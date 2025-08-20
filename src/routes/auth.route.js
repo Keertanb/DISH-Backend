@@ -4,7 +4,7 @@ import validateToken from "../middlewares/validateToken.middleware.js";
 // import validateSchema from '../middlewares/validateSchema.middleware.js';
 import { authRateLimiter } from "../middlewares/rateLimit.middleware.js";
 // VALIDATIONS
-import authValidation from "../../validations/auth.validation.js";
+import authValidation from "../validations/auth.validation.js";
 // CONTROLLERS
 import authController from "../controllers/auth.controller.js";
 
