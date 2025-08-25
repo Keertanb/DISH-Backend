@@ -3,8 +3,7 @@ import express from "express";
 import http from "http";
 // CONFIGS
 import config from "./src/config/index.js";
-import ResponseHandler from "./utils/responseHandler.js";
-import logger from "./utils/logger.js";
+import logger from "./src/utils/logger.js";
 // import { errorHandler } from './utils/errorHandler.js';
 // ROUTES
 import routes from "./src/routes/index.js";
@@ -16,7 +15,9 @@ import {
   generalRateLimiter,
   apiRateLimiter,
   developmentRateLimiter,
-} from "./middlewares/rateLimit.middleware.js";
+  authRateLimiter,
+} from "./src/middlewares/rateLimit.middleware.js";
+import ResponseHandler from "./src/utils/responseHandler.js";
 
 const app = express();
 const port = config.server.port;
@@ -52,7 +53,16 @@ if (config.server.nodeEnv === "development") {
 // app.use('/api/ping', healthRateLimiter, healthRoute);
 
 // API routes with API-specific rate limiting
+// Mount auth routes at the root of /api/v1
 app.use("/api/v1", apiRateLimiter, routes);
+
+// Mount auth routes directly under /api/v1 for backward compatibility
+const { login, logout, getProfile } = await import(
+  "./src/controllers/auth.controller.js"
+);
+app.post("/api/v1/login", authRateLimiter, login);
+app.post("/api/v1/logout", logout);
+app.get("/api/v1/profile", getProfile);
 
 // --------------------------    ERROR HANDLING    ---------------------
 // app.use(errorHandler);

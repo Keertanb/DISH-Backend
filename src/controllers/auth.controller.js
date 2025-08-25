@@ -1,96 +1,75 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
-import { User, UserSession } from "../models/index.js";
-import logger from "../../utils/logger.js";
-import config from "../config/index.js";
+// SERVICES
+import authService from "../services/auth.service.js";
+// UTILS
+import logger from "../utils/logger.js";
 
 /**
- * Generate JWT token for user
- * @param {Object} user - User object
- * @returns {String} JWT token
- */
-const generateToken = (user) => {
-  return jwt.sign(
-    {
-      userId: user.userId,
-      email: user.email,
-      roles: user.roles,
-    },
-    config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn }
-  );
-};
-
-/**
- * Login user and return JWT token
+ * Login user with username and password
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
+    console.log(req, "<><><><><>><<<<<<<<<<<<<<<<");
     const { userName, password, isForcedLogin = false } = req.body;
 
     // Input validation
     if (!userName || !password) {
-      return res.handler.badRequest("Username and password are required");
+      return res.handler.badRequest({}, "Username and password are required");
     }
 
-    // Find user by username
-    const user = await User.findOne({ where: { userName } });
+    // Get user by username
+    const user = await authService.getUserByUserName(userName);
     if (!user) {
-      return res.handler.unauthorized("Invalid credentials");
+      return res.handler.notFound({}, "Invalid Credentials");
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.userPassword);
     if (!isPasswordValid) {
-      return res.handler.unauthorized("Invalid credentials");
-    }
-
-    // Check for existing active sessions if not forced login
-    if (!isForcedLogin) {
-      const activeSession = await UserSession.findOne({
-        where: { userId: user.userId, status: "active" },
-      });
-
-      if (activeSession) {
-        return res.handler.conflict(
-          "User already logged in. Use force login to continue."
-        );
-      }
+      return res.handler.notFound({}, "Invalid Credentials");
     }
 
     // Generate JWT token
-    const token = generateToken(user);
-    const sessionId = uuidv4();
-    const ipAddress = req.ip || req.connection.remoteAddress;
+    const token = jwt.sign(
+      { userId: user.userId },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "2d" }
+    );
 
-    // Create new session
-    await UserSession.create({
-      sessionId,
-      userId: user.userId,
+    // Create user session
+    const session = await authService.createUserSession(
+      user.userId,
       token,
-      ipAddress,
-      userAgent: req.headers["user-agent"],
-      status: "active",
-      expiresAt: new Date(Date.now() + config.jwt.expiresInMs),
-    });
+      req.ip || "",
+      isForcedLogin
+    );
 
-    // Return user data with token
-    const userData = {
-      userId: user.userId,
-      userName: user.userName,
-      email: user.email,
-      roles: user.roles,
-      token,
-      isReset: user.isReset || false,
-    };
+    if (!session) {
+      return res.handler.serverError({}, "Session creation failed");
+    }
 
-    return res.handler.success(userData, "Login successful");
+    if (session.isAlreadyLoggedIn) {
+      return res.handler.forbidden({}, "Already logged in");
+    }
+
+    // Return success response
+    return res.handler.success(
+      {
+        userId: user.userId,
+        userName: user.userName,
+        email: user.userEmail,
+        token,
+        isReset: user.isReset,
+        roles: user.roles,
+      },
+      "Login successful"
+    );
   } catch (error) {
-    logger.error("Login error:", error);
-    return res.handler.serverError("Login failed");
+    logger.error("Login error:", { error, req: req.body });
+    return res.handler.serverError({}, error.message || "Login failed");
   }
 };
 
@@ -99,62 +78,20 @@ const login = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const logout = async (req, res) => {
+export const logout = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.handler.unauthorized("No token provided");
-    }
+    const token = req.headers.authorization?.split(" ")[1] || "";
 
-    // Update session status to logged out
-    await UserSession.update(
-      { status: "logged_out", loggedOutAt: new Date() },
-      { where: { token } }
-    );
+    await authService.updateUserSession(req.user.userId, token, "logout");
 
-    return res.handler.success(null, "Logout successful");
+    return res.handler.success({}, "Logout successful");
   } catch (error) {
-    logger.error("Logout error:", error);
-    return res.handler.serverError("Logout failed");
-  }
-};
-
-/**
- * Refresh access token using refresh token
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-const refreshToken = async (req, res) => {
-  try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-      return res.handler.badRequest("Refresh token is required");
-    }
-
-    // Verify refresh token
-    const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret);
-    const user = await User.findByPk(decoded.userId);
-
-    if (!user) {
-      return res.handler.unauthorized("Invalid refresh token");
-    }
-
-    // Generate new access token
-    const newToken = generateToken(user);
-
-    // Update session with new token
-    await UserSession.update(
-      { token: newToken },
-      { where: { userId: user.userId, token: refreshToken } }
-    );
-
-    return res.handler.success(
-      { token: newToken },
-      "Token refreshed successfully"
-    );
-  } catch (error) {
-    logger.error("Refresh token error:", error);
-    return res.handler.unauthorized("Invalid refresh token");
+    logger.error("Logout error:", {
+      error,
+      userId: req.user?.userId,
+      token: req.headers.authorization?.split(" ")[1],
+    });
+    return res.handler.serverError({}, error.message || "Logout failed");
   }
 };
 
@@ -163,27 +100,27 @@ const refreshToken = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.userId, {
-      attributes: { exclude: ["userPassword"] },
-      include: ["roles"],
-    });
+    // In a real implementation, you might want to get fresh user data
+    // For now, we'll just return the user from the request
+    const { userId, userName, email, roles } = req.user;
 
-    if (!user) {
-      return res.handler.notFound("User not found");
-    }
-
-    return res.handler.success(user, "Profile retrieved successfully");
+    return res.handler.success(
+      { userId, userName, email, roles },
+      "Profile retrieved successfully"
+    );
   } catch (error) {
-    logger.error("Get profile error:", error);
-    return res.handler.serverError("Failed to retrieve profile");
+    logger.error("Get profile error:", { error });
+    return res.handler.serverError(
+      {},
+      error.message || "Failed to retrieve profile"
+    );
   }
 };
 
 export default {
   login,
   logout,
-  refreshToken,
   getProfile,
 };

@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-import config from "../src/config/index.js";
+import config from "../config/index.js";
 
 /**
  * Helper function to generate IP-based keys for rate limiting
@@ -19,9 +19,9 @@ export const generalRateLimiter = rateLimit({
     message: "Too many requests from this IP, please try again later.",
     code: "RATE_LIMIT_EXCEEDED",
   },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  keyGenerator: ipKeyGenerator,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req, res) => ipKeyGenerator(req, res),
   handler: (req, res) => {
     res.status(429).json({
       status: "error",
@@ -35,7 +35,7 @@ export const generalRateLimiter = rateLimit({
 // Stricter rate limiter for authentication routes
 export const authRateLimiter = rateLimit({
   windowMs: config.rateLimit.authWindowMs, // 15 minutes
-  max: 5, // Limit each IP to 5 login attempts per windowMs
+  max: 500, // Limit each IP to 5 login attempts per windowMs
   message: {
     status: "error",
     message: "Too many authentication attempts, please try again later.",
@@ -43,7 +43,7 @@ export const authRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req, res) => ipKeyGenerator(req, res),
   handler: (req, res) => {
     res.status(429).json({
       status: "error",
@@ -65,7 +65,7 @@ export const apiRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req, res) => ipKeyGenerator(req, res),
   handler: (req, res) => {
     res.status(429).json({
       status: "error",
@@ -87,7 +87,7 @@ export const healthRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req, res) => ipKeyGenerator(req, res),
   handler: (req, res) => {
     res.status(429).json({
       status: "error",
@@ -109,7 +109,7 @@ export const developmentRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: ipKeyGenerator,
+  keyGenerator: (req, res) => ipKeyGenerator(req, res),
   handler: (req, res) => {
     res.status(429).json({
       status: "error",

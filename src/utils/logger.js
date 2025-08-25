@@ -1,4 +1,4 @@
-import config from "../src/config/index.js";
+import config from "../config/index.js";
 
 // Log levels
 export const LogLevel = {
@@ -130,8 +130,8 @@ class Logger {
   }
 }
 
-// Export a singleton instance
+// Export a singleton instance and LogLevel
 const logger = new Logger();
 
+// export { LogLevel };
 export default logger;
-module.exports.LogLevel = LogLevel;

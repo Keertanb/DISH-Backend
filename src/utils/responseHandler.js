@@ -1,6 +1,6 @@
 import { STATUS_CODES } from './statusCodes.js';
 
-export default class ResponseHandler {
+class ResponseHandler {
   constructor(req, res) {
     this.req = req;
     this.res = res;
@@ -135,4 +135,4 @@ export default class ResponseHandler {
   }
 }
 
-export { ResponseHandler };
+export default ResponseHandler;
