@@ -5,7 +5,7 @@ dotenv.config();
 const config = {
 	database: {
 		server: process.env.DB_SERVER || 'localhost',
-		database: process.env.DB_NAME || 'dish',
+		database: process.env.DB_NAME || 'DISHPortal',
 		user: process.env.DB_USER || 'sa',
 		password: process.env.DB_PASSWORD || 'admin@123',
 		port: parseInt(process.env.DB_PORT || '1433', 10),
