@@ -17,6 +17,18 @@ class AuthController {
 			return res.handler.serverError({}, (err).message || 'Error in factoryOwnerRegistration');
 		}
 	}
+
+	async competentOfficerRegistration(req, res) {
+		try {
+			const competent = await authService.competentOfficerRegistration(req.body);
+
+			return res.handler.success(competent);
+
+		} catch (err) {
+			logger.error('Error in competentOfficerRegistration:', { err });
+			return res.handler.serverError({}, (err).message || 'Error in competentOfficerRegistration');
+		}
+	}
 }
 
 export default AuthController;

@@ -8,8 +8,17 @@ import AuthController from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-const authController = new AuthController()
+const authController = new AuthController();
 
-router.post('/factory-registration' ,validateSchema(authValidation.factoryOwnerRegistration), authController.factoryOwnerRegistration);
+router.post(
+	'/factory-registration',
+	validateSchema(authValidation.factoryOwnerRegistration),
+	authController.factoryOwnerRegistration
+);
+router.post(
+	'/competent-registration',
+	validateSchema(authValidation.competentOfficerSchema),
+	authController.competentOfficerRegistration
+);
 
 export default router;

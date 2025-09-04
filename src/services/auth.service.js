@@ -16,6 +16,16 @@ class AuthService{
 			throw err;
 		}
 	}
+
+	async competentOfficerRegistration(data) {
+		try {
+			const competent = await authModel.competentOfficerRegistration(data);
+			return competent;
+		} catch (err) {
+			logger.error('Error in competentOfficerRegistration service:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AuthService;
