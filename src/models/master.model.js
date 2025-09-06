@@ -1,12 +1,11 @@
-import sql from 'mssql';    
+import sql from 'mssql';
 // DATABASE
 import { executeStoredProcedure } from '../database/index.js';
 // UTILS
 import logger from '../utils/logger.js';
 
-
 class MasterModel {
-    async getDistricts() {
+	async getDistricts() {
 		try {
 			const result = await executeStoredProcedure('SP_GetAllDistricts', [], true);
 			return result;
@@ -16,12 +15,12 @@ class MasterModel {
 		}
 	}
 
-		async getBlocksByDistrictId(districtId) {
+	async getBlocksByDistrictId(districtId) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetBlocksByDistrictId',
 				[{ name: 'districtId', type: sql.Int(), value: districtId }],
-				true,
+				true
 			);
 			return result;
 		} catch (err) {

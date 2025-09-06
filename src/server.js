@@ -44,21 +44,20 @@ app.use(handlerMiddleware);
 
 // ------------------------    RATE LIMITING    -------------------
 // Apply different rate limiters based on environment and route type
-if (config.server.nodeEnv === 'development') {
-	// More lenient rate limiting for development
-	app.use(developmentRateLimiter);
-} else {
-	// Production rate limiting
-	app.use(generalRateLimiter);
-}
+// if (config.server.nodeEnv === 'development') {
+// More lenient rate limiting for development
+app.use(developmentRateLimiter);
+// } else {
+// 	app.use(generalRateLimiter);
+// }
 
 // --------------------------    ROUTES    ------------------
 // Health check route with specific rate limiting
 app.use('/api/ping', healthRateLimiter, healthRoute);
 
 // API routes with API-specific rate limiting
- app.use('/api/v1', apiRateLimiter, routes);
-
+app.use('/api/v1', apiRateLimiter, routes);
+app.set('trust proxy', true);
 // --------------------------    ERROR HANDLING    ---------------------
 app.use(errorHandler);
 

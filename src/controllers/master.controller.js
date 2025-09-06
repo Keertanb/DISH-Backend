@@ -6,32 +6,34 @@ import logger from '../utils/logger.js';
 const masterService = new MasterService();
 
 class MasterController {
-   async getDistricts(req, res) {
+	async getDistricts(req, res) {
 		try {
 			const districts = await masterService.getDistricts(req.body);
 
 			return res.handler.success(districts);
 		} catch (err) {
 			logger.error('Error in getDistricts:', { err });
-			return res.handler.serverError({}, (err).message || 'Error in getDistricts');
+			return res.handler.serverError({}, err.message || 'Error in getDistricts');
 		}
 	}
 
-     async getBlocksByDistrictId(req, res) {
+	async getBlocksByDistrictId(req, res) {
 		try {
-            const { districtId } = req.query ;
+			const { districtId } = req.query;
+			const data = req?.data;
+			console.log(data);
 			const blocks = await masterService.getBlocksByDistrictId(districtId);
 
-			return res.handler.success(blocks);
+			return res.handler.success({ blocks });
 		} catch (err) {
 			logger.error('Error in getDistricts:', { err });
-			return res.handler.serverError({}, (err).message || 'Error in getDistricts');
+			return res.handler.serverError({}, err.message || 'Error in getDistricts');
 		}
 	}
 
-    async getBankDetailByIFSCCode(req, res) {
+	async getBankDetailByIFSCCode(req, res) {
 		try {
-			const { IFSCCode } = req.query ;
+			const { IFSCCode } = req.query;
 
 			const bankDetail = await masterService.getBankDetailByIFSCCode(IFSCCode);
 
@@ -40,7 +42,7 @@ class MasterController {
 			return res.handler.success(bankDetail, 'Bank detail fetched successfully');
 		} catch (err) {
 			logger.error('Error in getBankDetailByIFSCCode:', { err, IFSCCode: req.query.IFSCCode });
-			return res.handler.serverError({}, (err).message || 'Error in getBankDetailByIFSCCode');
+			return res.handler.serverError({}, err.message || 'Error in getBankDetailByIFSCCode');
 		}
 	}
 }

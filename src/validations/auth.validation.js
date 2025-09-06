@@ -244,3 +244,10 @@ export const competentOfficerSchema = {
 		otherRelevantInformation: Joi.string().allow(null, ''),
 	}),
 };
+
+export const login = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		userPassword: Joi.string().required(),
+	}),
+};

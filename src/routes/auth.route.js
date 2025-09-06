@@ -21,4 +21,6 @@ router.post(
 	authController.competentOfficerRegistration
 );
 
+router.post('/login', validateSchema(authValidation.login), authController.login);
+
 export default router;

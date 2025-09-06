@@ -262,6 +262,19 @@ class AuthModel {
 			throw error;
 		}
 	}
+
+	async login(userId) {
+		try {
+			const result = await executeStoredProcedure('SP_GetUserName', [
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
+			]);
+
+			return result || [];
+		} catch (error) {
+			logger.error('Error in login model:', { error });
+			throw error;
+		}
+	}
 }
 
 export default AuthModel;
