@@ -10,12 +10,16 @@ const authService = new AuthService();
 class AuthController {
 	async factoryOwnerRegistration(req, res) {
 		try {
+			// console.log(req.body);
 			const factory = await authService.factoryOwnerRegistration(req.body);
 
-			return res.handler.success(factory);
+			return res.handler.success(factory, 'Factory registered successfully!');
 		} catch (err) {
-			logger.error('Error in factoryOwnerRegistration:', { err });
-			return res.handler.serverError({}, err.message || 'Error in factoryOwnerRegistration');
+			logger.error('Error in factoryOwnerRegistration controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in factoryOwnerRegistration controller'
+			);
 		}
 	}
 
@@ -23,10 +27,13 @@ class AuthController {
 		try {
 			const competent = await authService.competentOfficerRegistration(req.body);
 
-			return res.handler.success(competent);
+			return res.handler.success(competent, 'Competent Officer registered successfully!');
 		} catch (err) {
-			logger.error('Error in competentOfficerRegistration:', { err });
-			return res.handler.serverError({}, err.message || 'Error in competentOfficerRegistration');
+			logger.error('Error in competentOfficerRegistration controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in competentOfficerRegistration controller'
+			);
 		}
 	}
 
@@ -37,8 +44,8 @@ class AuthController {
 			const authToken = createToken(login);
 			return res.handler.success({ ...login, authToken });
 		} catch (err) {
-			logger.error('Error in login:', { err });
-			return res.handler.serverError({}, err.message || 'Error in login');
+			logger.error('Error in login controller:', { message: err.message, stack: err.stack });
+			return res.handler.serverError({}, err.message || 'Error in login controller');
 		}
 	}
 }

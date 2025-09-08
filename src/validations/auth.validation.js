@@ -42,15 +42,27 @@ export const factoryOwnerRegistration = {
 		yearOfEstablishment: Joi.number().integer().min(1800).max(3000).allow(null),
 		industryType: Joi.number().integer().required(),
 		numberOfEmployees: Joi.number().integer().min(0).allow(null),
-		address: Joi.string()
-			.trim()
+		addressLine1: Joi.string()
 			.uppercase()
-			.max(500)
-			.message('Area cannot exceed 500 characters')
 			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
 			.message('Only English characters, numbers, spaces, hyphens and dots are allowed')
-			.optional()
-			.allow('', null),
+			.max(50)
+			.message('Area cannot exceed 50 characters')
+			.allow(null, ''),
+		addressLine2: Joi.string()
+			.uppercase()
+			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
+			.message('Only English characters, numbers, spaces, hyphens and dots are allowed')
+			.max(50)
+			.message('Area cannot exceed 50 characters')
+			.allow(null, ''),
+		addressLine3: Joi.string()
+			.uppercase()
+			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
+			.message('Only English characters, numbers, spaces, hyphens and dots are allowed')
+			.max(50)
+			.message('Area cannot exceed 50 characters')
+			.allow(null, ''),
 		pincode: Joi.string()
 			.trim()
 			.pattern(/^[0-9]{6}$/)

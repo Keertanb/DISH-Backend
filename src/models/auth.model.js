@@ -15,7 +15,9 @@ export const factoryOwner = {
 	yearOfEstablishment: null,
 	industryType: 0,
 	numberOfEmployees: null,
-	address: null,
+	addressLine1: null,
+	addressLine2: null,
+	addressLine3: null,
 	pincode: null,
 	accountHolderName: null,
 	bankName: null,
@@ -73,7 +75,7 @@ export const competentOfficer = {
 };
 
 class AuthModel {
-	async factoryOwnerRegistration(data) {
+	async factoryOwnerRegistration(data, password) {
 		try {
 			const {
 				factoryName,
@@ -86,7 +88,9 @@ class AuthModel {
 				yearOfEstablishment,
 				industryType,
 				numberOfEmployees,
-				address,
+				addressLine1,
+				addressLine2,
+				addressLine3,
 				pincode,
 				accountHolderName,
 				bankName,
@@ -99,30 +103,33 @@ class AuthModel {
 			} = data;
 
 			const result = await executeStoredProcedure('SP_FactoryOwner', [
-				{ name: 'factoryName', type: sql.VarChar(200), value: factoryName },
-				{ name: 'managerName', type: sql.VarChar(150), value: managerName },
-				{ name: 'email', type: sql.VarChar(100), value: email },
-				{ name: 'mobile', type: sql.VarChar(15), value: mobile },
+				{ name: 'factoryName', type: sql.NVarChar(200), value: factoryName },
+				{ name: 'managerName', type: sql.NVarChar(150), value: managerName },
+				{ name: 'email', type: sql.NVarChar(100), value: email },
+				{ name: 'mobile', type: sql.NVarChar(15), value: mobile },
 				{ name: 'district', type: sql.Int(), value: district },
 				{ name: 'block', type: sql.Int(), value: block },
-				{ name: 'factoryLicenseNumber', type: sql.VarChar(50), value: factoryLicenseNumber },
+				{ name: 'factoryLicenseNumber', type: sql.NVarChar(50), value: factoryLicenseNumber },
 				{ name: 'yearOfEstablishment', type: sql.Int(), value: yearOfEstablishment },
 				{ name: 'industryType', type: sql.Int(), value: industryType },
 				{ name: 'numberOfEmployees', type: sql.Int, value: numberOfEmployees },
-				{ name: 'address', type: sql.VarChar(500), value: address },
-				{ name: 'pincode', type: sql.VarChar(10), value: pincode },
-				{ name: 'accountHolderName', type: sql.VarChar(150), value: accountHolderName },
-				{ name: 'bankName', type: sql.VarChar(100), value: bankName },
-				{ name: 'accountNumber', type: sql.VarChar(30), value: accountNumber },
-				{ name: 'ifscCode', type: sql.VarChar(20), value: ifscCode },
-				{ name: 'branch', type: sql.VarChar(100), value: branch },
-				{ name: 'gstNumber', type: sql.VarChar(40), value: gstNumber },
+				{ name: 'addressLine1', type: sql.NVarChar(50), value: addressLine1 },
+				{ name: 'addressLine2', type: sql.NVarChar(50), value: addressLine2 },
+				{ name: 'addressLine3', type: sql.NVarChar(50), value: addressLine3 },
+				{ name: 'pincode', type: sql.NVarChar(10), value: pincode },
+				{ name: 'accountHolderName', type: sql.NVarChar(150), value: accountHolderName },
+				{ name: 'bankName', type: sql.NVarChar(100), value: bankName },
+				{ name: 'accountNumber', type: sql.NVarChar(30), value: accountNumber },
+				{ name: 'ifscCode', type: sql.NVarChar(20), value: ifscCode },
+				{ name: 'branch', type: sql.NVarChar(100), value: branch },
+				{ name: 'gstNumber', type: sql.NVarChar(40), value: gstNumber },
 				{
 					name: 'factoryRegistrationNumber',
-					type: sql.VarChar(20),
+					type: sql.NVarChar(20),
 					value: factoryRegistrationNumber,
 				},
-				{ name: 'companyPanCard', type: sql.VarChar(20), value: companyPanCard },
+				{ name: 'companyPanCard', type: sql.NVarChar(20), value: companyPanCard },
+				{ name: 'userPassword', type: sql.VarChar(255), value: password },
 			]);
 
 			return result;
@@ -132,7 +139,7 @@ class AuthModel {
 		}
 	}
 
-	async competentOfficerRegistration(data) {
+	async competentOfficerRegistration(data, password) {
 		try {
 			const {
 				formType,
@@ -254,6 +261,7 @@ class AuthModel {
 				{ name: 'otherStatute', type: sql.Bit, value: otherStatute },
 				{ name: 'statuteCompetency', type: sql.Text, value: statuteCompetency },
 				{ name: 'otherRelevantInformation', type: sql.Text, value: otherRelevantInformation },
+				{ name: 'userPassword', type: sql.VarChar(255), value: password },
 			]);
 
 			return result;
