@@ -44,6 +44,42 @@ class AllOfficersController {
 			);
 		}
 	}
+
+	/**
+	 * @description Review a competent officer (Approve/Reject)
+	 * @route PUT /api/officers/review
+	 * @access Private (DISH_OFFICER role required)
+	 */
+	async reviewCompetentOfficer(req, res) {
+		try {
+			const { competentOfficerId, status, comments } = req.body;
+			const reviewerId = req.user.id; // Assuming user ID is available in req.user
+
+			if (!competentOfficerId || !status) {
+				return res.handler.validationError({}, 'Competent officer ID and status are required');
+			}
+
+			const result = await allOfficersService.reviewCompetentOfficer(
+				competentOfficerId,
+				reviewerId,
+				status,
+				comments
+			);
+
+			return res.handler.success(result, 'Review submitted successfully');
+		} catch (err) {
+			logger.error('Error in reviewCompetentOfficer controller:', { 
+				error: err.message,
+				body: req.body,
+				user: req.user?.id 
+			});
+
+			if (err.statusCode) {
+				return res.handler.clientError({}, err.message, err.statusCode);
+			}
+			return res.handler.serverError({}, err.message || 'Failed to review competent officer');
+		}
+	}
 }
 
 export default AllOfficersController;
