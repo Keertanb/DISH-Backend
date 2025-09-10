@@ -1,21 +1,47 @@
-import { scheduleInspection } from '../services/factory.service';
-import { AppError } from '../utils/errorHandler';
+import FactoryService from '../services/factory.service.js';
 
-export const scheduleInspectionController = async (req, res, next) => {
-    try {
-        const { inspectionDate, machineType, competentOfficerId, factoryId } = req.body;
-        
-        if (!inspectionDate || !machineType || !competentOfficerId || !factoryId) {
-            throw new AppError('All fields are required', 400);
-        }
+// UTILS
+import logger from '../utils/logger.js';
 
-        const result = await scheduleInspection(
-            { inspectionDate, machineType, competentOfficerId, factoryId },
-            req.user.id 
-        );
+const factoryService = new FactoryService();
 
-        res.status(201).json(result);
-    } catch (error) {
-        next(error);
-    }
-};
+class FactoryController {
+	async getFactoryDetails(req, res) {
+		try {
+			const { userId } = req.query;
+
+			const details = await factoryService.getFactoryDetails(userId);
+
+			return res.handler.success(details);
+		} catch (err) {
+			logger.error('Error in getFactoryDetails:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getFactoryDetails');
+		}
+	}
+
+	async getMachineList(req, res) {
+		try {
+			const { userId } = req.query;
+
+			const machine = await factoryService.getMachineList(userId);
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in getMachineList:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getMachineList');
+		}
+	}
+
+	async addNewMachine(req, res) {
+		try {
+			const machine = await factoryService.addNewMachine(req.body);
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in addNewMachine:', { err });
+			return res.handler.serverError({}, err.message || 'Error in addNewMachine');
+		}
+	}
+}
+
+export default FactoryController;

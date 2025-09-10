@@ -1,7 +1,5 @@
 import express from 'express';
 import validateSchema from '../middlewares/validateSchema.middleware.js';
-import { validateToken } from '../middlewares/validateToken.middleware.js';
-import { checkRole } from '../middlewares/checkRole.middleware.js';
 import AllOfficersController from '../controllers/allOfficers.controller.js';
 import * as allOfficersValidation from '../validations/allOfficers.validation.js';
 
@@ -10,25 +8,44 @@ const router = express.Router();
 
 // Get competent officers
 router.get(
-    '/all-officer',
-    validateSchema(allOfficersValidation.getCompetentOfficers),
-    allOfficersController.getCompetentOfficers
+	'/get-all-officers',
+	validateSchema(allOfficersValidation.getCompetentOfficers),
+	allOfficersController.getCompetentOfficers
+);
+
+// Get Active competent officers
+router.get(
+	'/get-approved-officers',
+	validateSchema(allOfficersValidation.getActiveCompetentOfficers),
+	allOfficersController.getActiveCompetentOfficers
+);
+
+// Get Interview competent officers
+router.get(
+	'/get-interview-officers',
+	validateSchema(allOfficersValidation.getInterviewCompetentOfficers),
+	allOfficersController.getInterviewCompetentOfficers
+);
+
+// Update Status competent officers
+router.post(
+	'/update-competent-officers-status',
+	validateSchema(allOfficersValidation.updateCompetentOfficersStatus),
+	allOfficersController.updateCompetentOfficersStatus
 );
 
 // Get competent officer profile
 router.get(
-    '/competent-officer-profile',
-    validateSchema(allOfficersValidation.getCompetentOfficerProfile),
-    allOfficersController.getCompetentOfficerProfile
+	'/competent-officer-profile',
+	validateSchema(allOfficersValidation.getCompetentOfficerProfile),
+	allOfficersController.getCompetentOfficerProfile
 );
 
 // Review competent officer (Approve/Reject)
 router.put(
-    '/review-competent-officer',
-    validateToken, // Ensures user is authenticated
-    checkRole(['DISH_OFFICER']), // Only DISH officers can review
-    validateSchema(allOfficersValidation.reviewCompetentOfficer),
-    allOfficersController.reviewCompetentOfficer
+	'/review-competent-officer',
+	validateSchema(allOfficersValidation.reviewCompetentOfficer),
+	allOfficersController.reviewCompetentOfficer
 );
 
 // Get dashboard data

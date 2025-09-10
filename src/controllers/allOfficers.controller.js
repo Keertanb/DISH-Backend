@@ -7,9 +7,9 @@ const allOfficersService = new AllOfficersService();
 class AllOfficersController {
 	async getCompetentOfficers(req, res) {
 		try {
-			const { districtId } = req.query;
+			const { districtId, page, limit } = req.query;
 
-			const officer = await allOfficersService.getCompetentOfficers(districtId);
+			const officer = await allOfficersService.getCompetentOfficers(districtId, page, limit);
 
 			return res.handler.success(officer);
 		} catch (err) {
@@ -18,6 +18,56 @@ class AllOfficersController {
 		}
 	}
 
+	async getActiveCompetentOfficers(req, res) {
+		try {
+			const { districtId, page, limit } = req.query;
+
+			const officer = await allOfficersService.getActiveCompetentOfficers(districtId, page, limit);
+
+			return res.handler.success(officer);
+		} catch (err) {
+			logger.error('Error in getActiveCompetentOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getActiveCompetentOfficers controller'
+			);
+		}
+	}
+
+	async getInterviewCompetentOfficers(req, res) {
+		try {
+			const { page, limit } = req.query;
+			const officer = await allOfficersService.getInterviewCompetentOfficers(page, limit);
+
+			return res.handler.success(officer);
+		} catch (err) {
+			logger.error('Error in getInterviewCompetentOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getInterviewCompetentOfficers controller'
+			);
+		}
+	}
+
+	async updateCompetentOfficersStatus(req, res) {
+		try {
+			const { userId, applicationType, reason } = req.body;
+
+			const status = await allOfficersService.updateCompetentOfficersStatus({
+				userId,
+				applicationType,
+				reason,
+			});
+
+			return res.handler.success(status);
+		} catch (err) {
+			logger.error('Error in updateCompetentOfficersStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in updateCompetentOfficersStatus controller'
+			);
+		}
+	}
 	async getDashboard(req, res) {
 		try {
 			const dashboard = await allOfficersService.getDashboard(req.body);
@@ -68,10 +118,10 @@ class AllOfficersController {
 
 			return res.handler.success(result, 'Review submitted successfully');
 		} catch (err) {
-			logger.error('Error in reviewCompetentOfficer controller:', { 
+			logger.error('Error in reviewCompetentOfficer controller:', {
 				error: err.message,
 				body: req.body,
-				user: req.user?.id 
+				user: req.user?.id,
 			});
 
 			if (err.statusCode) {

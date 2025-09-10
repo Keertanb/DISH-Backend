@@ -3,20 +3,72 @@ import AllOfficersModel from '../models/allOfficers.model.js';
 
 // UTILS
 import logger from '../utils/logger.js';
-import { AppError } from '../utils/errorHandler.js';
+// import { AppError } from '../utils/errorHandler.js';
 
 const allOfficersModel = new AllOfficersModel();
 
 class AllOfficersService {
-	async getCompetentOfficers(districtId) {
+	async getCompetentOfficers(districtId, page, limit) {
 		try {
 			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
 				throw new Error('Invalid districtId provided');
 			}
-			const officers = await allOfficersModel.getCompetentOfficers(districtId);
+			const officers = await allOfficersModel.getCompetentOfficers(districtId, page, limit);
 			return officers;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficers service:', { err });
+			throw err;
+		}
+	}
+
+	async getActiveCompetentOfficers(districtId, page, limit) {
+		try {
+			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
+				throw new Error('Invalid districtId provided');
+			}
+			const officers = await allOfficersModel.getActiveCompetentOfficers(districtId, page, limit);
+			return officers;
+		} catch (err) {
+			logger.error('Error in getActiveCompetentOfficers service:', { err });
+			throw err;
+		}
+	}
+
+	async getInterviewCompetentOfficers(page, limit) {
+		try {
+			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit);
+			return officers;
+		} catch (err) {
+			logger.error('Error in getInterviewCompetentOfficers service:', { err });
+			throw err;
+		}
+	}
+
+	async updateCompetentOfficersStatus({ userId, applicationType, reason }) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
+			if (
+				!applicationType ||
+				!['Approved', 'Reject', 'RecommendedByDistrict', 'QueryToDistrict'].includes(
+					applicationType
+				)
+			) {
+				throw new Error('Invalid applicationType provided');
+			}
+
+			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Reject');
+			}
+			const status = await allOfficersModel.updateCompetentOfficersStatus(
+				userId,
+				applicationType,
+				reason
+			);
+			return status;
+		} catch (err) {
+			logger.error('Error in updateCompetentOfficersStatus service:', { err });
 			throw err;
 		}
 	}
@@ -46,17 +98,20 @@ class AllOfficersService {
 			// Validate review status
 			const validStatuses = ['Approved', 'Rejected'];
 			if (!validStatuses.includes(reviewStatus)) {
-				throw new AppError('Invalid review status. Must be either "Approved" or "Rejected"', 400);
+				throw new logger.error(
+					'Invalid review status. Must be either "Approved" or "Rejected"',
+					400
+				);
 			}
 
 			// Validate competent officer ID
 			if (!competentOfficerId || isNaN(competentOfficerId) || competentOfficerId <= 0) {
-				throw new AppError('Valid competent officer ID is required', 400);
+				throw new logger.error('Valid competent officer ID is required', 400);
 			}
 
 			// Validate reviewer ID
 			if (!reviewerId || isNaN(reviewerId) || reviewerId <= 0) {
-				throw new AppError('Valid reviewer ID is required', 400);
+				throw new logger.error('Valid reviewer ID is required', 400);
 			}
 
 			// Call the model to process the review
@@ -69,17 +124,14 @@ class AllOfficersService {
 
 			return result;
 		} catch (err) {
-			logger.error('Error in reviewCompetentOfficer service:', { 
+			logger.error('Error in reviewCompetentOfficer service:', {
 				error: err.message,
 				competentOfficerId,
 				reviewerId,
-				reviewStatus 
+				reviewStatus,
 			});
-			
-			if (err instanceof AppError) {
-				throw err;
-			}
-			throw new AppError(err.message || 'Failed to review competent officer', 500);
+
+			throw new logger.error(err.message || 'Failed to review competent officer', 500);
 		}
 	}
 }

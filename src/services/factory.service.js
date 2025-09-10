@@ -1,30 +1,47 @@
-import { executeStoredProcedure } from '../database';
-import { AppError } from '../utils/errorHandler';
+import FactoryModel from '../models/factory.model.js';
 
-export const scheduleInspection = async (inspectionData, userId) => {
-    try {
-        const params = [
-            { name: 'InspectionDate', value: inspectionData.inspectionDate, type: 'DateTime' },
-            { name: 'MachineType', value: inspectionData.machineType, type: 'NVarChar' },
-            { name: 'CompetentOfficerId', value: inspectionData.competentOfficerId, type: 'Int' },
-            { name: 'FactoryId', value: inspectionData.factoryId, type: 'Int' },
-            { name: 'ScheduledBy', value: userId, type: 'Int' },
-            { name: 'InspectionId', value: null, type: 'Int', isOutput: true },
-            { name: 'ErrorMessage', value: null, type: 'NVarChar', isOutput: true }
-        ];
+// UTILS
+import logger from '../utils/logger.js';
 
-        const result = await executeStoredProcedure('usp_ScheduleInspection', params);
-        
-        if (result.returnValue === -1) {
-            throw new AppError(result.output.ErrorMessage || 'Failed to schedule inspection', 400);
-        }
+const factoryModel = new FactoryModel();
+class FactoryService {
+	async getFactoryDetails(userId) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
 
-        return {
-            success: true,
-            inspectionId: result.output.InspectionId,
-            message: 'Inspection scheduled successfully'
-        };
-    } catch (error) {
-        throw new AppError(error.message || 'Failed to schedule inspection', error.statusCode || 500);
-    }
-};
+			const factory = await factoryModel.getFactoryDetails(userId);
+			return factory && factory.length > 0 ? factory[0] : null;
+		} catch (err) {
+			logger.error('Error in getFactoryDetails service:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineList(userId) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
+
+			const machine = await factoryModel.getMachineList(userId);
+			return machine;
+		} catch (err) {
+			logger.error('Error in getMachineList service:', { err });
+			throw err;
+		}
+	}
+
+	async addNewMachine(data) {
+		try {
+			const machine = await factoryModel.addNewMachine(data);
+			return machine && machine.length > 0 ? machine[0] : null;
+		} catch (err) {
+			logger.error('Error in addNewMachine service:', { err });
+			throw err;
+		}
+	}
+}
+
+export default FactoryService;
