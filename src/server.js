@@ -10,6 +10,8 @@ import { errorHandler } from './utils/errorHandler.js';
 // ROUTES
 // import routes from './routes/v1/index.js';
 import healthRoute from './routes/health.route.js';
+
+import routes from './routes/v1/index.js';
 // DATABASE
 import { initializeDatabase, closeDatabase } from './database/index.js';
 // RATE LIMITING
@@ -28,7 +30,7 @@ const server = http.createServer(app);
 
 // ------------------------      GLOBAL MIDDLEWARE -------------------------
 app.use(helmet());
-app.use(cors({ origin: config.server.corsOrigin })); // CORS configuration
+app.use(cors()); // CORS configuration
 app.use(express.json({ limit: '5mb' })); // ALLOW APPLICATION JSON
 app.use(express.urlencoded({ extended: false })); // ALLOW URL ENCODED PARSER
 app.use(logger.logRequest.bind(logger)); // Request logging
@@ -42,21 +44,20 @@ app.use(handlerMiddleware);
 
 // ------------------------    RATE LIMITING    -------------------
 // Apply different rate limiters based on environment and route type
-if (config.server.nodeEnv === 'development') {
-	// More lenient rate limiting for development
-	app.use(developmentRateLimiter);
-} else {
-	// Production rate limiting
-	app.use(generalRateLimiter);
-}
+// if (config.server.nodeEnv === 'development') {
+// More lenient rate limiting for development
+app.use(developmentRateLimiter);
+// } else {
+// 	app.use(generalRateLimiter);
+// }
 
 // --------------------------    ROUTES    ------------------
 // Health check route with specific rate limiting
 app.use('/api/ping', healthRateLimiter, healthRoute);
 
 // API routes with API-specific rate limiting
-// app.use('/api/v1', apiRateLimiter, routes);
-
+app.use('/api/v1', apiRateLimiter, routes);
+app.set('trust proxy', true);
 // --------------------------    ERROR HANDLING    ---------------------
 app.use(errorHandler);
 
