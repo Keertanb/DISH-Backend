@@ -95,6 +95,22 @@ class AllOfficersController {
 		}
 	}
 
+	async scheduleInterview(req, res) {
+		try {
+			const { interviewCandidates, scheduledInterviewDate } = req.body;
+
+			const interview = await allOfficersService.scheduleInterview({
+				interviewCandidates,
+				scheduledInterviewDate,
+			});
+
+			return res.handler.success(interview);
+		} catch (err) {
+			logger.error('Error in scheduleInterview controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in scheduleInterview controller');
+		}
+	}
+
 	/**
 	 * @description Review a competent officer (Approve/Reject)
 	 * @route PUT /api/officers/review

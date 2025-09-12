@@ -24,12 +24,21 @@ export const addNewMachine = {
 		nameOfManufacture: Joi.string().max(200).required(),
 		addressOfManufacture: Joi.string().max(200).required(),
 		dateOfConstruction: Joi.date().optional(),
-		thinknessOfWall: Joi.string().max(30).optional(),
+		thicknessOfWall: Joi.string().max(30).optional(),
 		identityFicationOfMachine: Joi.string().max(50).optional(),
 		safeWorkingPressure: Joi.when('machineName', {
 			is: 'Pressure Vessel or Plant',
 			then: Joi.string().max(50).required(),
 			otherwise: Joi.string().optional(),
 		}),
+	}),
+};
+
+export const machineInspection = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+		competentUserId: Joi.string().max(30).required(),
 	}),
 };

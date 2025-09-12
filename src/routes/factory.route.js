@@ -26,4 +26,10 @@ router.post(
 	factoryController.addNewMachine
 );
 
+router.post(
+	'/machine-inspection',
+	validateSchema(factoryValidation.machineInspection),
+	factoryController.machineInspection
+);
+
 export default router;

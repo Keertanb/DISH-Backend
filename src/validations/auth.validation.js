@@ -263,3 +263,17 @@ export const login = {
 		userPassword: Joi.string().required(),
 	}),
 };
+
+export const forgotPasswordSchema = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		email: Joi.string().email().required(),
+	}),
+};
+
+export const resetPasswordSchema = {
+	body: Joi.object().keys({
+		token: Joi.string().required(),
+		newPassword: Joi.string().min(8).required(),
+	}),
+};

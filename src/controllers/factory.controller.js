@@ -42,6 +42,24 @@ class FactoryController {
 			return res.handler.serverError({}, err.message || 'Error in addNewMachine');
 		}
 	}
+
+	async machineInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo, scheduleInspectionDate, competentUserId } = req.body;
+
+			const machine = await factoryService.machineInspection({
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate,
+				competentUserId,
+			});
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in machineInspection controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in machineInspection controller');
+		}
+	}
 }
 
 export default FactoryController;

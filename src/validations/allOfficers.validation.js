@@ -49,6 +49,16 @@ export const getCompetentOfficerProfile = {
 	}),
 };
 
+export const scheduleInterview = {
+	body: Joi.object().keys({
+		interviewCandidates: Joi.array()
+			.items(Joi.object({ userId: Joi.string().max(30).required() }))
+			.min(1)
+			.required(),
+		scheduledInterviewDate: Joi.date().required(),
+	}),
+};
+
 // Validation for reviewing a competent officer
 export const reviewCompetentOfficer = {
 	body: Joi.object()

@@ -100,6 +100,30 @@ class AllOfficersModel {
 		}
 	}
 
+	async scheduleInterview(userIds, scheduledInterviewDate) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_ScheduleInterview',
+				[
+					{ name: 'userIds', type: sql.NVarChar, value: userIds },
+					{ name: 'scheduledInterviewDate', type: sql.Date, value: scheduledInterviewDate },
+				],
+				true
+			);
+
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in scheduleInterview model:', { err });
+			throw err;
+		}
+	}
+
 	async reviewCompetentOfficer(
 		competentOfficerId,
 		reviewerId,

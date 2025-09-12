@@ -15,7 +15,7 @@ export const AddMachine = {
 	nameOfManufacture: null,
 	addressOfManufacture: null,
 	dateOfConstruction: null,
-	thinknessOfWall: null,
+	thicknessOfWall: null,
 	identityFicationOfMachine: null,
 	safeWorkingPressure: null,
 };
@@ -61,7 +61,7 @@ class FactoryModel {
 				nameOfManufacture,
 				addressOfManufacture,
 				dateOfConstruction,
-				thinknessOfWall,
+				thicknessOfWall,
 				identityFicationOfMachine,
 				safeWorkingPressure,
 			} = data;
@@ -78,7 +78,7 @@ class FactoryModel {
 					{ name: 'nameOfManufacture', type: sql.VarChar(200), value: nameOfManufacture },
 					{ name: 'addressOfManufacture', type: sql.VarChar(200), value: addressOfManufacture },
 					{ name: 'dateOfConstruction', type: sql.Date(), value: dateOfConstruction },
-					{ name: 'thinknessOfWall', type: sql.VarChar(30), value: thinknessOfWall },
+					{ name: 'thicknessOfWall', type: sql.VarChar(30), value: thicknessOfWall },
 					{
 						name: 'identityFicationOfMachine',
 						type: sql.VarChar(50),
@@ -91,6 +91,25 @@ class FactoryModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in addNewMachine model:', { err });
+			throw err;
+		}
+	}
+
+	async machineInspection(factoryUserId, machineNo, scheduleInspectionDate, competentUserId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_MachineInspection',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+					{ name: 'scheduleInspectionDate', type: sql.Date(), value: scheduleInspectionDate },
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in machineInspection model:', { err });
 			throw err;
 		}
 	}

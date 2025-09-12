@@ -283,6 +283,42 @@ class AuthModel {
 			throw error;
 		}
 	}
+
+	async generateResetToken(userId, email, token, expiry) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GeneratePasswordResetToken',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'email', type: sql.VarChar(100), value: email },
+					{ name: 'token', type: sql.VarChar(100), value: token },
+					{ name: 'expiry', type: sql.DateTime2, value: expiry },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in generateResetToken model:', { err });
+			throw err;
+		}
+	}
+
+	async resetPassword(token, hashedPassword) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_ResetPassword',
+				[
+					{ name: 'token', type: sql.VarChar(100), value: token },
+					{ name: 'newPassword', type: sql.VarChar(100), value: hashedPassword },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in resetPassword model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AuthModel;

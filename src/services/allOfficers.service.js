@@ -3,7 +3,8 @@ import AllOfficersModel from '../models/allOfficers.model.js';
 
 // UTILS
 import logger from '../utils/logger.js';
-// import { AppError } from '../utils/errorHandler.js';
+
+import { sendMail } from '../utils/mail.js';
 
 const allOfficersModel = new AllOfficersModel();
 
@@ -89,6 +90,50 @@ class AllOfficersService {
 			return profile;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficerProfile service:', { err });
+			throw err;
+		}
+	}
+
+	async scheduleInterview({ interviewCandidates, scheduledInterviewDate }) {
+		try {
+			const userIds = interviewCandidates.map((c) => c.userId).join(',');
+
+			const candidates = await allOfficersModel.scheduleInterview(userIds, scheduledInterviewDate);
+
+			if (!candidates.length) {
+				console.error(
+					' No candidates found. Check if userIds exist in competent_officer or emails are NULL.'
+				);
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email } = candidate;
+
+				if (!email) {
+					console.error(` Missing email for userId ${userId}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject: 'Interview Scheduled - Factory Portal',
+					html: `
+					<p>Dear Competent Officer,</p>
+					<p>Your interview has been <b>successfully scheduled</b>.</p>
+					<p>Below are your details:</p>
+					<ul>
+						<li>User ID: <b>${userId}</b></li>
+						<li>Interview Date: <b>${scheduledInterviewDate}</b></li>
+					</ul>
+					<p>Please be on time and prepared.</p>
+					<p>Regards,<br/>Support Team</p>
+				`,
+				});
+			}
+
+			return { message: 'Interview scheduled successfully', candidates };
+		} catch (err) {
+			logger.error('Error in scheduleInterview service:', { err });
 			throw err;
 		}
 	}

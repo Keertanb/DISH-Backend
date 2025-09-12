@@ -42,6 +42,21 @@ class FactoryService {
 			throw err;
 		}
 	}
+
+	async machineInspection({ factoryUserId, machineNo, scheduleInspectionDate, competentUserId }) {
+		try {
+			const machine = await factoryModel.machineInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate,
+				competentUserId
+			);
+			return machine;
+		} catch (err) {
+			logger.error('Error in machineInspection service:', { err });
+			throw err;
+		}
+	}
 }
 
 export default FactoryService;

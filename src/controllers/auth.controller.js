@@ -48,6 +48,28 @@ class AuthController {
 			return res.handler.serverError({}, err.message || 'Error in login controller');
 		}
 	}
+
+	async forgotPassword(req, res) {
+		try {
+			const { userId, email } = req.body;
+			const result = await authService.forgotPassword(userId, email);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in forgotPassword:', { err });
+			return res.handler.serverError({}, err.message || 'Error in forgotPassword');
+		}
+	}
+
+	async resetPassword(req, res) {
+		try {
+			const { token, newPassword } = req.body;
+			const result = await authService.resetPassword(token, newPassword);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in resetPassword:', { err });
+			return res.handler.serverError({}, err.message || 'Error in resetPassword');
+		}
+	}
 }
 
 export default AuthController;
