@@ -41,10 +41,18 @@ router.get(
 	allOfficersController.getCompetentOfficerProfile
 );
 
+// schedule Interview
 router.post(
 	'/schedule-interview',
 	validateSchema(allOfficersValidation.scheduleInterview),
 	allOfficersController.scheduleInterview
+);
+
+// Update Status Interview competent officers (Approve/Reject)
+router.post(
+	'/interview-competent-officers-status',
+	validateSchema(allOfficersValidation.InterviewCompetentOfficersStatus),
+	allOfficersController.InterviewCompetentOfficersStatus
 );
 
 // Review competent officer (Approve/Reject)

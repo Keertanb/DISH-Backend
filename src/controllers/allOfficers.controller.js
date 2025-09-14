@@ -68,6 +68,7 @@ class AllOfficersController {
 			);
 		}
 	}
+
 	async getDashboard(req, res) {
 		try {
 			const dashboard = await allOfficersService.getDashboard(req.body);
@@ -108,6 +109,26 @@ class AllOfficersController {
 		} catch (err) {
 			logger.error('Error in scheduleInterview controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error in scheduleInterview controller');
+		}
+	}
+
+	async InterviewCompetentOfficersStatus(req, res) {
+		try {
+			const { userId, applicationType, reason } = req.body;
+
+			const status = await allOfficersService.InterviewCompetentOfficersStatus({
+				userId,
+				applicationType,
+				reason,
+			});
+
+			return res.handler.success(status);
+		} catch (err) {
+			logger.error('Error in InterviewCompetentOfficersStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in InterviewCompetentOfficersStatus controller'
+			);
 		}
 	}
 

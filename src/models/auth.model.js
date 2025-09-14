@@ -75,7 +75,7 @@ export const competentOfficer = {
 };
 
 class AuthModel {
-	async factoryOwnerRegistration(data, password) {
+	async factoryOwnerRegistration(data) {
 		try {
 			const {
 				factoryName,
@@ -100,6 +100,7 @@ class AuthModel {
 				gstNumber,
 				factoryRegistrationNumber,
 				companyPanCard,
+				password,
 			} = data;
 
 			const result = await executeStoredProcedure('SP_FactoryOwner', [

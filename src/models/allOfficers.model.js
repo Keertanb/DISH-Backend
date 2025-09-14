@@ -124,6 +124,25 @@ class AllOfficersModel {
 		}
 	}
 
+	async InterviewCompetentOfficersStatus(userId, applicationType, reason = null) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_InterviewCompetentOfficersStatus',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'applicationType', type: sql.VarChar(30), value: applicationType },
+					{ name: 'reason', type: sql.VarChar(255), value: reason },
+				],
+				true
+			);
+
+			return result[0];
+		} catch (err) {
+			logger.error('Error in InterviewCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
+
 	async reviewCompetentOfficer(
 		competentOfficerId,
 		reviewerId,

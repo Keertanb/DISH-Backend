@@ -138,6 +138,57 @@ class AllOfficersService {
 		}
 	}
 
+	async InterviewCompetentOfficersStatus({ userId, applicationType, reason }) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
+			if (!applicationType || !['Approved', 'Reject'].includes(applicationType)) {
+				throw new Error('Invalid applicationType provided');
+			}
+
+			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Reject');
+			}
+			const status = await allOfficersModel.InterviewCompetentOfficersStatus(
+				userId,
+				applicationType,
+				reason
+			);
+			if (status?.email) {
+				let subject = '';
+				let html = '';
+
+				if (applicationType === 'Approved') {
+					subject = 'Competent Officer Approval Notification';
+					html = `
+					<p>Dear Officer,</p>
+					<p><b>Congratulations!</b></p>
+					<p>You are a new competent officer.</p>
+					<p><b>Start Date:</b> ${status.StartDate}</p>
+					<p><b>End Date:</b> ${status.EndDate}</p>
+					<p>Regards,<br/>Factory Portal</p>
+				`;
+				} else if (applicationType === 'Reject') {
+					subject = 'Competent Officer Rejection Notification';
+					html = `
+					<p>Dear Officer,</p>
+					<p>Your application has been <b>Rejected</b>.</p>
+					<p><b>Reason:</b> ${status.reason}</p>
+					<p>Regards,<br/>Factory Portal</p>
+				`;
+				}
+
+				await sendMail({ to: status.email, subject, html });
+			}
+
+			return status;
+		} catch (err) {
+			logger.error('Error in InterviewCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
+
 	async reviewCompetentOfficer(competentOfficerId, reviewerId, reviewStatus, reviewComments) {
 		try {
 			// Validate review status

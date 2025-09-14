@@ -59,6 +59,20 @@ export const scheduleInterview = {
 	}),
 };
 
+export const InterviewCompetentOfficersStatus = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+
+		applicationType: Joi.string().valid('Approved', 'Reject').required(),
+
+		reason: Joi.when('applicationType', {
+			is: 'Reject',
+			then: Joi.string().max(255).required(),
+			otherwise: Joi.allow(null).optional(),
+		}),
+	}),
+};
+
 // Validation for reviewing a competent officer
 export const reviewCompetentOfficer = {
 	body: Joi.object()
