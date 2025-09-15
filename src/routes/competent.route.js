@@ -21,51 +21,107 @@ router.get(
 	competentController.getFactoryList
 );
 
+// Get competent officer profile
+router.get(
+	'/competent-officer-profile',
+	validateSchema(competentValidation.getCompetentOfficerProfile),
+	competentController.getCompetentOfficerProfile
+);
+
 router.post(
 	'/pv-form11',
-	validateSchema(competentValidation.pressureVesselInspectionValidation),
-	competentController.insertPressureVesselInspection
+	validateSchema(competentValidation.upsertPressureVesselInspection),
+	competentController.upsertPressureVesselInspection
 );
 
 router.post(
 	'/hl-form9',
-	validateSchema(competentValidation.insertHoistLiftInspection),
-	competentController.insertHoistLiftInspection
+	validateSchema(competentValidation.upsertHoistLiftInspection),
+	competentController.upsertHoistLiftInspection
 );
 
 router.post(
 	'/lcr-form10',
-	validateSchema(competentValidation.insertEquipmentInspection),
-	competentController.insertEquipmentInspection
+	validateSchema(competentValidation.upsertEquipmentInspection),
+	competentController.upsertEquipmentInspection
 );
 
 router.post(
 	'/dfs-form26',
-	validateSchema(competentValidation.insertDustFumeExtractionSystem),
-	competentController.insertDustFumeExtractionSystem
+	validateSchema(competentValidation.upsertDustFumeExtractionSystem),
+	competentController.upsertDustFumeExtractionSystem
 );
 
 router.post(
 	'/oven-driers',
-	validateSchema(competentValidation.insertOvenDriersInspection),
-	competentController.insertOvenDriersInspection
+	validateSchema(competentValidation.upsertOvenDriersInspection),
+	competentController.upsertOvenDriersInspection
 );
 
 router.post(
 	'/centrifuge-machine',
-	validateSchema(competentValidation.insertCentrifugeMachineInspection),
-	competentController.insertCentrifugeMachineInspection
+	validateSchema(competentValidation.upsertCentrifugeMachineInspection),
+	competentController.upsertCentrifugeMachineInspection
 );
 
 router.post(
 	'/psd-inspection',
-	validateSchema(competentValidation.insertPowerPressInspection),
-	competentController.insertPowerPressInspection
+	validateSchema(competentValidation.upsertPowerPressInspection),
+	competentController.upsertPowerPressInspection
 );
 
 router.post(
 	'/thermic-fluid-heater',
-	validateSchema(competentValidation.insertThermicFluidHeater),
-	competentController.insertThermicFluidHeater
+	validateSchema(competentValidation.upsertThermicFluidHeater),
+	competentController.upsertThermicFluidHeater
 );
+
+router.get(
+	'/get-pv-form11',
+	validateSchema(competentValidation.getPressureVesselInspection),
+	competentController.getPressureVesselInspection
+);
+
+router.get(
+	'/get-hl-form9',
+	validateSchema(competentValidation.getHoistLiftInspection),
+	competentController.getHoistLiftInspection
+);
+
+router.get(
+	'/get-lcr-form10',
+	validateSchema(competentValidation.getEquipmentInspection),
+	competentController.getEquipmentInspection
+);
+
+router.get(
+	'/get-dfs-form26',
+	validateSchema(competentValidation.getDustFumeExtractionSystem),
+	competentController.getDustFumeExtractionSystem
+);
+
+router.get(
+	'/get-oven-driers',
+	validateSchema(competentValidation.getOvenDriersInspection),
+	competentController.getOvenDriersInspection
+);
+
+router.get(
+	'/get-centrifuge-machine',
+	validateSchema(competentValidation.getCentrifugeMachineInspection),
+	competentController.getCentrifugeMachineInspection
+);
+
+router.get(
+	'/get-psd-inspection',
+	validateSchema(competentValidation.getPowerPressInspection),
+	competentController.getPowerPressInspection
+);
+
+router.get(
+	'/get-thermic-fluid-heater',
+	validateSchema(competentValidation.getThermicFluidHeater),
+	competentController.getThermicFluidHeater
+);
+
 export default router;

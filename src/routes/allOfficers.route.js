@@ -34,13 +34,6 @@ router.post(
 	allOfficersController.updateCompetentOfficersStatus
 );
 
-// Get competent officer profile
-router.get(
-	'/competent-officer-profile',
-	validateSchema(allOfficersValidation.getCompetentOfficerProfile),
-	allOfficersController.getCompetentOfficerProfile
-);
-
 // schedule Interview
 router.post(
 	'/schedule-interview',
@@ -52,7 +45,7 @@ router.post(
 router.post(
 	'/interview-competent-officers-status',
 	validateSchema(allOfficersValidation.InterviewCompetentOfficersStatus),
-	allOfficersController.InterviewCompetentOfficersStatus
+	allOfficersController.interviewCompetentOfficersStatus
 );
 
 // Review competent officer (Approve/Reject)
@@ -64,5 +57,12 @@ router.put(
 
 // Get dashboard data
 router.get('/dashboard', allOfficersController.getDashboard);
+
+// Review competent officer pause
+router.post(
+	'/pause-competent-officer',
+	validateSchema(allOfficersValidation.pauseCompetentOfficer),
+	allOfficersController.pauseCompetentOfficer
+);
 
 export default router;

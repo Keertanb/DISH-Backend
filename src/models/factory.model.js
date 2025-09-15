@@ -20,20 +20,6 @@ export const AddMachine = {
 	safeWorkingPressure: null,
 };
 class FactoryModel {
-	async getFactoryDetails(userId) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_GetFactoryDetails',
-				[{ name: 'userId', type: sql.VarChar(), value: userId }],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in getFactoryDetails model:', { err });
-			throw err;
-		}
-	}
-
 	async getMachineList(userId) {
 		try {
 			const result = await executeStoredProcedure(
@@ -110,6 +96,20 @@ class FactoryModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in machineInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getFactoryOwnerProfile(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetFactoryOwnerProfile',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId ?? null }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getFactoryOwnerProfile model:', { err });
 			throw err;
 		}
 	}

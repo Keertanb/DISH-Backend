@@ -41,7 +41,21 @@ class CompetentModel {
 		}
 	}
 
-	async insertPressureVesselInspection(data) {
+	async getCompetentOfficerProfile(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentOfficerProfile',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId ?? null }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentOfficerProfile model:', { err });
+			throw err;
+		}
+	}
+
+	async upsertPressureVesselInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -84,9 +98,10 @@ class CompetentModel {
 				calculatedSafeWorkingPressure,
 				reducedWorkingPressurePendingRepairs,
 				otherPressureObservations,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertPressureVesselInspectionForm11', [
+			const result = await executeStoredProcedure('SP_UpsertPressureVesselInspectionForm11', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -99,7 +114,7 @@ class CompetentModel {
 				},
 				{
 					name: 'descriptionOfPressureVesselOrPlant',
-					type: sql.NVarChar(20),
+					type: sql.NVarChar(500),
 					value: descriptionOfPressureVesselOrPlant,
 				},
 				{
@@ -195,16 +210,17 @@ class CompetentModel {
 					type: sql.VarChar(255),
 					value: otherPressureObservations,
 				},
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertPressureVesselInspection model:', { error });
+			logger.error('Error in upsertPressureVesselInspection model:', { error });
 			throw error;
 		}
 	}
 
-	async insertHoistLiftInspection(data) {
+	async upsertHoistLiftInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -234,9 +250,10 @@ class CompetentModel {
 				repairsRenewalsOrAlterations,
 				maximumSafeWorkingLoad,
 				otherParticulars,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertHoistLiftInspectionForm9', [
+			const result = await executeStoredProcedure('SP_UpsertHoistLiftInspectionForm9', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -280,16 +297,17 @@ class CompetentModel {
 				},
 				{ name: 'maximumSafeWorkingLoad', type: sql.VarChar(50), value: maximumSafeWorkingLoad },
 				{ name: 'otherParticulars', type: sql.VarChar(50), value: otherParticulars },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (err) {
-			logger.error('Error in getFactoryList model:', { err });
+			logger.error('Error in upsertHoistLiftInspection model:', { err });
 			throw err;
 		}
 	}
 
-	async insertEquipmentInspection(data) {
+	async upsertEquipmentInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -309,9 +327,10 @@ class CompetentModel {
 				heatTreatmentBy,
 				defectsFound,
 				remedialSteps,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertEquipmentInspectionForm10', [
+			const result = await executeStoredProcedure('SP_UpsertEquipmentInspectionForm10', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -333,16 +352,17 @@ class CompetentModel {
 				{ name: 'heatTreatmentBy', type: sql.VarChar(50), value: heatTreatmentBy },
 				{ name: 'defectsFound', type: sql.VarChar(50), value: defectsFound },
 				{ name: 'remedialSteps', type: sql.VarChar(30), value: remedialSteps },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (err) {
-			logger.error('Error in insertEquipmentInspectionForm10 model:', { err });
+			logger.error('Error in upsertEquipmentInspection model:', { err });
 			throw err;
 		}
 	}
 
-	async insertDustFumeExtractionSystem(data) {
+	async upsertDustFumeExtractionSystem(data) {
 		try {
 			const {
 				factoryUserId,
@@ -371,9 +391,10 @@ class CompetentModel {
 				fanMotorType,
 				speedAndHorsepower,
 				defectsFound,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertDustFumeExtractionSystemFrom26', [
+			const result = await executeStoredProcedure('SP_UpsertDustFumeExtractionSystemFrom26', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -420,16 +441,17 @@ class CompetentModel {
 				{ name: 'fanMotorType', type: sql.VarChar(20), value: fanMotorType },
 				{ name: 'speedAndHorsepower', type: sql.VarChar(50), value: speedAndHorsepower },
 				{ name: 'defectsFound', type: sql.VarChar(20), value: defectsFound },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertDustFumeExtractionSystem model:', { error });
+			logger.error('Error in upsertDustFumeExtractionSystem model:', { error });
 			throw error;
 		}
 	}
 
-	async insertOvenDriersInspection(data) {
+	async upsertOvenDriersInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -450,9 +472,10 @@ class CompetentModel {
 				interlockWithFan,
 				remarks,
 				lastExaminationDate,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertOvenDriersInspection', [
+			const result = await executeStoredProcedure('SP_UpsertOvenDriersInspection', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -483,16 +506,17 @@ class CompetentModel {
 				{ name: 'interlockWithFan', type: sql.VarChar(50), value: interlockWithFan },
 				{ name: 'remarks', type: sql.VarChar(50), value: remarks },
 				{ name: 'lastExaminationDate', type: sql.Date, value: lastExaminationDate },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertOvenDriersInspection model:', { error });
+			logger.error('Error in upsertOvenDriersInspection model:', { error });
 			throw error;
 		}
 	}
 
-	async insertCentrifugeMachineInspection(data) {
+	async upsertCentrifugeMachineInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -519,9 +543,10 @@ class CompetentModel {
 				lastExaminationDate,
 				remarks,
 				examinationDate,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertCentrifugeMachineInspection', [
+			const result = await executeStoredProcedure('SP_UpsertCentrifugeMachineInspection', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -562,16 +587,17 @@ class CompetentModel {
 				{ name: 'lastExaminationDate', type: sql.Date, value: lastExaminationDate },
 				{ name: 'remarks', type: sql.VarChar(50), value: remarks },
 				{ name: 'examinationDate', type: sql.Date, value: examinationDate },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertCentrifugeMachineInspection model:', { error });
+			logger.error('Error in upsertCentrifugeMachineInspection model:', { error });
 			throw error;
 		}
 	}
 
-	async insertPowerPressInspection(data) {
+	async upsertPowerPressInspection(data) {
 		try {
 			const {
 				factoryUserId,
@@ -594,9 +620,10 @@ class CompetentModel {
 				repairPeriod,
 				otherConditions,
 				otherObservations,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertPowerPressInspection', [
+			const result = await executeStoredProcedure('SP_UpsertPowerPressInspection', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -625,16 +652,17 @@ class CompetentModel {
 				{ name: 'repairPeriod', type: sql.VarChar(30), value: repairPeriod },
 				{ name: 'otherConditions', type: sql.VarChar(100), value: otherConditions },
 				{ name: 'otherObservations', type: sql.VarChar(100), value: otherObservations },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertPowerPressInspection model:', { error });
+			logger.error('Error in upsertPowerPressInspection model:', { error });
 			throw error;
 		}
 	}
 
-	async insertThermicFluidHeater(data) {
+	async upsertThermicFluidHeater(data) {
 		try {
 			const {
 				factoryUserId,
@@ -664,9 +692,10 @@ class CompetentModel {
 				thermicFluidLevelControl,
 				audioVideoAlarm,
 				otherDevices,
+				inspectedOn,
 			} = data;
 
-			const result = await executeStoredProcedure('SP_InsertThermicFluidHeater', [
+			const result = await executeStoredProcedure('SP_UpsertThermicFluidHeater', [
 				{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 				{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
@@ -706,12 +735,149 @@ class CompetentModel {
 				},
 				{ name: 'audioVideoAlarm', type: sql.VarChar(50), value: audioVideoAlarm },
 				{ name: 'otherDevices', type: sql.VarChar(50), value: otherDevices },
+				{ name: 'inspectedOn', type: sql.Date, value: inspectedOn },
 			]);
 
 			return result;
 		} catch (error) {
-			logger.error('Error in insertThermicFluidHeater model:', { error });
+			logger.error('Error in upsertThermicFluidHeater model:', { error });
 			throw error;
+		}
+	}
+
+	async getPressureVesselInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetPressureVesselInspectionForm11',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getPressureVesselInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getHoistLiftInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetHoistLiftInspectionForm9',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getHoistLiftInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getEquipmentInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetEquipmentInspectionForm10',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getEquipmentInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getDustFumeExtractionSystem(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDustFumeExtractionSystemFrom26',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getDustFumeExtractionSystem model:', { err });
+			throw err;
+		}
+	}
+
+	async getOvenDriersInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetOvenDriersInspection',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getOvenDriersInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getCentrifugeMachineInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCentrifugeMachineInspection',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCentrifugeMachineInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getPowerPressInspection(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetPowerPressInspection',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getPowerPressInspection model:', { err });
+			throw err;
+		}
+	}
+
+	async getThermicFluidHeater(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetThermicFluidHeater',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getThermicFluidHeater model:', { err });
+			throw err;
 		}
 	}
 }

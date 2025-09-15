@@ -84,16 +84,6 @@ class AllOfficersService {
 		}
 	}
 
-	async getCompetentOfficerProfile(userId) {
-		try {
-			const profile = await allOfficersModel.getCompetentOfficerProfile(userId);
-			return profile;
-		} catch (err) {
-			logger.error('Error in getCompetentOfficerProfile service:', { err });
-			throw err;
-		}
-	}
-
 	async scheduleInterview({ interviewCandidates, scheduledInterviewDate }) {
 		try {
 			const userIds = interviewCandidates.map((c) => c.userId).join(',');
@@ -138,7 +128,51 @@ class AllOfficersService {
 		}
 	}
 
-	async InterviewCompetentOfficersStatus({ userId, applicationType, reason }) {
+	async pauseCompetentOfficer({ userId }) {
+		try {
+			const pause = await allOfficersModel.pauseCompetentOfficer(userId);
+
+			if (!pause || pause.length === 0) {
+				throw new Error('No record found for this userId');
+			}
+
+			const { email, CompetentSuspensionStatus, CompetentSuspensionDate } = pause[0];
+
+			let subject = '';
+			let html = '';
+
+			if (CompetentSuspensionStatus === 1) {
+				subject = 'Warning Notice';
+				html = `
+                <p>Dear Competent Officer,</p>
+                <p>This is to inform you that you have received a <b>warning from the state authorities</b>.</p>
+                <p>If any mistake occurs again in the future, you will be suspended for a period of <b>6 months</b>.</p>
+                <p>Please take this warning seriously and ensure compliance with all required regulations.</p>
+                <p>Regards,<br/>Support Team</p>
+            `;
+			} else if (CompetentSuspensionStatus === 2) {
+				subject = 'Suspension Notice';
+				html = `
+                <p>Dear Competent Officer,</p>
+                <p>This is to notify you that you have been <b>suspended for a period of 6 months</b>.</p>
+                <p>Your suspension will remain effective until <b>${CompetentSuspensionDate}</b>.</p>
+                <p>Please contact the concerned department for any further clarification.</p>
+                <p>Regards,<br/>Support Team</p>
+            `;
+			}
+
+			if (email && subject && html) {
+				await sendMail({ to: email, subject, html });
+			}
+
+			return pause[0];
+		} catch (err) {
+			logger.error('Error in pauseCompetentOfficer service:', { err });
+			throw err;
+		}
+	}
+
+	async interviewCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
 			if (!userId || userId.trim() === '') {
 				throw new Error('Invalid userId provided');
@@ -150,7 +184,7 @@ class AllOfficersService {
 			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
 				throw new Error('Reason is required when applicationType is Reject');
 			}
-			const status = await allOfficersModel.InterviewCompetentOfficersStatus(
+			const status = await allOfficersModel.interviewCompetentOfficersStatus(
 				userId,
 				applicationType,
 				reason

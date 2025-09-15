@@ -5,20 +5,6 @@ import logger from '../utils/logger.js';
 
 const factoryModel = new FactoryModel();
 class FactoryService {
-	async getFactoryDetails(userId) {
-		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
-
-			const factory = await factoryModel.getFactoryDetails(userId);
-			return factory && factory.length > 0 ? factory[0] : null;
-		} catch (err) {
-			logger.error('Error in getFactoryDetails service:', { err });
-			throw err;
-		}
-	}
-
 	async getMachineList(userId) {
 		try {
 			if (!userId || userId.trim() === '') {
@@ -54,6 +40,16 @@ class FactoryService {
 			return machine;
 		} catch (err) {
 			logger.error('Error in machineInspection service:', { err });
+			throw err;
+		}
+	}
+
+	async getFactoryOwnerProfile(userId) {
+		try {
+			const profile = await factoryModel.getFactoryOwnerProfile(userId);
+			return profile && profile.length > 0 ? profile[0] : null;
+		} catch (err) {
+			logger.error('Error in getFactoryOwnerProfile service:', { err });
 			throw err;
 		}
 	}

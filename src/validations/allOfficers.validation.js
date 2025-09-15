@@ -42,13 +42,6 @@ export const updateCompetentOfficersStatus = {
 	}),
 };
 
-// Validation for getting competent officer profile
-export const getCompetentOfficerProfile = {
-	query: Joi.object().keys({
-		userId: Joi.string().required(),
-	}),
-};
-
 export const scheduleInterview = {
 	body: Joi.object().keys({
 		interviewCandidates: Joi.array()
@@ -70,6 +63,12 @@ export const InterviewCompetentOfficersStatus = {
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
+	}),
+};
+
+export const pauseCompetentOfficer = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
 	}),
 };
 

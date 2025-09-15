@@ -80,22 +80,6 @@ class AllOfficersController {
 		}
 	}
 
-	async getCompetentOfficerProfile(req, res) {
-		try {
-			const { userId } = req.query;
-
-			const profile = await allOfficersService.getCompetentOfficerProfile(userId);
-
-			return res.handler.success(profile);
-		} catch (err) {
-			logger.error('Error in getCompetentOfficerProfile controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in getCompetentOfficerProfile controller'
-			);
-		}
-	}
-
 	async scheduleInterview(req, res) {
 		try {
 			const { interviewCandidates, scheduledInterviewDate } = req.body;
@@ -112,11 +96,29 @@ class AllOfficersController {
 		}
 	}
 
-	async InterviewCompetentOfficersStatus(req, res) {
+	async pauseCompetentOfficer(req, res) {
+		try {
+			const { userId } = req.body;
+
+			const pause = await allOfficersService.pauseCompetentOfficer({
+				userId,
+			});
+
+			return res.handler.success(pause);
+		} catch (err) {
+			logger.error('Error in pauseCompetentOfficer controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in pauseCompetentOfficer controller'
+			);
+		}
+	}
+
+	async interviewCompetentOfficersStatus(req, res) {
 		try {
 			const { userId, applicationType, reason } = req.body;
 
-			const status = await allOfficersService.InterviewCompetentOfficersStatus({
+			const status = await allOfficersService.interviewCompetentOfficersStatus({
 				userId,
 				applicationType,
 				reason,
@@ -124,7 +126,7 @@ class AllOfficersController {
 
 			return res.handler.success(status);
 		} catch (err) {
-			logger.error('Error in InterviewCompetentOfficersStatus controller:', { err });
+			logger.error('Error in interviewCompetentOfficersStatus controller:', { err });
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in InterviewCompetentOfficersStatus controller'

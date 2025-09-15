@@ -86,20 +86,6 @@ class AllOfficersModel {
 		}
 	}
 
-	async getCompetentOfficerProfile(userId) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_GetCompetentOfficerProfile',
-				[{ name: 'userId', type: sql.VarChar(30), value: userId ?? null }],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in getCompetentOfficerProfile model:', { err });
-			throw err;
-		}
-	}
-
 	async scheduleInterview(userIds, scheduledInterviewDate) {
 		try {
 			const result = await executeStoredProcedure(
@@ -124,7 +110,7 @@ class AllOfficersModel {
 		}
 	}
 
-	async InterviewCompetentOfficersStatus(userId, applicationType, reason = null) {
+	async interviewCompetentOfficersStatus(userId, applicationType, reason = null) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_InterviewCompetentOfficersStatus',
@@ -139,6 +125,27 @@ class AllOfficersModel {
 			return result[0];
 		} catch (err) {
 			logger.error('Error in InterviewCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
+
+	async pauseCompetentOfficer(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_PauseCompetentSuspensionStatus',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
+			);
+
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in pauseCompetentOfficer model:', { err });
 			throw err;
 		}
 	}

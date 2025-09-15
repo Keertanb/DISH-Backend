@@ -9,12 +9,6 @@ const router = express.Router();
 const factoryController = new FactoryController();
 
 router.get(
-	'/get-factory-details',
-	validateSchema(factoryValidation.getFactoryDetails),
-	factoryController.getFactoryDetails
-);
-
-router.get(
 	'/get-machine-list',
 	validateSchema(factoryValidation.getMachineList),
 	factoryController.getMachineList
@@ -32,4 +26,9 @@ router.post(
 	factoryController.machineInspection
 );
 
+router.get(
+	'/factory-owner-profile',
+	validateSchema(factoryValidation.getFactoryOwnerProfile),
+	factoryController.getFactoryOwnerProfile
+);
 export default router;

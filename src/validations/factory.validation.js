@@ -1,11 +1,5 @@
 import Joi from 'joi';
 
-export const getFactoryDetails = {
-	query: Joi.object().keys({
-		userId: Joi.string().max(30).required(),
-	}),
-};
-
 export const getMachineList = {
 	query: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
@@ -15,7 +9,7 @@ export const getMachineList = {
 export const addNewMachine = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-		machineName: Joi.string().max(30).required(),
+		machineName: Joi.string().max(40).required(),
 		quantity: Joi.number().required(),
 		machineDescription: Joi.string().max(300).required(),
 		serialNumbers: Joi.string().max(50).required(),
@@ -40,5 +34,11 @@ export const machineInspection = {
 		machineNo: Joi.string().max(30).required(),
 		scheduleInspectionDate: Joi.date().required(),
 		competentUserId: Joi.string().max(30).required(),
+	}),
+};
+
+export const getFactoryOwnerProfile = {
+	query: Joi.object().keys({
+		userId: Joi.string().required(),
 	}),
 };

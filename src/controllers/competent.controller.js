@@ -30,42 +30,58 @@ class CompetentController {
 		}
 	}
 
-	async insertPressureVesselInspection(req, res) {
+	async getCompetentOfficerProfile(req, res) {
 		try {
-			const result = await competentService.insertPressureVesselInspection(req.body);
-			return res.handler.success(result, 'Pressure vessel inspection inserted successfully!');
+			const { userId } = req.query;
+
+			const profile = await competentService.getCompetentOfficerProfile(userId);
+
+			return res.handler.success(profile);
 		} catch (err) {
-			logger.error('Error in insertPressureVesselInspection controller:', { err });
+			logger.error('Error in getCompetentOfficerProfile controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentOfficerProfile controller'
+			);
+		}
+	}
+
+	async upsertPressureVesselInspection(req, res) {
+		try {
+			const result = await competentService.upsertPressureVesselInspection(req.body);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in upsertPressureVesselInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error inserting inspection data');
 		}
 	}
 
-	async insertHoistLiftInspection(req, res) {
+	async upsertHoistLiftInspection(req, res) {
 		try {
-			const result = await competentService.insertHoistLiftInspection(req.body);
-			return res.handler.success(result, 'Hoist Lift Inspection inserted successfully!');
+			const result = await competentService.upsertHoistLiftInspection(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertHoistLiftInspection controller:', { err });
+			logger.error('Error in upsertHoistLiftInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error Hoist Lift Inspection data');
 		}
 	}
 
-	async insertEquipmentInspection(req, res) {
+	async upsertEquipmentInspection(req, res) {
 		try {
-			const result = await competentService.insertEquipmentInspection(req.body);
-			return res.handler.success(result, 'Equipment Inspection inserted successfully!');
+			const result = await competentService.upsertEquipmentInspection(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertEquipmentInspection controller:', { err });
+			logger.error('Error in upsertEquipmentInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error inserting Equipment Inspection');
 		}
 	}
 
-	async insertDustFumeExtractionSystem(req, res) {
+	async upsertDustFumeExtractionSystem(req, res) {
 		try {
-			const result = await competentService.insertDustFumeExtractionSystem(req.body);
-			return res.handler.success(result, 'Dust Fume Extraction System inserted successfully!');
+			const result = await competentService.upsertDustFumeExtractionSystem(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertDustFumeExtractionSystem controller:', { err });
+			logger.error('Error in upsertDustFumeExtractionSystem controller:', { err });
 			return res.handler.serverError(
 				{},
 				err.message || 'Error Dust Fume Extraction System Inspection'
@@ -73,43 +89,142 @@ class CompetentController {
 		}
 	}
 
-	async insertOvenDriersInspection(req, res) {
+	async upsertOvenDriersInspection(req, res) {
 		try {
-			const result = await competentService.insertOvenDriersInspection(req.body);
-			return res.handler.success(result, 'Oven Driers Inspection inserted successfully!');
+			const result = await competentService.upsertOvenDriersInspection(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertOvenDriersInspection controller:', { err });
+			logger.error('Error in upsertOvenDriersInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error Oven Driers Inspection');
 		}
 	}
 
-	async insertCentrifugeMachineInspection(req, res) {
+	async upsertCentrifugeMachineInspection(req, res) {
 		try {
-			const result = await competentService.insertCentrifugeMachineInspection(req.body);
-			return res.handler.success(result, 'Centrifuge Machine Inspection inserted successfully!');
+			const result = await competentService.upsertCentrifugeMachineInspection(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertCentrifugeMachineInspection controller:', { err });
+			logger.error('Error in upsertCentrifugeMachineInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error Centrifuge Machine Inspection');
 		}
 	}
 
-	async insertPowerPressInspection(req, res) {
+	async upsertPowerPressInspection(req, res) {
 		try {
-			const result = await competentService.insertPowerPressInspection(req.body);
-			return res.handler.success(result, 'Power Press Inspection inserted successfully!');
+			const result = await competentService.upsertPowerPressInspection(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertPowerPressInspection controller:', { err });
+			logger.error('Error in upsertPowerPressInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error Power Press Inspection');
 		}
 	}
 
-	async insertThermicFluidHeater(req, res) {
+	async upsertThermicFluidHeater(req, res) {
 		try {
-			const result = await competentService.insertThermicFluidHeater(req.body);
-			return res.handler.success(result, 'Thermic Fluid Heater Inspection inserted successfully!');
+			const result = await competentService.upsertThermicFluidHeater(req.body);
+			return res.handler.success(result);
 		} catch (err) {
-			logger.error('Error in insertThermicFluidHeater controller:', { err });
+			logger.error('Error in upsertThermicFluidHeater controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error Thermic Fluid Heater Inspection');
+		}
+	}
+
+	async getPressureVesselInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getPressureVesselInspection(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getPressureVesselInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getPressureVesselInspection');
+		}
+	}
+
+	async getHoistLiftInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getHoistLiftInspection(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getHoistLiftInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getHoistLiftInspection');
+		}
+	}
+
+	async getEquipmentInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getEquipmentInspection(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getEquipmentInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getEquipmentInspection');
+		}
+	}
+
+	async getDustFumeExtractionSystem(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getDustFumeExtractionSystem(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getDustFumeExtractionSystem:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getDustFumeExtractionSystem');
+		}
+	}
+
+	async getOvenDriersInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getOvenDriersInspection(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getOvenDriersInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getOvenDriersInspection');
+		}
+	}
+
+	async getCentrifugeMachineInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getCentrifugeMachineInspection(
+				factoryUserId,
+				machineNo
+			);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCentrifugeMachineInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getCentrifugeMachineInspection');
+		}
+	}
+
+	async getPowerPressInspection(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getPowerPressInspection(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getPowerPressInspection:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getPowerPressInspection');
+		}
+	}
+
+	async getThermicFluidHeater(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.query;
+			const result = await competentService.getThermicFluidHeater(factoryUserId, machineNo);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getThermicFluidHeater:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getThermicFluidHeater');
 		}
 	}
 }
