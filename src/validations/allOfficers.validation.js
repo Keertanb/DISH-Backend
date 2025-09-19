@@ -18,6 +18,12 @@ export const getActiveCompetentOfficers = {
 	}),
 };
 
+export const getDashboard = {
+	query: Joi.object().keys({
+		userId: Joi.string().max(30).optional(),
+	}),
+};
+
 // Validation for getting Interview competent officers
 export const getInterviewCompetentOfficers = {
 	query: Joi.object().keys({
@@ -72,20 +78,15 @@ export const pauseCompetentOfficer = {
 	}),
 };
 
-// Validation for reviewing a competent officer
-export const reviewCompetentOfficer = {
-	body: Joi.object()
-		.keys({
-			competentOfficerId: Joi.number()
-				.integer()
-				.positive()
-				.required()
-				.description('ID of the competent officer being reviewed'),
-			status: Joi.string()
-				.valid('Approved', 'Rejected')
-				.required()
-				.description('Review status (Approved/Rejected)'),
-			comments: Joi.string().max(1000).optional().description('Optional comments for the review'),
-		})
-		.with('status', ['competentOfficerId']), // Requires both status and competentOfficerId together
+export const prioritiesCompetentOfficersStatus = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+	}),
+};
+
+export const getQueryToDistrictCompetentOfficers = {
+	query: Joi.object().keys({
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+	}),
 };

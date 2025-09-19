@@ -2,7 +2,7 @@
 import AuthService from '../services/auth.service.js';
 // UTILS
 import logger from '../utils/logger.js';
-
+// Config
 import { createToken } from '../config/jwt.js';
 
 const authService = new AuthService();

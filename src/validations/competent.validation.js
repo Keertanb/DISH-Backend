@@ -1,4 +1,26 @@
 import Joi from 'joi';
+export const getScheduledInspectionList = {
+	query: Joi.object().keys({
+		competentUserId: Joi.string().max(30).required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+	}),
+};
+
+export const scheduledMachineInspectionStatus = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+		status: Joi.string().valid('Approved', 'Rejected').required(),
+
+		reason: Joi.when('status', {
+			is: 'Rejected',
+			then: Joi.string().max(255).required(),
+			otherwise: Joi.allow(null).optional(),
+		}),
+	}),
+};
 
 export const inspectionFactory = {
 	query: Joi.object().keys({
@@ -23,11 +45,23 @@ export const getCompetentOfficerProfile = {
 	}),
 };
 
+export const addExperience = {
+	body: Joi.object().keys({
+		userId: Joi.string().required(),
+		organization: Joi.string().required(),
+		designation: Joi.string().required(),
+		startDate: Joi.date().allow(null),
+		endDate: Joi.date().allow(null),
+		keyResponsibilites: Joi.string().allow(null, ''),
+	}),
+};
+
 export const upsertPressureVesselInspection = {
 	body: Joi.object().keys({
 		factoryUserId: Joi.string().required(),
 		competentUserId: Joi.string().required(),
 		machineNo: Joi.string().required(),
+		scheduleInspectionDate: Joi.date().required(),
 		occupierName: Joi.string().allow(null, ''),
 		occupierAddress: Joi.string().allow(null, ''),
 		nameOfPressureVesselOrPlant: Joi.string().allow(null, ''),
@@ -66,6 +100,7 @@ export const upsertPressureVesselInspection = {
 		reducedWorkingPressurePendingRepairs: Joi.string().allow(null, ''),
 		otherPressureObservations: Joi.string().allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -74,6 +109,7 @@ export const upsertHoistLiftInspection = {
 		factoryUserId: Joi.string().required(),
 		competentUserId: Joi.string().required(),
 		machineNo: Joi.string().required(),
+		scheduleInspectionDate: Joi.date().required(),
 		registrationNumber: Joi.string().allow(null, ''),
 		licenceNumber: Joi.string().allow(null, ''),
 		nicCodeNumber: Joi.string().allow(null, ''),
@@ -99,6 +135,7 @@ export const upsertHoistLiftInspection = {
 		maximumSafeWorkingLoad: Joi.string().allow(null, ''),
 		otherParticulars: Joi.string().allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -106,7 +143,8 @@ export const upsertEquipmentInspection = {
 	body: Joi.object().keys({
 		factoryUserId: Joi.string().required(),
 		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().allow(null, ''),
+		machineNo: Joi.string().required(),
+		scheduleInspectionDate: Joi.date().required(),
 		occupierName: Joi.string().allow(null, ''),
 		factoryAddress: Joi.string().allow(null, ''),
 		distinguishingNumberOrMark: Joi.string().allow(null, ''),
@@ -122,6 +160,7 @@ export const upsertEquipmentInspection = {
 		defectsFound: Joi.string().allow(null, ''),
 		remedialSteps: Joi.string().allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -130,6 +169,7 @@ export const upsertDustFumeExtractionSystem = {
 		factoryUserId: Joi.string().required(),
 		competentUserId: Joi.string().required(),
 		machineNo: Joi.string().required(),
+		scheduleInspectionDate: Joi.date().required(),
 		systemDescription: Joi.string().allow(null, ''),
 		hoodSerialNumber: Joi.string().allow(null, ''),
 		contaminantCaptured: Joi.string().allow(null, ''),
@@ -154,6 +194,7 @@ export const upsertDustFumeExtractionSystem = {
 		speedAndHorsepower: Joi.string().allow(null, ''),
 		defectsFound: Joi.string().allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -162,6 +203,7 @@ export const upsertOvenDriersInspection = {
 		factoryUserId: Joi.string().required(),
 		competentUserId: Joi.string().required(),
 		machineNo: Joi.string().required(),
+		scheduleInspectionDate: Joi.date().required(),
 		occupierName: Joi.string().allow(null, ''),
 		address: Joi.string().allow(null, ''),
 		ovenName: Joi.string().allow(null, ''),
@@ -178,6 +220,7 @@ export const upsertOvenDriersInspection = {
 		remarks: Joi.string().allow(null, ''),
 		lastExaminationDate: Joi.date().allow(null),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -186,6 +229,7 @@ export const upsertCentrifugeMachineInspection = {
 		factoryUserId: Joi.string().max(30).required(),
 		competentUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 		registrationNumber: Joi.string().max(50).allow(null, ''),
 		licenseNumber: Joi.string().max(30).allow(null, ''),
 		nicCodeNumber: Joi.string().max(30).allow(null, ''),
@@ -208,6 +252,7 @@ export const upsertCentrifugeMachineInspection = {
 		remarks: Joi.string().max(50).allow(null, ''),
 		examinationDate: Joi.date().allow(null),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -216,6 +261,7 @@ export const upsertPowerPressInspection = {
 		factoryUserId: Joi.string().max(30).required(),
 		competentUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 		registrationNumber: Joi.string().max(50).allow(null, ''),
 		licenseNumber: Joi.string().max(20).allow(null, ''),
 		nicCodeNumber: Joi.string().max(30).allow(null, ''),
@@ -234,6 +280,7 @@ export const upsertPowerPressInspection = {
 		otherConditions: Joi.string().max(100).allow(null, ''),
 		otherObservations: Joi.string().max(100).allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -242,6 +289,7 @@ export const upsertThermicFluidHeater = {
 		factoryUserId: Joi.string().max(30).required(),
 		competentUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 		registrationNumber: Joi.string().max(50).allow(null, ''),
 		licenseNumber: Joi.string().max(50).allow(null, ''),
 		nicCodeNumber: Joi.string().max(50).allow(null, ''),
@@ -267,6 +315,96 @@ export const upsertThermicFluidHeater = {
 		audioVideoAlarm: Joi.string().max(50).allow(null, ''),
 		otherDevices: Joi.string().max(50).allow(null, ''),
 		inspectedOn: Joi.date().required(),
+		isDraft: Joi.number().valid(0, 1).required(),
+	}),
+};
+
+export const upsertStabilityForm1A = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+		factoryName: Joi.string().max(50).allow(null, ''),
+		villageTownDistrict: Joi.string().max(20).allow(null, ''),
+		fullPostalAddress: Joi.string().max(255).allow(null, ''),
+		occupierName: Joi.string().max(50).allow(null, ''),
+		natureOfManufacturingProcess: Joi.string().max(255).allow(null, ''),
+		numberOfFloors: Joi.number().integer().allow(null),
+		certificateNumber: Joi.string().max(30).allow(null, ''),
+		jointDirectorLetterNumber: Joi.string().max(30).allow(null, ''),
+		jointDirectorLetterDate: Joi.date().allow(null),
+		inspectionDetails: Joi.string().max(255).allow(null, ''),
+		structuralSoundness: Joi.string().max(50).allow(null, ''),
+		stabilityAssessment: Joi.string().max(50).allow(null, ''),
+		intendedUse: Joi.string().max(100).allow(null, ''),
+		inspectedOn: Joi.date().allow(null),
+		isDraft: Joi.number().valid(0, 1).required(),
+	}),
+};
+
+export const upsertWaterSealedGasHolderForm11A = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+		occupierName: Joi.string().max(200).allow(null, ''),
+		factoryAddress: Joi.string().max(255).allow(null, ''),
+		equipmentDescription: Joi.string().max(255).allow(null, ''),
+		distinguishingNumber: Joi.string().max(20).allow(null, ''),
+		manufacturerDetails: Joi.string().max(255).allow(null, ''),
+		yearOfManufacture: Joi.number().integer().allow(null),
+		lastInspectionDate: Joi.date().allow(null),
+		inspectionBy: Joi.string().max(50).allow(null, ''),
+		nextInspectionDate: Joi.date().allow(null),
+		hasPressureGauge: Joi.number().valid(0, 1).default(0),
+		hasSafetyValve: Joi.number().valid(0, 1).default(0),
+		hasThermometer: Joi.number().valid(0, 1).default(0),
+		hasWaterGauge: Joi.number().valid(0, 1).default(0),
+		equipmentCondition: Joi.string().max(100).allow(null, ''),
+		remarks: Joi.string().max(255).allow(null, ''),
+		inspectedOn: Joi.date().allow(null),
+		isDraft: Joi.number().valid(0, 1).required(),
+	}),
+};
+
+export const upsertConfinedSpace = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+		occupierName: Joi.string().max(50).allow(null, ''),
+		factoryAddress: Joi.string().allow(null, ''),
+		equipmentDescription: Joi.string().allow(null, ''),
+		distinguishingNumber: Joi.string().max(50).allow(null, ''),
+		manufacturerDetails: Joi.string().allow(null, ''),
+		yearOfManufacture: Joi.number().integer().allow(null),
+		workingPressure: Joi.number().precision(2).allow(null),
+		safeWorkingPressure: Joi.number().precision(2).allow(null),
+		testPressure: Joi.number().precision(2).allow(null),
+		lastHydraulicTestDate: Joi.date().allow(null),
+		nextHydraulicTestDate: Joi.date().allow(null),
+		lastInternalInspectionDate: Joi.date().allow(null),
+		nextInternalInspectionDate: Joi.date().allow(null),
+		safetyValveDetails: Joi.string().allow(null, ''),
+		safetyValveTestingDetails: Joi.string().allow(null, ''),
+		pressureGaugeDetails: Joi.string().allow(null, ''),
+		pressureGaugeTestingDetails: Joi.string().allow(null, ''),
+		waterLevelIndicatorDetails: Joi.string().allow(null, ''),
+		waterLevelIndicatorTestingDetails: Joi.string().allow(null, ''),
+		fusiblePlugDetails: Joi.string().allow(null, ''),
+		fusiblePlugTestingDetails: Joi.string().allow(null, ''),
+		feedPumpDetails: Joi.string().allow(null, ''),
+		feedPumpTestingDetails: Joi.string().allow(null, ''),
+		blowDownCockDetails: Joi.string().allow(null, ''),
+		blowDownCockTestingDetails: Joi.string().allow(null, ''),
+		mountingsAndFittingsCondition: Joi.string().allow(null, ''),
+		generalCondition: Joi.string().allow(null, ''),
+		remarks: Joi.string().allow(null, ''),
+		inspectedOn: Joi.date().allow(null),
+		isDraft: Joi.number().valid(0, 1).required(),
 	}),
 };
 
@@ -274,6 +412,7 @@ export const getPressureVesselInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -281,6 +420,7 @@ export const getHoistLiftInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -288,6 +428,7 @@ export const getEquipmentInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -295,6 +436,7 @@ export const getDustFumeExtractionSystem = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -302,6 +444,7 @@ export const getOvenDriersInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -309,6 +452,7 @@ export const getCentrifugeMachineInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -316,6 +460,7 @@ export const getPowerPressInspection = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
 
@@ -323,5 +468,30 @@ export const getThermicFluidHeater = {
 	query: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+	}),
+};
+
+export const getStabilityForm1A = {
+	query: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+	}),
+};
+
+export const getWaterSealedGasHolderForm11A = {
+	query: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
+	}),
+};
+
+export const getConfinedSpace = {
+	query: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
+		scheduleInspectionDate: Joi.date().required(),
 	}),
 };

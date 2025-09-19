@@ -1,10 +1,13 @@
 import express from 'express';
+// MIDDLEWARES
 import validateSchema from '../middlewares/validateSchema.middleware.js';
+// VALIDATIONS
 import AllOfficersController from '../controllers/allOfficers.controller.js';
+// CONTROLLERS
 import * as allOfficersValidation from '../validations/allOfficers.validation.js';
 
-const allOfficersController = new AllOfficersController();
 const router = express.Router();
+const allOfficersController = new AllOfficersController();
 
 // Get competent officers
 router.get(
@@ -48,21 +51,32 @@ router.post(
 	allOfficersController.interviewCompetentOfficersStatus
 );
 
-// Review competent officer (Approve/Reject)
-router.put(
-	'/review-competent-officer',
-	validateSchema(allOfficersValidation.reviewCompetentOfficer),
-	allOfficersController.reviewCompetentOfficer
+// Get all dashboard data Count
+router.get(
+	'/dashboard',
+	validateSchema(allOfficersValidation.getDashboard),
+	allOfficersController.getDashboard
 );
-
-// Get dashboard data
-router.get('/dashboard', allOfficersController.getDashboard);
 
 // Review competent officer pause
 router.post(
 	'/pause-competent-officer',
 	validateSchema(allOfficersValidation.pauseCompetentOfficer),
 	allOfficersController.pauseCompetentOfficer
+);
+
+// Priorities officers top in list interview schedule
+router.post(
+	'/priorities-officers',
+	validateSchema(allOfficersValidation.prioritiesCompetentOfficersStatus),
+	allOfficersController.prioritiesCompetentOfficersStatus
+);
+
+// Query to district pending list
+router.get(
+	'/get-queryToDistrict-officers',
+	validateSchema(allOfficersValidation.getQueryToDistrictCompetentOfficers),
+	allOfficersController.getQueryToDistrictCompetentOfficers
 );
 
 export default router;

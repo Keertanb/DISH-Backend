@@ -68,6 +68,22 @@ export const factoryOwnerRegistration = {
 			.pattern(/^[0-9]{6}$/)
 			.message('Pincode must be exactly 6 digits')
 			.allow('', null),
+		machineName: Joi.string().max(40).required(),
+		quantity: Joi.number().required(),
+		machineDescription: Joi.string().max(300).required(),
+		serialNumbers: Joi.string().max(30).required(),
+		dateOfFirstUse: Joi.date().required(),
+		dateOfInstallation: Joi.date().optional(),
+		nameOfManufacture: Joi.string().max(50).required(),
+		addressOfManufacture: Joi.string().max(200).required(),
+		dateOfConstruction: Joi.date().optional(),
+		thicknessOfWall: Joi.string().max(30).optional(),
+		identityFicationOfMachine: Joi.string().max(50).optional(),
+		safeWorkingPressure: Joi.when('machineName', {
+			is: 'Pressure Vessel or Plant',
+			then: Joi.string().max(50).required(),
+			otherwise: Joi.string().optional(),
+		}),
 		accountHolderName: Joi.string()
 			.trim()
 			.uppercase()
@@ -235,6 +251,12 @@ export const competentOfficerSchema = {
 		liftingMachinesChainsRopesDocument: Joi.string().max(255).allow(null, ''),
 		ovenAndDriersDocument: Joi.string().max(255).allow(null, ''),
 
+		organization: Joi.string().required(),
+		experienceDesignation: Joi.string().required(),
+		startDate: Joi.date().allow(null),
+		endDate: Joi.date().allow(null),
+		keyResponsibilites: Joi.string().allow(null, ''),
+
 		accountHolderName: Joi.string().max(150).allow(null, ''),
 		bankName: Joi.string().max(100).allow(null, ''),
 		accountNumber: Joi.string().max(30).allow(null, ''),
@@ -259,7 +281,7 @@ export const competentOfficerSchema = {
 
 export const login = {
 	body: Joi.object().keys({
-		userId: Joi.string().max(30).required(),
+		userId: Joi.string().max(80).required(),
 		userPassword: Joi.string().required(),
 	}),
 };

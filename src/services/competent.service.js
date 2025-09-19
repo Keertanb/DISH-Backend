@@ -3,10 +3,82 @@ import CompetentModel from '../models/competent.mode.js';
 
 // UTILS
 import logger from '../utils/logger.js';
+import { sendMail } from '../utils/mail.js';
 
 const competentModel = new CompetentModel();
 
 class CompetentService {
+	async getScheduledInspectionList(competentUserId, page, limit) {
+		try {
+			const result = await competentModel.getScheduledInspectionList(competentUserId, page, limit);
+			return result;
+		} catch (err) {
+			logger.error('Error in getScheduledInspectionList service:', { err });
+			throw err;
+		}
+	}
+
+	async scheduledMachineInspectionStatus({
+		userId,
+		machineNo,
+		scheduleInspectionDate,
+		status,
+		reason,
+	}) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
+			if (!status || !['Approved', 'Rejected'].includes(status)) {
+				throw new Error('Invalid status provided');
+			}
+
+			if (status === 'Rejected' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when status is Rejected');
+			}
+			const result = await competentModel.scheduledMachineInspectionStatus(
+				userId,
+				machineNo,
+				scheduleInspectionDate,
+				status,
+				reason
+			);
+			if (result?.email) {
+				let subject = '';
+				let html = '';
+
+				if (status === 'Approved') {
+					subject = `Inspection Approved for Machine ${result.machineNo}`;
+					html = `
+					<p>Dear Factory Owner,</p>
+					<p><b>Congratulations!</b></p>
+					<p>Your scheduled inspection for Machine No: ${result.machineNo} on 
+					${result.scheduleInspectionDate} has been approved.
+					You may proceed with the inspection as scheduled.</p>
+					<p>Regards,<br/>Factory Inspection Team</p>
+				`;
+				} else if (status === 'Rejected') {
+					subject = `Inspection Rejected for Machine ${result.machineNo}`;
+					html = `
+					<p>Dear Factory Owner,</p>
+					<p>Your scheduled inspection for Machine No: ${result.machineNo} on 
+					${result.scheduleInspectionDate} 
+					has been <b>Rejected</b>.</p>
+					<p><b>Reason:</b> ${result.reason}</p>
+					<p>Regards,<br/>Factory Inspection Team</p>
+				`;
+				}
+
+				await sendMail({ to: result.email, subject, html });
+			}
+
+			return result;
+		} catch (err) {
+			logger.error('Error in scheduledMachineInspectionStatus service:', { err });
+			throw err;
+		}
+	}
+
 	async inspectionFactory(competentUserId, page, limit) {
 		try {
 			const result = await competentModel.inspectionFactory(competentUserId, page, limit);
@@ -33,6 +105,19 @@ class CompetentService {
 			return profile && profile.length > 0 ? profile[0] : null;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficerProfile service:', { err });
+			throw err;
+		}
+	}
+
+	async addExperience(data) {
+		try {
+			const result = await competentModel.addExperience(data);
+			return result;
+		} catch (err) {
+			logger.error('Error in addExperience service:', {
+				message: err.message,
+				stack: err.stack,
+			});
 			throw err;
 		}
 	}
@@ -141,9 +226,52 @@ class CompetentService {
 		}
 	}
 
-	async getPressureVesselInspection(factoryUserId, machineNo) {
+	async upsertStabilityForm1A(data) {
 		try {
-			const result = await competentModel.getPressureVesselInspection(factoryUserId, machineNo);
+			const result = await competentModel.upsertStabilityForm1A(data);
+			return result;
+		} catch (err) {
+			logger.error('Error in upsertStabilityForm1A service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
+
+	async upsertWaterSealedGasHolderForm11A(data) {
+		try {
+			const result = await competentModel.upsertWaterSealedGasHolderForm11A(data);
+			return result;
+		} catch (err) {
+			logger.error('Error in upsertWaterSealedGasHolderForm11A service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
+
+	async upsertConfinedSpace(data) {
+		try {
+			const result = await competentModel.upsertConfinedSpace(data);
+			return result;
+		} catch (err) {
+			logger.error('Error in upsertConfinedSpace service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
+
+	async getPressureVesselInspection(factoryUserId, machineNo, scheduleInspectionDate) {
+		try {
+			const result = await competentModel.getPressureVesselInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getPressureVesselInspection service:', { err });
@@ -151,9 +279,13 @@ class CompetentService {
 		}
 	}
 
-	async getHoistLiftInspection(factoryUserId, machineNo) {
+	async getHoistLiftInspection(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getHoistLiftInspection(factoryUserId, machineNo);
+			const result = await competentModel.getHoistLiftInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getHoistLiftInspection service:', { err });
@@ -161,9 +293,13 @@ class CompetentService {
 		}
 	}
 
-	async getEquipmentInspection(factoryUserId, machineNo) {
+	async getEquipmentInspection(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getEquipmentInspection(factoryUserId, machineNo);
+			const result = await competentModel.getEquipmentInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getEquipmentInspection service:', { err });
@@ -171,9 +307,13 @@ class CompetentService {
 		}
 	}
 
-	async getDustFumeExtractionSystem(factoryUserId, machineNo) {
+	async getDustFumeExtractionSystem(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getDustFumeExtractionSystem(factoryUserId, machineNo);
+			const result = await competentModel.getDustFumeExtractionSystem(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getDustFumeExtractionSystem service:', { err });
@@ -181,9 +321,13 @@ class CompetentService {
 		}
 	}
 
-	async getOvenDriersInspection(factoryUserId, machineNo) {
+	async getOvenDriersInspection(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getOvenDriersInspection(factoryUserId, machineNo);
+			const result = await competentModel.getOvenDriersInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getOvenDriersInspection service:', { err });
@@ -191,9 +335,13 @@ class CompetentService {
 		}
 	}
 
-	async getCentrifugeMachineInspection(factoryUserId, machineNo) {
+	async getCentrifugeMachineInspection(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getCentrifugeMachineInspection(factoryUserId, machineNo);
+			const result = await competentModel.getCentrifugeMachineInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getCentrifugeMachineInspection service:', { err });
@@ -201,9 +349,13 @@ class CompetentService {
 		}
 	}
 
-	async getPowerPressInspection(factoryUserId, machineNo) {
+	async getPowerPressInspection(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getPowerPressInspection(factoryUserId, machineNo);
+			const result = await competentModel.getPowerPressInspection(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getPowerPressInspection service:', { err });
@@ -211,12 +363,63 @@ class CompetentService {
 		}
 	}
 
-	async getThermicFluidHeater(factoryUserId, machineNo) {
+	async getThermicFluidHeater(factoryUserId, machineNo, scheduleInspectionDate) {
 		try {
-			const result = await competentModel.getThermicFluidHeater(factoryUserId, machineNo);
+			const result = await competentModel.getThermicFluidHeater(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
 			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in getThermicFluidHeater service:', { err });
+			throw err;
+		}
+	}
+	async getStabilityForm1A(factoryUserId, machineNo, scheduleInspectionDate) {
+		try {
+			const result = await competentModel.getStabilityForm1A(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
+			return result && result.length > 0 ? result[0] : null;
+		} catch (err) {
+			logger.error('Error in getStabilityForm1A service:', { err });
+			throw err;
+		}
+	}
+
+	async getWaterSealedGasHolderForm11A(factoryUserId, machineNo, scheduleInspectionDate) {
+		try {
+			const result = await competentModel.getWaterSealedGasHolderForm11A(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
+			// if (!result || result.length === 0) {
+			// 	// No record found case
+			// 	const error = new Error('Record not found');
+			// 	error.statusCode = 404;
+			// 	throw error;
+			// }
+			return result && result.length > 0 ? result[0] : null;
+		} catch (err) {
+			logger.error('Error in getWaterSealedGasHolderForm11A service:', { err });
+			throw err;
+		}
+	}
+
+	async getConfinedSpace(factoryUserId, machineNo, scheduleInspectionDate) {
+		try {
+			const result = await competentModel.getConfinedSpace(
+				factoryUserId,
+				machineNo,
+				scheduleInspectionDate
+			);
+			return result && result.length > 0 ? result[0] : null;
+		} catch (err) {
+			logger.error('Error in getConfinedSpace service:', { err });
 			throw err;
 		}
 	}

@@ -75,7 +75,7 @@ export const competentOfficer = {
 };
 
 class AuthModel {
-	async factoryOwnerRegistration(data) {
+	async factoryOwnerRegistration(data, password) {
 		try {
 			const {
 				factoryName,
@@ -92,6 +92,18 @@ class AuthModel {
 				addressLine2,
 				addressLine3,
 				pincode,
+				machineName,
+				quantity,
+				machineDescription,
+				serialNumbers,
+				dateOfFirstUse,
+				dateOfInstallation,
+				nameOfManufacture,
+				addressOfManufacture,
+				dateOfConstruction,
+				thicknessOfWall,
+				identityFicationOfMachine,
+				safeWorkingPressure,
 				accountHolderName,
 				bankName,
 				accountNumber,
@@ -100,7 +112,6 @@ class AuthModel {
 				gstNumber,
 				factoryRegistrationNumber,
 				companyPanCard,
-				password,
 			} = data;
 
 			const result = await executeStoredProcedure('SP_FactoryOwner', [
@@ -118,6 +129,22 @@ class AuthModel {
 				{ name: 'addressLine2', type: sql.NVarChar(50), value: addressLine2 },
 				{ name: 'addressLine3', type: sql.NVarChar(50), value: addressLine3 },
 				{ name: 'pincode', type: sql.NVarChar(10), value: pincode },
+				{ name: 'machineName', type: sql.VarChar(40), value: machineName },
+				{ name: 'quantity', type: sql.Int(), value: quantity },
+				{ name: 'machineDescription', type: sql.VarChar(), value: machineDescription },
+				{ name: 'serialNumbers', type: sql.VarChar(50), value: serialNumbers },
+				{ name: 'dateOfFirstUse', type: sql.Date(), value: dateOfFirstUse },
+				{ name: 'dateOfInstallation', type: sql.Date(), value: dateOfInstallation },
+				{ name: 'nameOfManufacture', type: sql.VarChar(50), value: nameOfManufacture },
+				{ name: 'addressOfManufacture', type: sql.VarChar(200), value: addressOfManufacture },
+				{ name: 'dateOfConstruction', type: sql.Date(), value: dateOfConstruction },
+				{ name: 'thicknessOfWall', type: sql.VarChar(30), value: thicknessOfWall },
+				{
+					name: 'identityFicationOfMachine',
+					type: sql.VarChar(50),
+					value: identityFicationOfMachine,
+				},
+				{ name: 'safeWorkingPressure', type: sql.VarChar(50), value: safeWorkingPressure },
 				{ name: 'accountHolderName', type: sql.NVarChar(150), value: accountHolderName },
 				{ name: 'bankName', type: sql.NVarChar(100), value: bankName },
 				{ name: 'accountNumber', type: sql.NVarChar(30), value: accountNumber },
@@ -173,6 +200,11 @@ class AuthModel {
 				waterSealedGasHolderDocument,
 				liftingMachinesChainsRopesDocument,
 				ovenAndDriersDocument,
+				organization,
+				experienceDesignation,
+				startDate,
+				endDate,
+				keyResponsibilites,
 				accountHolderName,
 				bankName,
 				accountNumber,
@@ -242,6 +274,11 @@ class AuthModel {
 					value: liftingMachinesChainsRopesDocument,
 				},
 				{ name: 'ovenAndDriersDocument', type: sql.VarChar(255), value: ovenAndDriersDocument },
+				{ name: 'organization', type: sql.VarChar(70), value: organization },
+				{ name: 'experienceDesignation', type: sql.VarChar(40), value: experienceDesignation },
+				{ name: 'startDate', type: sql.Date(), value: startDate },
+				{ name: 'endDate', type: sql.Date(), value: endDate },
+				{ name: 'keyResponsibilites', type: sql.NVarChar(255), value: keyResponsibilites },
 				{ name: 'accountHolderName', type: sql.VarChar(150), value: accountHolderName },
 				{ name: 'bankName', type: sql.VarChar(100), value: bankName },
 				{ name: 'accountNumber', type: sql.VarChar(30), value: accountNumber },
@@ -275,7 +312,7 @@ class AuthModel {
 	async login(userId) {
 		try {
 			const result = await executeStoredProcedure('SP_GetUserName', [
-				{ name: 'userId', type: sql.VarChar(30), value: userId },
+				{ name: 'userId', type: sql.VarChar(80), value: userId },
 			]);
 
 			return result || [];

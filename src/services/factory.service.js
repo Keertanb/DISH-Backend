@@ -1,3 +1,4 @@
+// MODELS
 import FactoryModel from '../models/factory.model.js';
 
 // UTILS

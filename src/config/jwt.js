@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-const secretKey = 'DISH_PORTAL_JWT';
+dotenv.config();
+
+const secretKey = process.env.JWT_SECRET || 'DISH_PORTAL_JWT';
 
 export const createToken = (data) => jwt.sign({ data }, secretKey);
 

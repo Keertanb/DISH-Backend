@@ -1,6 +1,8 @@
 import sql from 'mssql';
 
+// DATABASE
 import { executeStoredProcedure } from '../database/index.js';
+// UTILS
 import logger from '../utils/logger.js';
 
 class DishModel {

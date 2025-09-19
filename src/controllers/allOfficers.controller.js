@@ -1,3 +1,4 @@
+// SERVICES
 import AllOfficersService from '../services/allOfficers.service.js';
 // UTILS
 import logger from '../utils/logger.js';
@@ -71,7 +72,8 @@ class AllOfficersController {
 
 	async getDashboard(req, res) {
 		try {
-			const dashboard = await allOfficersService.getDashboard(req.body);
+			const { userId } = req.query;
+			const dashboard = await allOfficersService.getDashboard(userId);
 
 			return res.handler.success(dashboard);
 		} catch (err) {
@@ -134,39 +136,37 @@ class AllOfficersController {
 		}
 	}
 
-	/**
-	 * @description Review a competent officer (Approve/Reject)
-	 * @route PUT /api/officers/review
-	 * @access Private (DISH_OFFICER role required)
-	 */
-	async reviewCompetentOfficer(req, res) {
+	async prioritiesCompetentOfficersStatus(req, res) {
 		try {
-			const { competentOfficerId, status, comments } = req.body;
-			const reviewerId = req.user.id; // Assuming user ID is available in req.user
+			const { userId } = req.body;
 
-			if (!competentOfficerId || !status) {
-				return res.handler.validationError({}, 'Competent officer ID and status are required');
-			}
-
-			const result = await allOfficersService.reviewCompetentOfficer(
-				competentOfficerId,
-				reviewerId,
-				status,
-				comments
-			);
-
-			return res.handler.success(result, 'Review submitted successfully');
-		} catch (err) {
-			logger.error('Error in reviewCompetentOfficer controller:', {
-				error: err.message,
-				body: req.body,
-				user: req.user?.id,
+			const status = await allOfficersService.prioritiesCompetentOfficersStatus({
+				userId,
 			});
 
-			if (err.statusCode) {
-				return res.handler.clientError({}, err.message, err.statusCode);
-			}
-			return res.handler.serverError({}, err.message || 'Failed to review competent officer');
+			return res.handler.success(status);
+		} catch (err) {
+			logger.error('Error in prioritiesCompetentOfficersStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in prioritiesCompetentOfficersStatus controller'
+			);
+		}
+	}
+
+	async getQueryToDistrictCompetentOfficers(req, res) {
+		try {
+			const { page, limit } = req.query;
+
+			const officer = await allOfficersService.getQueryToDistrictCompetentOfficers(page, limit);
+
+			return res.handler.success(officer);
+		} catch (err) {
+			logger.error('Error in getQueryToDistrictCompetentOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getQueryToDistrictCompetentOfficers controller'
+			);
 		}
 	}
 }

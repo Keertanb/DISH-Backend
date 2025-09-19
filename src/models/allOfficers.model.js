@@ -1,6 +1,7 @@
 import sql from 'mssql';
-
+// UTILS
 import { executeStoredProcedure } from '../database/index.js';
+// UTILS
 import logger from '../utils/logger.js';
 
 class AllOfficersModel {
@@ -76,9 +77,13 @@ class AllOfficersModel {
 		}
 	}
 
-	async getDashboard() {
+	async getDashboard(userId = null) {
 		try {
-			const result = await executeStoredProcedure('SP_GetDashboardCounts', [], true);
+			const result = await executeStoredProcedure(
+				'SP_GetDashboardCounts',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
+			);
 			return result;
 		} catch (err) {
 			logger.error('Error in getDashboard model:', { err });
@@ -150,35 +155,34 @@ class AllOfficersModel {
 		}
 	}
 
-	async reviewCompetentOfficer(
-		competentOfficerId,
-		reviewerId,
-		reviewStatus,
-		reviewComments = null
-	) {
+	async prioritiesCompetentOfficersStatus(userId) {
 		try {
 			const result = await executeStoredProcedure(
-				'usp_ReviewCompetentOfficer',
-				[
-					{ name: 'CompetentOfficerId', type: sql.Int, value: competentOfficerId },
-					{ name: 'ReviewerId', type: sql.Int, value: reviewerId },
-					{ name: 'ReviewStatus', type: sql.NVarChar(50), value: reviewStatus },
-					{ name: 'ReviewComments', type: sql.NVarChar(1000), value: reviewComments },
-					{ name: 'ErrorMessage', type: sql.NVarChar(4000), isOutput: true },
-				],
-				false
+				'SP_PrioritiesCompetentOfficersStatus',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
 			);
 
-			if (result.returnValue === -1) {
-				throw new Error(result.output.ErrorMessage || 'Failed to review competent officer');
-			}
-
-			return {
-				success: true,
-				message: `Competent officer ${reviewStatus.toLowerCase()} successfully`,
-			};
+			return result;
 		} catch (err) {
-			logger.error('Error in reviewCompetentOfficer model:', { err });
+			logger.error('Error in prioritiesCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
+
+	async getQueryToDistrictCompetentOfficers(page, limit) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentOfficersQueryToDistrict',
+				[
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getQueryToDistrictCompetentOfficers model:', { err });
 			throw err;
 		}
 	}

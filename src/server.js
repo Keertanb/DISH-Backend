@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
 // CONFIGS
 import config from './config/index.js';
 import ResponseHandler from './utils/responseHandler.js';
@@ -23,6 +24,7 @@ import {
 } from './middlewares/rateLimit.middlewares.js';
 
 const app = express();
+dotenv.config();
 const port = config.server.port;
 
 // ------------------------      CREATE HTTP SERVER -------------------------

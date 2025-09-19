@@ -1,24 +1,29 @@
+import dotenv from 'dotenv';
 // MODELS
 import AuthModel from '../models/auth.model.js';
 
 // UTILS
 import logger from '../utils/logger.js';
-
-import crypto from 'crypto';
 import { sendMail } from '../utils/mail.js';
 
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+
+dotenv.config();
 const authModel = new AuthModel();
 
 function generatePassword() {
-	const password = crypto.randomBytes(8).toString('base64'); // plain password
-	const hashedPassword = crypto.createHash('sha256').update(password).digest('hex'); // hash for DB
-	return { password, hashedPassword };
+	const password = crypto.randomBytes(6).toString('base64').slice(0, 8);
+	return password;
 }
 
 class AuthService {
 	async factoryOwnerRegistration(data) {
 		try {
-			const { password, hashedPassword } = generatePassword();
+			const password = generatePassword();
+
+			const saltRounds = 10;
+			const hashedPassword = await bcrypt.hash(password, saltRounds);
 
 			// Save user with hashed password
 			const factory = await authModel.factoryOwnerRegistration(data, hashedPassword);
@@ -54,7 +59,9 @@ class AuthService {
 
 	async competentOfficerRegistration(data) {
 		try {
-			const { password, hashedPassword } = generatePassword();
+			const password = generatePassword();
+			const saltRounds = 10;
+			const hashedPassword = await bcrypt.hash(password, saltRounds);
 
 			const competent = await authModel.competentOfficerRegistration(data, hashedPassword);
 
@@ -97,16 +104,15 @@ class AuthService {
 				throw new Error('Invalid UserId or Password');
 			}
 
-			// Hash frontend input password and compare with DB
-			const hashedInput = crypto.createHash('sha256').update(userPassword).digest('hex');
-
-			if (login.userPassword !== hashedInput) {
+			const isMatch = await bcrypt.compare(userPassword, login.userPassword);
+			if (!isMatch) {
 				throw new Error('Invalid UserId or Password');
 			}
 
 			return {
 				userId: login.userId,
 				roleName: login.roleName,
+				email: login.email,
 				districtId: login.districtId,
 			};
 		} catch (err) {
@@ -132,31 +138,32 @@ class AuthService {
 			to: email,
 			subject: 'Reset your password',
 			html: `
-        <p>Hello ${userId},</p>
-        <p>Click the button below to reset your password:</p>
-        <p>
-          <a href="${resetLink}" style="
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #1a73e8;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-          ">Reset Password</a>
-        </p>
-        <p>If the button doesn’t work, copy this link into your browser:</p>
-        // <p>${resetLink}</p>
-        <p>This link expires in 1 hour.</p>
-      `,
+        	<p>Hello ${userId},</p>
+			<p>Click the button below to reset your password:</p>
+			<p>
+			<a href="${resetLink}" style="
+				display: inline-block;
+				padding: 10px 20px;
+				background-color: #1a73e8;
+				color: white;
+				text-decoration: none;
+				border-radius: 5px;
+				font-weight: bold;
+			">Reset Password</a>
+			</p>
+			<p>If the button doesn’t work, copy this link into your browser:</p>
+			// <p>${resetLink}</p>
+			<p>This link expires in 1 hour.</p>
+		`,
 		});
 
 		return { message: 'Reset link sent to your email' };
 	}
 
 	async resetPassword(token, newPassword) {
-		// Hash password using SHA-256
-		const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+		/// Hash password using bcrypt
+		const saltRounds = 10;
+		const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
 		const result = await authModel.resetPassword(token, hashedPassword);
 

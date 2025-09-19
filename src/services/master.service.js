@@ -1,13 +1,13 @@
 // MODELS
-import MasterModel from "../models/master.model.js";
+import MasterModel from '../models/master.model.js';
 
 // UTILS
 import logger from '../utils/logger.js';
 
 const masterModel = new MasterModel();
 
-class MasterService{
-    	async getDistricts() {
+class MasterService {
+	async getDistricts() {
 		try {
 			const districts = await masterModel.getDistricts();
 			return districts;
@@ -17,7 +17,7 @@ class MasterService{
 		}
 	}
 
-    async getBlocksByDistrictId(districtId) {
+	async getBlocksByDistrictId(districtId) {
 		try {
 			if (!districtId || districtId <= 0) {
 				throw new Error('Invalid districtId provided');

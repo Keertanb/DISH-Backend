@@ -1,31 +1,36 @@
 import express from 'express';
-
-import FactoryController from '../controllers/factory.controller.js';
-
-import * as factoryValidation from '../validations/factory.validation.js';
+// MIDDLEWARES
 import validateSchema from '../middlewares/validateSchema.middleware.js';
+// VALIDATIONS
+import * as factoryValidation from '../validations/factory.validation.js';
+// CONTROLLERS
+import FactoryController from '../controllers/factory.controller.js';
 
 const router = express.Router();
 const factoryController = new FactoryController();
 
+// Factory User all machine list
 router.get(
 	'/get-machine-list',
 	validateSchema(factoryValidation.getMachineList),
 	factoryController.getMachineList
 );
 
+// Factory user add new machine
 router.post(
 	'/register-new-machine',
 	validateSchema(factoryValidation.addNewMachine),
 	factoryController.addNewMachine
 );
 
+// Factory user schedule machine inspection
 router.post(
 	'/machine-inspection',
 	validateSchema(factoryValidation.machineInspection),
 	factoryController.machineInspection
 );
 
+// factory profile data
 router.get(
 	'/factory-owner-profile',
 	validateSchema(factoryValidation.getFactoryOwnerProfile),

@@ -3,7 +3,6 @@ import AllOfficersModel from '../models/allOfficers.model.js';
 
 // UTILS
 import logger from '../utils/logger.js';
-
 import { sendMail } from '../utils/mail.js';
 
 const allOfficersModel = new AllOfficersModel();
@@ -74,9 +73,9 @@ class AllOfficersService {
 		}
 	}
 
-	async getDashboard() {
+	async getDashboard(userId) {
 		try {
-			const dashboard = await allOfficersModel.getDashboard();
+			const dashboard = await allOfficersModel.getDashboard(userId);
 			return dashboard;
 		} catch (err) {
 			logger.error('Error in getDashboard service:', { err });
@@ -223,45 +222,27 @@ class AllOfficersService {
 		}
 	}
 
-	async reviewCompetentOfficer(competentOfficerId, reviewerId, reviewStatus, reviewComments) {
+	async prioritiesCompetentOfficersStatus({ userId }) {
 		try {
-			// Validate review status
-			const validStatuses = ['Approved', 'Rejected'];
-			if (!validStatuses.includes(reviewStatus)) {
-				throw new logger.error(
-					'Invalid review status. Must be either "Approved" or "Rejected"',
-					400
-				);
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
 			}
+			const status = await allOfficersModel.prioritiesCompetentOfficersStatus(userId);
 
-			// Validate competent officer ID
-			if (!competentOfficerId || isNaN(competentOfficerId) || competentOfficerId <= 0) {
-				throw new logger.error('Valid competent officer ID is required', 400);
-			}
-
-			// Validate reviewer ID
-			if (!reviewerId || isNaN(reviewerId) || reviewerId <= 0) {
-				throw new logger.error('Valid reviewer ID is required', 400);
-			}
-
-			// Call the model to process the review
-			const result = await allOfficersModel.reviewCompetentOfficer(
-				competentOfficerId,
-				reviewerId,
-				reviewStatus,
-				reviewComments
-			);
-
-			return result;
+			return status;
 		} catch (err) {
-			logger.error('Error in reviewCompetentOfficer service:', {
-				error: err.message,
-				competentOfficerId,
-				reviewerId,
-				reviewStatus,
-			});
+			logger.error('Error in prioritiesCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
 
-			throw new logger.error(err.message || 'Failed to review competent officer', 500);
+	async getQueryToDistrictCompetentOfficers(page, limit) {
+		try {
+			const officers = await allOfficersModel.getQueryToDistrictCompetentOfficers(page, limit);
+			return officers;
+		} catch (err) {
+			logger.error('Error in getQueryToDistrictCompetentOfficers service:', { err });
+			throw err;
 		}
 	}
 }
