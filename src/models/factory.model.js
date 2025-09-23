@@ -113,6 +113,56 @@ class FactoryModel {
 			throw err;
 		}
 	}
+
+	async getFactoryMachineInspectionList(factoryUserId, page, limit) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetFactoryMachineInspectionsList',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getFactoryMachineInspectionList model:', { err });
+			throw err;
+		}
+	}
+
+	async getUpcomingInspectionUsers() {
+		try {
+			const result = await executeStoredProcedure('SP_GetUpcomingInspectionUsers', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in getUpcomingInspectionUsers model:', { err });
+			throw err;
+		}
+	}
+
+	async nextInspectionOnMachine() {
+		try {
+			const result = await executeStoredProcedure('SP_NextInspectionOnMachine', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in nextInspectionOnMachine model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default FactoryModel;

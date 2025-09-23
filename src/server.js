@@ -12,6 +12,9 @@ import { errorHandler } from './utils/errorHandler.js';
 // import routes from './routes/v1/index.js';
 import healthRoute from './routes/health.route.js';
 
+//cron
+import factoryCron from './cron/factoryCron.js';
+
 import routes from './routes/v1/index.js';
 // DATABASE
 import { initializeDatabase, closeDatabase } from './database/index.js';
@@ -73,6 +76,8 @@ const startServer = async () => {
 			logger.info(`Server started successfully on port ${port}`);
 			console.log('\x1b[32m%s\x1b[0m', 'Compiled Successfully!');
 			console.log(`\n Local:\t\t http://localhost:${port}`);
+
+			factoryCron.stopAll();
 		});
 	} catch (error) {
 		console.error('Failed to start server:', error);

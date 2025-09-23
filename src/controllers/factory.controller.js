@@ -64,6 +64,46 @@ class FactoryController {
 			);
 		}
 	}
+
+	async getFactoryMachineInspectionList(req, res) {
+		try {
+			const { factoryUserId, page, limit } = req.query;
+
+			const machine = await factoryService.getFactoryMachineInspectionList(
+				factoryUserId,
+				page,
+				limit
+			);
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in getFactoryMachineInspectionList controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getFactoryMachineInspectionList controller'
+			);
+		}
+	}
+
+	async getUpcomingInspectionUsers(req, res) {
+		try {
+			const result = await factoryService.getUpcomingInspectionUsers();
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getUpcomingInspectionUsers controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching upcoming inspections');
+		}
+	}
+
+	async nextInspectionOnMachine(req, res) {
+		try {
+			const result = await factoryService.nextInspectionOnMachine();
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in nextInspectionOnMachine controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching upcoming inspections');
+		}
+	}
 }
 
 export default FactoryController;

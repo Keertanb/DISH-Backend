@@ -755,7 +755,7 @@ class CompetentModel {
 		}
 	}
 
-	async upsertThermicFluidHeater() {
+	async upsertThermicFluidHeater(data) {
 		try {
 			const {
 				factoryUserId,

@@ -17,7 +17,6 @@ router.get('/get-districts', masterController.getDistricts);
 // DistrictId wise show block names
 router.get(
 	'/get-blocks-by-districtId',
-	jwtMiddleware,
 	validateSchema(masterValidation.blocksByDistrictId),
 	masterController.getBlocksByDistrictId
 );

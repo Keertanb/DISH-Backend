@@ -36,4 +36,17 @@ router.get(
 	validateSchema(factoryValidation.getFactoryOwnerProfile),
 	factoryController.getFactoryOwnerProfile
 );
+
+// Get List By Factory machine inspection list
+router.get(
+	'/get-factory-machine-approved',
+	validateSchema(factoryValidation.getFactoryMachineInspectionList),
+	factoryController.getFactoryMachineInspectionList
+);
+
+// Re-schedule machine Inspection warning after 5 day  mail
+router.post('/upcoming-inspection', factoryController.getUpcomingInspectionUsers);
+
+router.post('/expire-inspection', factoryController.nextInspectionOnMachine);
+
 export default router;

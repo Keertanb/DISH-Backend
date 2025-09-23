@@ -42,3 +42,11 @@ export const getFactoryOwnerProfile = {
 		userId: Joi.string().required(),
 	}),
 };
+
+export const getFactoryMachineInspectionList = {
+	query: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+	}),
+};
