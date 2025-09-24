@@ -114,6 +114,7 @@ class AuthService {
 				roleName: login.roleName,
 				email: login.email,
 				districtId: login.districtId,
+				districtName: login.districtName,
 			};
 		} catch (err) {
 			logger.error('Error in login service:', { message: err.message, stack: err.stack });

@@ -29,8 +29,8 @@ class AllOfficersModel {
 				'SP_GetCompetentActiveOfficers',
 				[
 					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
-					{ name: 'page', type: sql.Int(), value: page },
-					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'page', type: sql.Int(), value: page ?? null },
+					{ name: 'limit', type: sql.Int(), value: limit ?? null },
 				],
 				true
 			);

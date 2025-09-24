@@ -141,9 +141,6 @@ export const factoryOwnerRegistration = {
 						message: 'IFSC code must be exactly 11 characters',
 					});
 				}
-				if (value === '0') {
-					return helpers.error('any.invalid', { message: 'IFSC code cannot be 0' });
-				}
 				return value;
 			}, 'valid-ifsc')
 			.required(),
@@ -191,7 +188,7 @@ export const competentOfficerSchema = {
 		name: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
 			.message('Invalid name format')
-			.min(5)
+			.min(2)
 			.message('Name must be at least 5 characters')
 			.max(100)
 			.message('Name cannot exceed 100 characters')
@@ -392,7 +389,7 @@ export const competentOfficerSchema = {
 
 		organization: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
+			.message('Invalid organization format')
 			.min(5)
 			.message('Name must be at least 5 characters')
 			.max(70)
@@ -400,7 +397,7 @@ export const competentOfficerSchema = {
 			.required(),
 		experienceDesignation: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
+			.message('Invalid experienceDesignation format')
 			.min(5)
 			.message('Name must be at least 5 characters')
 			.max(40)
@@ -409,10 +406,6 @@ export const competentOfficerSchema = {
 		startDate: Joi.date().allow(null),
 		endDate: Joi.date().allow(null),
 		keyResponsibilites: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
-			.min(5)
-			.message('Name must be at least 5 characters')
 			.max(255)
 			.message('Name cannot exceed 255 characters')
 			.allow(null, ''),
@@ -433,7 +426,7 @@ export const competentOfficerSchema = {
 			.required(),
 		bankName: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
+			.message('Invalid bankName format')
 			.min(5)
 			.message('Bank name must be at least 5 characters')
 			.max(100)
@@ -471,7 +464,7 @@ export const competentOfficerSchema = {
 			.required(),
 		branch: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
+			.message('Invalid branch format')
 			.min(3)
 			.message('Branch name must be at least 3 characters')
 			.max(100)

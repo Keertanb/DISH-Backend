@@ -13,8 +13,8 @@ export const getCompetentOfficers = {
 export const getActiveCompetentOfficers = {
 	query: Joi.object().keys({
 		districtId: Joi.number().optional(),
-		page: Joi.number().required(),
-		limit: Joi.number().required(),
+		page: Joi.number().optional(),
+		limit: Joi.number().optional(),
 	}),
 };
 
