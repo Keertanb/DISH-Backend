@@ -132,7 +132,8 @@ class AuthService {
 			throw new Error('User ID and Email do not match');
 		}
 
-		const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+		// const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+		const resetLink = `Dish_Portal/reset-password?token=${token}`;
 
 		// Send email
 		await sendMail({

@@ -1,19 +1,24 @@
 // MODELS
 import AllOfficersModel from '../models/allOfficers.model.js';
+import { generateInterviewPDF } from '../pdf/generateInterviewPDF.js';
 
 // UTILS
 import logger from '../utils/logger.js';
 import { sendMail } from '../utils/mail.js';
+import fs from 'fs';
+import path from 'path';
+
+import { fileURLToPath } from 'url';
 
 const allOfficersModel = new AllOfficersModel();
 
 class AllOfficersService {
-	async getCompetentOfficers(districtId, page, limit) {
+	async getCompetentOfficers(districtId, page, limit, search) {
 		try {
 			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
 				throw new Error('Invalid districtId provided');
 			}
-			const officers = await allOfficersModel.getCompetentOfficers(districtId, page, limit);
+			const officers = await allOfficersModel.getCompetentOfficers(districtId, page, limit, search);
 			return officers;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficers service:', { err });
@@ -21,12 +26,17 @@ class AllOfficersService {
 		}
 	}
 
-	async getActiveCompetentOfficers(districtId, page, limit) {
+	async getActiveCompetentOfficers(districtId, page, limit, search) {
 		try {
 			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
 				throw new Error('Invalid districtId provided');
 			}
-			const officers = await allOfficersModel.getActiveCompetentOfficers(districtId, page, limit);
+			const officers = await allOfficersModel.getActiveCompetentOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
 			return officers;
 		} catch (err) {
 			logger.error('Error in getActiveCompetentOfficers service:', { err });
@@ -34,9 +44,9 @@ class AllOfficersService {
 		}
 	}
 
-	async getInterviewCompetentOfficers(page, limit) {
+	async getInterviewCompetentOfficers(page, limit, search) {
 		try {
-			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit);
+			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit, search);
 			return officers;
 		} catch (err) {
 			logger.error('Error in getInterviewCompetentOfficers service:', { err });
@@ -95,28 +105,44 @@ class AllOfficersService {
 				);
 			}
 
+			const formattedDate = new Date(scheduledInterviewDate).toLocaleDateString('en-GB');
+
 			for (const candidate of candidates) {
-				const { userId, email } = candidate;
+				const { userId, email, name } = candidate;
 
 				if (!email) {
 					console.error(` Missing email for userId ${userId}`);
 					continue;
 				}
 
+				const pdfBuffer = await generateInterviewPDF({
+					name: name || '...............................',
+					userId,
+					interviewDate: formattedDate,
+					interviewTime: '11:00',
+				});
+
+				// send mail
 				await sendMail({
 					to: email,
 					subject: 'Interview Scheduled - Factory Portal',
 					html: `
-					<p>Dear Competent Officer,</p>
-					<p>Your interview has been <b>successfully scheduled</b>.</p>
-					<p>Below are your details:</p>
-					<ul>
-						<li>User ID: <b>${userId}</b></li>
-						<li>Interview Date: <b>${scheduledInterviewDate}</b></li>
-					</ul>
-					<p>Please be on time and prepared.</p>
-					<p>Regards,<br/>Support Team</p>
+				<p>Dear Competent Officer,</p>
+				<p>Your interview has been <b>successfully scheduled</b>.</p>
+				<p>Below are your details:</p>
+				<ul>
+					<li>User ID: <b>${userId}</b></li>
+					<li>Interview Date: <b>${formattedDate}</b></li>
+				</ul>
+				<p>Regards,<br/>Support Team</p>
 				`,
+					attachments: [
+						{
+							filename: `interview_call_${userId}.pdf`,
+							content: pdfBuffer,
+							contentType: 'application/pdf',
+						},
+					],
 				});
 			}
 
@@ -236,9 +262,13 @@ class AllOfficersService {
 		}
 	}
 
-	async getQueryToDistrictCompetentOfficers(page, limit) {
+	async getQueryToDistrictCompetentOfficers(page, limit, search) {
 		try {
-			const officers = await allOfficersModel.getQueryToDistrictCompetentOfficers(page, limit);
+			const officers = await allOfficersModel.getQueryToDistrictCompetentOfficers(
+				page,
+				limit,
+				search
+			);
 			return officers;
 		} catch (err) {
 			logger.error('Error in getQueryToDistrictCompetentOfficers service:', { err });

@@ -8,12 +8,13 @@ const dishService = new DishService();
 class DishController {
 	async allQueryToDistrictOfficersController(req, res) {
 		try {
-			const { districtId, page, limit } = req.query;
+			const { districtId, page, limit, search } = req.query;
 
 			const officer = await dishService.allQueryToDistrictOfficersController(
 				districtId,
 				page,
-				limit
+				limit,
+				search
 			);
 
 			return res.handler.success(officer);

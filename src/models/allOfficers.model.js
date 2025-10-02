@@ -5,7 +5,7 @@ import { executeStoredProcedure } from '../database/index.js';
 import logger from '../utils/logger.js';
 
 class AllOfficersModel {
-	async getCompetentOfficers(districtId, page, limit) {
+	async getCompetentOfficers(districtId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetCompetentOfficers',
@@ -13,6 +13,7 @@ class AllOfficersModel {
 					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -23,7 +24,7 @@ class AllOfficersModel {
 		}
 	}
 
-	async getActiveCompetentOfficers(districtId, page, limit) {
+	async getActiveCompetentOfficers(districtId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetCompetentActiveOfficers',
@@ -31,6 +32,7 @@ class AllOfficersModel {
 					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
 					{ name: 'page', type: sql.Int(), value: page ?? null },
 					{ name: 'limit', type: sql.Int(), value: limit ?? null },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -41,13 +43,14 @@ class AllOfficersModel {
 		}
 	}
 
-	async getInterviewCompetentOfficers(page, limit) {
+	async getInterviewCompetentOfficers(page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetInterviewCompetentOfficers',
 				[
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -170,13 +173,14 @@ class AllOfficersModel {
 		}
 	}
 
-	async getQueryToDistrictCompetentOfficers(page, limit) {
+	async getQueryToDistrictCompetentOfficers(page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetCompetentOfficersQueryToDistrict',
 				[
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);

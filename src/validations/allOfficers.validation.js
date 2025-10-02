@@ -6,6 +6,7 @@ export const getCompetentOfficers = {
 		districtId: Joi.number().optional(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().optional(),
 	}),
 };
 
@@ -15,6 +16,7 @@ export const getActiveCompetentOfficers = {
 		districtId: Joi.number().optional(),
 		page: Joi.number().optional(),
 		limit: Joi.number().optional(),
+		search: Joi.string().optional(),
 	}),
 };
 
@@ -29,6 +31,7 @@ export const getInterviewCompetentOfficers = {
 	query: Joi.object().keys({
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().optional(),
 	}),
 };
 
@@ -88,5 +91,6 @@ export const getQueryToDistrictCompetentOfficers = {
 	query: Joi.object().keys({
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().optional(),
 	}),
 };

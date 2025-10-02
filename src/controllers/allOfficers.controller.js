@@ -8,9 +8,14 @@ const allOfficersService = new AllOfficersService();
 class AllOfficersController {
 	async getCompetentOfficers(req, res) {
 		try {
-			const { districtId, page, limit } = req.query;
+			const { districtId, page, limit, search } = req.query;
 
-			const officer = await allOfficersService.getCompetentOfficers(districtId, page, limit);
+			const officer = await allOfficersService.getCompetentOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
 
 			return res.handler.success(officer);
 		} catch (err) {
@@ -21,9 +26,14 @@ class AllOfficersController {
 
 	async getActiveCompetentOfficers(req, res) {
 		try {
-			const { districtId, page, limit } = req.query;
+			const { districtId, page, limit, search } = req.query;
 
-			const officer = await allOfficersService.getActiveCompetentOfficers(districtId, page, limit);
+			const officer = await allOfficersService.getActiveCompetentOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
 
 			return res.handler.success(officer);
 		} catch (err) {
@@ -37,8 +47,8 @@ class AllOfficersController {
 
 	async getInterviewCompetentOfficers(req, res) {
 		try {
-			const { page, limit } = req.query;
-			const officer = await allOfficersService.getInterviewCompetentOfficers(page, limit);
+			const { page, limit, search } = req.query;
+			const officer = await allOfficersService.getInterviewCompetentOfficers(page, limit, search);
 
 			return res.handler.success(officer);
 		} catch (err) {
@@ -156,9 +166,13 @@ class AllOfficersController {
 
 	async getQueryToDistrictCompetentOfficers(req, res) {
 		try {
-			const { page, limit } = req.query;
+			const { page, limit, search } = req.query;
 
-			const officer = await allOfficersService.getQueryToDistrictCompetentOfficers(page, limit);
+			const officer = await allOfficersService.getQueryToDistrictCompetentOfficers(
+				page,
+				limit,
+				search
+			);
 
 			return res.handler.success(officer);
 		} catch (err) {

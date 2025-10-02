@@ -354,7 +354,7 @@ class AuthModel {
 					{ name: 'userId', type: sql.VarChar(30), value: userId },
 					{ name: 'email', type: sql.VarChar(100), value: email },
 					{ name: 'token', type: sql.VarChar(100), value: token },
-					{ name: 'expiry', type: sql.DateTime2, value: expiry },
+					{ name: 'expiry', type: sql.DateTime2(3), value: expiry },
 				],
 				true
 			);

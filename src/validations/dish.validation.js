@@ -6,5 +6,6 @@ export const allQueryToDistrictOfficersController = {
 		districtId: Joi.number().required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().optional(),
 	}),
 };

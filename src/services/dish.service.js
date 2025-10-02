@@ -7,7 +7,7 @@ import logger from '../utils/logger.js';
 const dishModel = new DishModel();
 
 class DishService {
-	async allQueryToDistrictOfficersController(districtId, page, limit) {
+	async allQueryToDistrictOfficersController(districtId, page, limit, search) {
 		try {
 			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
 				throw new Error('Invalid districtId provided');
@@ -15,7 +15,8 @@ class DishService {
 			const officers = await dishModel.allQueryToDistrictOfficersController(
 				districtId,
 				page,
-				limit
+				limit,
+				search
 			);
 			return officers;
 		} catch (err) {
