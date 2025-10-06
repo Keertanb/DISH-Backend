@@ -8,11 +8,12 @@ const competentService = new CompetentService();
 class CompetentController {
 	async getScheduledInspectionList(req, res) {
 		try {
-			const { competentUserId, page, limit } = req.query;
+			const { competentUserId, page, limit, search } = req.query;
 			const result = await competentService.getScheduledInspectionList(
 				competentUserId,
 				page,
-				limit
+				limit,
+				search
 			);
 
 			return res.handler.success(result);
@@ -46,8 +47,8 @@ class CompetentController {
 
 	async inspectionFactory(req, res) {
 		try {
-			const { competentUserId, page, limit } = req.query;
-			const result = await competentService.inspectionFactory(competentUserId, page, limit);
+			const { competentUserId, page, limit, search } = req.query;
+			const result = await competentService.inspectionFactory(competentUserId, page, limit, search);
 
 			return res.handler.success(result);
 		} catch (err) {
@@ -58,8 +59,8 @@ class CompetentController {
 
 	async getFactoryList(req, res) {
 		try {
-			const { factoryUserId, page, limit } = req.query;
-			const result = await competentService.getFactoryList(factoryUserId, page, limit);
+			const { factoryUserId, page, limit, search } = req.query;
+			const result = await competentService.getFactoryList(factoryUserId, page, limit, search);
 
 			return res.handler.success(result);
 		} catch (err) {
@@ -81,6 +82,24 @@ class CompetentController {
 				{},
 				err.message || 'Error in getCompetentOfficerProfile controller'
 			);
+		}
+	}
+
+	async getCompetentApprovedMachineList(req, res) {
+		try {
+			const { competentUserId, districtId, page, limit, search } = req.query;
+			const result = await competentService.getCompetentApprovedMachineList(
+				competentUserId,
+				districtId,
+				page,
+				limit,
+				search
+			);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentApprovedMachineList:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getCompetentApprovedMachineList');
 		}
 	}
 

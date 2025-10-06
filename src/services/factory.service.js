@@ -56,12 +56,13 @@ class FactoryService {
 		}
 	}
 
-	async getFactoryMachineInspectionList(factoryUserId, page, limit) {
+	async getFactoryMachineInspectionList(factoryUserId, page, limit, search) {
 		try {
 			const machine = await factoryModel.getFactoryMachineInspectionList(
 				factoryUserId,
 				page,
-				limit
+				limit,
+				search
 			);
 			return machine;
 		} catch (err) {

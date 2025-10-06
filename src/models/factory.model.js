@@ -114,7 +114,7 @@ class FactoryModel {
 		}
 	}
 
-	async getFactoryMachineInspectionList(factoryUserId, page, limit) {
+	async getFactoryMachineInspectionList(factoryUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetFactoryMachineInspectionsList',
@@ -122,6 +122,7 @@ class FactoryModel {
 					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);

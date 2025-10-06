@@ -4,6 +4,7 @@ export const getScheduledInspectionList = {
 		competentUserId: Joi.string().max(30).required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 
@@ -27,6 +28,7 @@ export const inspectionFactory = {
 		competentUserId: Joi.string().max(30).required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 
@@ -35,6 +37,7 @@ export const getFactoryList = {
 		factoryUserId: Joi.string().max(30).required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 
@@ -42,6 +45,16 @@ export const getFactoryList = {
 export const getCompetentOfficerProfile = {
 	query: Joi.object().keys({
 		userId: Joi.string().required(),
+	}),
+};
+
+export const getCompetentApprovedMachineList = {
+	query: Joi.object().keys({
+		competentUserId: Joi.string().max(30).optional(),
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 

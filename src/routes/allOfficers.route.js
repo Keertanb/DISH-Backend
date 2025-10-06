@@ -79,4 +79,11 @@ router.get(
 	allOfficersController.getQueryToDistrictCompetentOfficers
 );
 
+// Get all factory owners
+router.get(
+	'/get-factory-owners',
+	validateSchema(allOfficersValidation.getFactoryOwners),
+	allOfficersController.getFactoryOwners
+);
+
 export default router;

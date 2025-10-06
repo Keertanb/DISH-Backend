@@ -48,5 +48,6 @@ export const getFactoryMachineInspectionList = {
 		factoryUserId: Joi.string().max(30).required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };

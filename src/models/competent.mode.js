@@ -5,14 +5,15 @@ import { executeStoredProcedure } from '../database/index.js';
 import logger from '../utils/logger.js';
 
 class CompetentModel {
-	async getScheduledInspectionList(competentUserId, page, limit) {
+	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_ScheduledMachineInspection',
+				'SP_GetScheduledMachineInspection',
 				[
 					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -50,7 +51,7 @@ class CompetentModel {
 		}
 	}
 
-	async inspectionFactory(competentUserId, page, limit) {
+	async inspectionFactory(competentUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetPendingFactoriesByCompetent',
@@ -58,6 +59,7 @@ class CompetentModel {
 					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -68,7 +70,7 @@ class CompetentModel {
 		}
 	}
 
-	async getFactoryList(factoryUserId, page, limit) {
+	async getFactoryList(factoryUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetMachineInspectionsList',
@@ -76,6 +78,7 @@ class CompetentModel {
 					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
 				true
 			);
@@ -93,9 +96,33 @@ class CompetentModel {
 				[{ name: 'userId', type: sql.VarChar(30), value: userId ?? null }],
 				true
 			);
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
+
 			return result;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficerProfile model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentApprovedMachineList(competentUserId, districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentApprovedMachineList',
+				[
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId ?? null },
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in inspectionFactory model:', { err });
 			throw err;
 		}
 	}

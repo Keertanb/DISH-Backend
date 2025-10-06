@@ -190,6 +190,25 @@ class AllOfficersModel {
 			throw err;
 		}
 	}
+
+	async getFactoryOwners(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetFactoryOwners',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getFactoryOwners model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AllOfficersModel;

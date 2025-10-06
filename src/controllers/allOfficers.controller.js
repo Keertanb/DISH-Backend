@@ -183,6 +183,19 @@ class AllOfficersController {
 			);
 		}
 	}
+
+	async getFactoryOwners(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+
+			const result = await allOfficersService.getFactoryOwners(districtId, page, limit, search);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getFactoryOwners controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getFactoryOwners controller');
+		}
+	}
 }
 
 export default AllOfficersController;

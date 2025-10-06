@@ -133,7 +133,7 @@ class AuthService {
 		}
 
 		// const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-		const resetLink = `Dish_Portal/reset-password?token=${token}`;
+		const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
 		// Send email
 		await sendMail({

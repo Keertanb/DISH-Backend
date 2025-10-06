@@ -8,9 +8,14 @@ import { sendMail } from '../utils/mail.js';
 const competentModel = new CompetentModel();
 
 class CompetentService {
-	async getScheduledInspectionList(competentUserId, page, limit) {
+	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
-			const result = await competentModel.getScheduledInspectionList(competentUserId, page, limit);
+			const result = await competentModel.getScheduledInspectionList(
+				competentUserId,
+				page,
+				limit,
+				search
+			);
 			return result;
 		} catch (err) {
 			logger.error('Error in getScheduledInspectionList service:', { err });
@@ -79,9 +84,9 @@ class CompetentService {
 		}
 	}
 
-	async inspectionFactory(competentUserId, page, limit) {
+	async inspectionFactory(competentUserId, page, limit, search) {
 		try {
-			const result = await competentModel.inspectionFactory(competentUserId, page, limit);
+			const result = await competentModel.inspectionFactory(competentUserId, page, limit, search);
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory service:', { err });
@@ -89,9 +94,9 @@ class CompetentService {
 		}
 	}
 
-	async getFactoryList(factoryUserId, page, limit) {
+	async getFactoryList(factoryUserId, page, limit, search) {
 		try {
-			const result = await competentModel.getFactoryList(factoryUserId, page, limit);
+			const result = await competentModel.getFactoryList(factoryUserId, page, limit, search);
 			return result;
 		} catch (err) {
 			logger.error('Error in getFactoryList service:', { err });
@@ -105,6 +110,22 @@ class CompetentService {
 			return profile && profile.length > 0 ? profile[0] : null;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficerProfile service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentApprovedMachineList(competentUserId, districtId, page, limit, search) {
+		try {
+			const result = await competentModel.getCompetentApprovedMachineList(
+				competentUserId,
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentApprovedMachineList service:', { err });
 			throw err;
 		}
 	}

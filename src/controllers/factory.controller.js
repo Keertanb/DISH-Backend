@@ -67,12 +67,13 @@ class FactoryController {
 
 	async getFactoryMachineInspectionList(req, res) {
 		try {
-			const { factoryUserId, page, limit } = req.query;
+			const { factoryUserId, page, limit, search } = req.query;
 
 			const machine = await factoryService.getFactoryMachineInspectionList(
 				factoryUserId,
 				page,
-				limit
+				limit,
+				search
 			);
 
 			return res.handler.success(machine);

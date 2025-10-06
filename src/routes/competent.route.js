@@ -44,6 +44,13 @@ router.get(
 	competentController.getCompetentOfficerProfile
 );
 
+// Get all machine approved list by competent officer
+router.get(
+	'/get-machine-approved-list',
+	validateSchema(competentValidation.getCompetentApprovedMachineList),
+	competentController.getCompetentApprovedMachineList
+);
+
 // Competent add another experience
 router.post(
 	'/add-experience',

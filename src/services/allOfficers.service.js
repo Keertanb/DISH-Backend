@@ -275,6 +275,16 @@ class AllOfficersService {
 			throw err;
 		}
 	}
+
+	async getFactoryOwners(districtId, page, limit, search) {
+		try {
+			const factory = await allOfficersModel.getFactoryOwners(districtId, page, limit, search);
+			return factory;
+		} catch (err) {
+			logger.error('Error in getFactoryOwners service:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AllOfficersService;

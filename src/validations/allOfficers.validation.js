@@ -94,3 +94,12 @@ export const getQueryToDistrictCompetentOfficers = {
 		search: Joi.string().optional(),
 	}),
 };
+
+export const getFactoryOwners = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().optional(),
+		limit: Joi.number().optional(),
+		search: Joi.string().optional(),
+	}),
+};

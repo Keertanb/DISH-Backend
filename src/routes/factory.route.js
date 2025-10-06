@@ -47,6 +47,7 @@ router.get(
 // Re-schedule machine Inspection warning after 5 day  mail
 router.post('/upcoming-inspection', factoryController.getUpcomingInspectionUsers);
 
+// Re-schedule machine Inspection
 router.post('/expire-inspection', factoryController.nextInspectionOnMachine);
 
 export default router;
