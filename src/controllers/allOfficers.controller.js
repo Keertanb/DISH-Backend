@@ -196,6 +196,47 @@ class AllOfficersController {
 			return res.handler.serverError({}, err.message || 'Error in getFactoryOwners controller');
 		}
 	}
+
+	async getCompetentRenewOfficersList(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+
+			const result = await allOfficersService.getCompetentRenewOfficersList(
+				districtId,
+				page,
+				limit,
+				search
+			);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentRenewOfficersList controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentRenewOfficersList controller'
+			);
+		}
+	}
+
+	async renewCompetentOfficersStatus(req, res) {
+		try {
+			const { userId, applicationType, reason } = req.body;
+
+			const status = await allOfficersService.renewCompetentOfficersStatus({
+				userId,
+				applicationType,
+				reason,
+			});
+
+			return res.handler.success(status);
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficersStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in renewCompetentOfficersStatus controller'
+			);
+		}
+	}
 }
 
 export default AllOfficersController;

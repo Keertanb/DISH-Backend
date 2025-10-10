@@ -14,6 +14,7 @@ import healthRoute from './routes/health.route.js';
 
 //cron
 import factoryCron from './cron/factoryCron.js';
+import competentCron from './cron/competentCron.js';
 
 import routes from './routes/v1/index.js';
 // DATABASE
@@ -78,6 +79,7 @@ const startServer = async () => {
 			console.log(`\n Local:\t\t http://localhost:${port}`);
 
 			factoryCron.stopAll();
+			competentCron.stopAll();
 		});
 	} catch (error) {
 		console.error('Failed to start server:', error);

@@ -381,6 +381,20 @@ class AuthModel {
 			throw err;
 		}
 	}
+
+	async renewPauseCompetentOfficer(userId, email) {
+		try {
+			const result = await executeStoredProcedure('SP_UpdateRenewPauseCompetentOfficers', [
+				{ name: 'userId', type: sql.VarChar(80), value: userId ?? null },
+				{ name: 'email', type: sql.VarChar(100), value: email ?? null },
+			]);
+
+			return result;
+		} catch (error) {
+			logger.error('Error in renewPauseCompetentOfficer model:', { error });
+			throw error;
+		}
+	}
 }
 
 export default AuthModel;

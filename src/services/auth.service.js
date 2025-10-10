@@ -115,6 +115,7 @@ class AuthService {
 				email: login.email,
 				districtId: login.districtId,
 				districtName: login.districtName,
+				accountRenew: login.isRenew,
 			};
 		} catch (err) {
 			logger.error('Error in login service:', { message: err.message, stack: err.stack });
@@ -163,7 +164,6 @@ class AuthService {
 	}
 
 	async resetPassword(token, newPassword) {
-		/// Hash password using bcrypt
 		const saltRounds = 10;
 		const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
@@ -174,6 +174,33 @@ class AuthService {
 		}
 
 		return { message: 'Password reset successfully' };
+	}
+
+	async renewPauseCompetentOfficer(userId, email) {
+		try {
+			const competent = await authModel.renewPauseCompetentOfficer(userId, email);
+
+			const { userId: dbUserId, email: dbEmail } = competent;
+			await sendMail({
+				to: dbEmail,
+				subject: 'Competent Officer Renewal Application Confirmation',
+				html: `
+				<p>Dear Competent Officer,</p>
+				<p>We’re pleased to inform you that your <b>renewal application request has been successfully submitted</b>.</p>
+				<p>Our team will review your details shortly and notify you once the renewal process is completed.</p>
+				<p>Thank you for your continued service and cooperation.</p>
+				<p>Best regards,<br/>Support Team</p>
+			`,
+			});
+
+			return competent;
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficer service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
 	}
 }
 

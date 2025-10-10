@@ -400,6 +400,43 @@ class CompetentController {
 			return res.handler.serverError({}, err.message || 'Error in getConfinedSpace');
 		}
 	}
+
+	async getCompetentExpiryEnd(req, res) {
+		try {
+			const result = await competentService.getCompetentExpiryEnd(req.body);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentExpiryEnd controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching Competent Expiry End data');
+		}
+	}
+
+	async getCompetentExpiryPauseEnd(req, res) {
+		try {
+			const result = await competentService.getCompetentExpiryPauseEnd(req.body);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentExpiryPauseEnd controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error fetching Competent Expiry Pause End data'
+			);
+		}
+	}
+
+	async renewCompetentOfficer(req, res) {
+		try {
+			const { userId } = req.body;
+			const result = await competentService.renewCompetentOfficer(userId);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficer controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error fetching renew Competent Officer data'
+			);
+		}
+	}
 }
 
 export default CompetentController;

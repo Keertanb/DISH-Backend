@@ -103,3 +103,26 @@ export const getFactoryOwners = {
 		search: Joi.string().optional(),
 	}),
 };
+
+export const getCompetentRenewOfficersList = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().optional(),
+	}),
+};
+
+export const renewCompetentOfficersStatus = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+
+		applicationType: Joi.string().valid('Approved', 'Reject').required(),
+
+		reason: Joi.when('applicationType', {
+			is: 'Reject',
+			then: Joi.string().max(255).required(),
+			otherwise: Joi.allow(null).optional(),
+		}),
+	}),
+};

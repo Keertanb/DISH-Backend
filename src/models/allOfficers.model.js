@@ -209,6 +209,44 @@ class AllOfficersModel {
 			throw err;
 		}
 	}
+
+	async getCompetentRenewOfficersList(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentRenewOfficers',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentRenewOfficersList model:', { err });
+			throw err;
+		}
+	}
+
+	async renewCompetentOfficersStatus(userId, applicationType, reason = null) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_RenewCompetentOfficersStatus',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'applicationType', type: sql.VarChar(30), value: applicationType },
+					{ name: 'reason', type: sql.VarChar(255), value: reason },
+				],
+				true
+			);
+
+			return result[0];
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AllOfficersModel;

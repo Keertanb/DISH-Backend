@@ -285,6 +285,73 @@ class AllOfficersService {
 			throw err;
 		}
 	}
+
+	async getCompetentRenewOfficersList(districtId, page, limit, search) {
+		try {
+			const renew = await allOfficersModel.getCompetentRenewOfficersList(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return renew;
+		} catch (err) {
+			logger.error('Error in getCompetentRenewOfficersList service:', { err });
+			throw err;
+		}
+	}
+
+	async renewCompetentOfficersStatus({ userId, applicationType, reason }) {
+		try {
+			if (!userId || userId.trim() === '') {
+				throw new Error('Invalid userId provided');
+			}
+			if (!applicationType || !['Approved', 'Reject'].includes(applicationType)) {
+				throw new Error('Invalid applicationType provided');
+			}
+
+			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Reject');
+			}
+			const status = await allOfficersModel.renewCompetentOfficersStatus(
+				userId,
+				applicationType,
+				reason
+			);
+			if (status?.email) {
+				let subject = '';
+				let html = '';
+
+				if (applicationType === 'Approved') {
+					subject = 'Competent Officer Approval Notification';
+					html = `
+					<p>Dear Officer,</p>
+					<p><b>Congratulations!</b></p>
+					<p>You have been successfully reappointed as a Competent Officer.</p>
+					<p><b>Start Date:</b> ${status.StartDate}</p>
+					<p><b>End Date:</b> ${status.EndDate}</p>
+					<p>We appreciate your continued service and dedication.</p>
+					<p>Regards,<br/>Factory Portal</p>
+				`;
+				} else if (applicationType === 'Reject') {
+					subject = 'Competent Officer Rejection Notification';
+					html = `
+					<p>Dear Officer,</p>
+					<p>We regret to inform you that your Competent Officer renewal application has been <b>Rejected</b>.</p>
+					<p><b>Reason:</b> ${status.reason}</p>
+					<p>Regards,<br/>Factory Portal</p>
+				`;
+				}
+
+				await sendMail({ to: status.email, subject, html });
+			}
+
+			return status;
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
 }
 
 export default AllOfficersService;

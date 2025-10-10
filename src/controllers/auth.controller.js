@@ -70,6 +70,17 @@ class AuthController {
 			return res.handler.serverError({}, err.message || 'Error in resetPassword');
 		}
 	}
+
+	async renewPauseCompetentOfficer(req, res) {
+		try {
+			const { userId, email } = req.body;
+			const result = await authService.renewPauseCompetentOfficer(userId, email);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in renewPauseCompetentOfficer:', { err });
+			return res.handler.serverError({}, err.message || 'Error in renewPauseCompetentOfficer');
+		}
+	}
 }
 
 export default AuthController;

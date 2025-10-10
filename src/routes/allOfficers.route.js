@@ -86,4 +86,18 @@ router.get(
 	allOfficersController.getFactoryOwners
 );
 
+// Get all competent renew officers List
+router.get(
+	'/get-all-renew-officers',
+	validateSchema(allOfficersValidation.getCompetentRenewOfficersList),
+	allOfficersController.getCompetentRenewOfficersList
+);
+
+// Update Status Renew competent officers (Approve/Reject)
+router.post(
+	'/renew-competent-officers-status',
+	validateSchema(allOfficersValidation.renewCompetentOfficersStatus),
+	allOfficersController.renewCompetentOfficersStatus
+);
+
 export default router;

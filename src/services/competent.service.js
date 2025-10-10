@@ -444,5 +444,130 @@ class CompetentService {
 			throw err;
 		}
 	}
+
+	async getCompetentExpiryEnd() {
+		try {
+			const candidates = await competentModel.getCompetentExpiryEnd();
+
+			if (!candidates.length) {
+				console.error('No competent officers found whose validity period has ended.');
+				return { message: 'No expired competent officers found', data: [] };
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email, expirationDate } = candidate;
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject: 'Competent Officer Validity Expired - DISH Portal',
+					html: `
+					<p>Dear Competent Officer,</p>
+
+					<p>We would like to inform you that your <b>competent officer validity period has expired${
+						expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+					}.</b></p>
+
+					<p>If you wish to continue your registration as a competent officer, please log in to the <b>DISH Portal</b> and complete the renewal process at your earliest convenience.</p>
+
+					<p><b>Important:</b> Without renewal, you will no longer be able to access your account or perform related activities on the portal.</p>
+
+					<p>To renew your account, please log in using your registered credentials and follow the on-screen instructions.</p>
+
+					<p>For any assistance or queries, please contact the DISH Support Team.</p>
+
+					<p>Regards,<br/>
+					<b>DISH Support Team</b><br/>
+					<small>Department of Industrial Safety & Health</small></p>
+				`,
+				});
+			}
+
+			return { message: 'Competent Officer Expiry Notification sent successfully', candidates };
+		} catch (err) {
+			logger.error('Error in getCompetentExpiryEnd service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentExpiryPauseEnd() {
+		try {
+			const candidates = await competentModel.getCompetentExpiryPauseEnd();
+
+			if (!candidates.length) {
+				console.error('No competent officers found whose validity period has ended.');
+				return { message: 'No expired competent officers found', data: [] };
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email, expirationDate } = candidate;
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject: 'Competent Officer Suspension Ended - DISH Portal',
+					html: `
+						<p>Dear Competent Officer,</p>
+
+						<p>We would like to inform you that your <b>competent officer suspension period has ended${
+							expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+						}.</b></p>
+
+						<p>You can now resume your duties as a competent officer. Please log in to the <b>DISH Portal</b> to continue your activities.</p>
+
+						<p><b>Important:</b> Ensure your account is active and updated. If you wish to renew any other settings or information, please do so after logging in.</p>
+
+						<p>If you face any issues accessing your account, contact the <b>DISH Support Team</b>.</p>
+
+						<p>Regards,<br/>
+						<b>DISH Support Team</b><br/>
+						<small>Department of Industrial Safety & Health</small></p>
+					`,
+				});
+			}
+
+			return {
+				message: 'Competent Officer Pause Expiry Notification sent successfully',
+				candidates,
+			};
+		} catch (err) {
+			logger.error('Error in getCompetentExpiryPauseEnd service:', { err });
+			throw err;
+		}
+	}
+
+	async renewCompetentOfficer(userId) {
+		try {
+			const competent = await competentModel.renewCompetentOfficer(userId);
+			const { userId: dbUserId, email: dbEmail } = competent;
+			await sendMail({
+				to: dbEmail,
+				subject: 'Competent Officer Renewal - DISH Portal',
+				html: `
+				<p>Dear Competent Officer,</p>
+				<p>Your request for renewal as a competent officer has been <b>successfully processed</b>.</p>
+				<p>If you encounter any issues or have questions, please contact the <b>DISH Support Team</b>.</p>
+				<p>Regards,<br/>
+				<b>DISH Support Team</b><br/>
+				<small>Department of Industrial Safety & Health</small></p>
+			`,
+			});
+			return competent;
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficer service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
 }
 export default CompetentService;

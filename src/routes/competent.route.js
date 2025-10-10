@@ -212,4 +212,17 @@ router.get(
 	competentController.getConfinedSpace
 );
 
+// All competent expiry end
+router.post('/competent-expiry-end', competentController.getCompetentExpiryEnd);
+
+// All competent expiry Pause end
+router.post('/competent-expiry-pause-end', competentController.getCompetentExpiryPauseEnd);
+
+// Renew Competent Officer Application
+router.post(
+	'/renew-competent-officer',
+	validateSchema(competentValidation.renewCompetentOfficer),
+	competentController.renewCompetentOfficer
+);
+
 export default router;

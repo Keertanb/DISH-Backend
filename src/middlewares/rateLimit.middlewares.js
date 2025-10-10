@@ -5,7 +5,7 @@ import { ipKeyGenerator } from 'express-rate-limit';
 // General rate limiter for all routes
 const generalRateLimiter = rateLimit({
 	windowMs: config.rateLimit.windowMs, // 15 minutes
-	limit: 60000000, // Limit each IP to 100 requests per windowMs
+	limit: 600000000000, // Limit each IP to 100 requests per windowMs
 	message: {
 		status: 'error',
 		message: 'Too many requests from this IP, please try again later.',

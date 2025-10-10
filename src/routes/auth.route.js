@@ -41,4 +41,11 @@ router.post(
 	authController.resetPassword
 );
 
+//Renew Pause Competent Officer Application
+router.post(
+	'/renew-pause-competent-officer',
+	validateSchema(authValidation.renewPauseCompetentOfficer),
+	authController.renewPauseCompetentOfficer
+);
+
 export default router;

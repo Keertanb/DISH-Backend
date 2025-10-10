@@ -509,3 +509,10 @@ export const resetPasswordSchema = {
 		newPassword: Joi.string().min(8).required(),
 	}),
 };
+
+export const renewPauseCompetentOfficer = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).optional(),
+		email: Joi.string().email().optional(),
+	}),
+};

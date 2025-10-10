@@ -1913,3 +1913,9 @@ export const getConfinedSpace = {
 		scheduleInspectionDate: Joi.date().required(),
 	}),
 };
+
+export const renewCompetentOfficer = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+	}),
+};

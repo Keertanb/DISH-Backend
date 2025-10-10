@@ -1286,6 +1286,50 @@ class CompetentModel {
 			throw err;
 		}
 	}
+
+	async getCompetentExpiryEnd() {
+		try {
+			const result = await executeStoredProcedure('SP_CompetentExpiryEnd', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in nextInspectionOnMachine model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentExpiryPauseEnd() {
+		try {
+			const result = await executeStoredProcedure('SP_CompetentExpiryPauseEnd', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in getCompetentExpiryPauseEnd model:', { err });
+			throw err;
+		}
+	}
+
+	async renewCompetentOfficer(userId) {
+		try {
+			const result = await executeStoredProcedure('SP_UpdateRenewCompetentOfficer', [
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
+			]);
+			return result;
+		} catch (err) {
+			logger.error('Error in renewCompetentOfficer model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default CompetentModel;
