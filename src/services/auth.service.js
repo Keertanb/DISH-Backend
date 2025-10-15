@@ -25,10 +25,8 @@ class AuthService {
 			const saltRounds = 10;
 			const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-			// Save user with hashed password
 			const factory = await authModel.factoryOwnerRegistration(data, hashedPassword);
 
-			// Mail send (plain password)
 			const { userId, email } = factory;
 			await sendMail({
 				to: email,
@@ -46,7 +44,6 @@ class AuthService {
 			`,
 			});
 
-			// Return data + plain password (for response if needed)
 			return { ...factory, userPassword: password };
 		} catch (err) {
 			logger.error('Error in factoryOwnerRegistration service:', {

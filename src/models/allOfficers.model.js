@@ -17,6 +17,20 @@ class AllOfficersModel {
 				],
 				true
 			);
+			if (result && result.length > 0) {
+				result.forEach((officer) => {
+					if (officer.experiences) {
+						try {
+							officer.experiences = JSON.parse(officer.experiences);
+						} catch (e) {
+							officer.experiences = [];
+						}
+					} else {
+						officer.experiences = [];
+					}
+				});
+			}
+
 			return result;
 		} catch (err) {
 			logger.error('Error in getCompetentOfficers model:', { err });
@@ -118,12 +132,38 @@ class AllOfficersModel {
 		}
 	}
 
+	async rescheduleInterview(userId, oldScheduledDate, newScheduledDate) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_RescheduleInterview',
+				[
+					{ name: 'userId', type: sql.NVarChar(sql.MAX), value: userId },
+					{ name: 'oldScheduledDate', type: sql.Date, value: oldScheduledDate },
+					{ name: 'newScheduledDate', type: sql.Date, value: newScheduledDate },
+				],
+				true
+			);
+
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in rescheduleInterview model:', { err });
+			throw err;
+		}
+	}
+
+
 	async interviewCompetentOfficersStatus(userId, applicationType, reason = null) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_InterviewCompetentOfficersStatus',
 				[
-					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'userId', type: sql.VarChar(sql.MAX), value: userId },
 					{ name: 'applicationType', type: sql.VarChar(30), value: applicationType },
 					{ name: 'reason', type: sql.VarChar(255), value: reason },
 				],

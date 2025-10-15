@@ -44,6 +44,14 @@ router.post(
 	allOfficersController.scheduleInterview
 );
 
+// reschedule Interview
+router.post(
+	'/reschedule-interview',
+	validateSchema(allOfficersValidation.rescheduleInterview),
+	allOfficersController.rescheduleInterview
+);
+
+
 // Update Status Interview competent officers (Approve/Reject)
 router.post(
 	'/interview-competent-officers-status',

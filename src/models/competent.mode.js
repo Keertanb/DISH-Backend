@@ -5,6 +5,140 @@ import { executeStoredProcedure } from '../database/index.js';
 import logger from '../utils/logger.js';
 
 class CompetentModel {
+
+	async updateProfile(userId, data) {
+		try {
+			const {
+				experienceYear,
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability,
+				pressureVesselOrPlantDocument,
+				hoistAndLiftsDocument,
+				dustFumeExtractionSystemDocument,
+				powerPressSafetyDevicesDocument,
+				waterSealedGasHolderDocument,
+				liftingMachinesChainsRopesDocument,
+				ovenAndDriersDocument,
+				centrifugeMachineDocument,
+				thermicFluidHeaterDocument,
+				confinedSpaceDocument,
+				stabilityDocument,
+				cv,
+				educationalQualification,
+				descriptionOfExamination,
+				arrangementsForCalibrationAndMaintenance,
+				competencyCertificateIsSought,
+				otherStatute,
+				statuteCompetency,
+				otherRelevantInformation,
+			} = data;
+			const result = await executeStoredProcedure(
+				'SP_UpdateCompetentOfficerProfile',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId },
+				{ name: 'experienceYear', type: sql.Int, value: experienceYear },
+				{ name: 'isPressureVesselOrPlant', type: sql.Bit, value: isPressureVesselOrPlant },
+				{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts },
+				{ name: 'isDustFumeExtractionSystem', type: sql.Bit, value: isDustFumeExtractionSystem },
+				{ name: 'isPowerPressSafetyDevices', type: sql.Bit, value: isPowerPressSafetyDevices },
+				{ name: 'isWaterSealedGasHolder', type: sql.Bit, value: isWaterSealedGasHolder },
+				{
+					name: 'isLiftingMachinesChainsRopes',
+					type: sql.Bit,
+					value: isLiftingMachinesChainsRopes,
+				},
+				{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers },
+				{
+					name: 'pressureVesselOrPlantDocument',
+					type: sql.VarChar(255),
+					value: pressureVesselOrPlantDocument,
+				},
+				{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine },
+				{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater },
+				{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace },
+				{ name: 'isStability', type: sql.Bit, value: isStability },
+				{ name: 'hoistAndLiftsDocument', type: sql.VarChar(255), value: hoistAndLiftsDocument },
+				{
+					name: 'dustFumeExtractionSystemDocument',
+					type: sql.VarChar(255),
+					value: dustFumeExtractionSystemDocument,
+				},
+				{
+					name: 'powerPressSafetyDevicesDocument',
+					type: sql.VarChar(255),
+					value: powerPressSafetyDevicesDocument,
+				},
+				{
+					name: 'waterSealedGasHolderDocument',
+					type: sql.VarChar(255),
+					value: waterSealedGasHolderDocument,
+				},
+				{
+					name: 'liftingMachinesChainsRopesDocument',
+					type: sql.VarChar(255),
+					value: liftingMachinesChainsRopesDocument,
+				},
+				{ name: 'ovenAndDriersDocument', type: sql.VarChar(255), value: ovenAndDriersDocument },
+				{
+					name: 'centrifugeMachineDocument',
+					type: sql.VarChar(255),
+					value: centrifugeMachineDocument,
+				},
+				{
+					name: 'thermicFluidHeaterDocument',
+					type: sql.VarChar(255),
+					value: thermicFluidHeaterDocument,
+				},
+				{ name: 'confinedSpaceDocument', type: sql.VarChar(255), value: confinedSpaceDocument },
+				{ name: 'stabilityDocument', type: sql.VarChar(255), value: stabilityDocument },
+				{ name: 'cv', type: sql.VarChar(255), value: cv },
+				{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
+				{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
+				{
+					name: 'arrangementsForCalibrationAndMaintenance',
+					type: sql.Text,
+					value: arrangementsForCalibrationAndMaintenance,
+				},
+				{
+					name: 'competencyCertificateIsSought',
+					type: sql.Text,
+					value: competencyCertificateIsSought,
+				},
+				{ name: 'otherStatute', type: sql.Bit, value: otherStatute },
+				{ name: 'statuteCompetency', type: sql.Text, value: statuteCompetency },
+				{ name: 'otherRelevantInformation', type: sql.Text, value: otherRelevantInformation },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in updateProfile model:', { err });
+			throw err;
+		}
+	}
+
+	async applyCompetentOfficer(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_ApplyForm',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in applyCompetentOfficer model:', { err });
+			throw err;
+		}
+	}
+
 	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
@@ -1315,6 +1449,22 @@ class CompetentModel {
 			return [];
 		} catch (err) {
 			logger.error('Error in getCompetentExpiryPauseEnd model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentBeforeExpiry() {
+		try {
+			const result = await executeStoredProcedure('SP_GetCompetentOfficersBeforeExpiry', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in getCompetentBeforeExpiry model:', { err });
 			throw err;
 		}
 	}

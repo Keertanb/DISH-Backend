@@ -6,6 +6,29 @@ import logger from '../utils/logger.js';
 const competentService = new CompetentService();
 
 class CompetentController {
+
+	async updateProfile(req, res) {
+		try {
+			const { userId, ...data } = req.body;
+			const result = await competentService.updateProfile(userId, data);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in updateProfile controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error updating profile');
+		}
+	}
+
+	async applyCompetentOfficer(req, res) {
+		try {
+			const { userId } = req.body;
+			const result = await competentService.applyCompetentOfficer(userId);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in applyCompetentOfficer controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error applying for Competent Officer');
+		}
+	}
+
 	async getScheduledInspectionList(req, res) {
 		try {
 			const { competentUserId, page, limit, search } = req.query;
@@ -420,6 +443,19 @@ class CompetentController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error fetching Competent Expiry Pause End data'
+			);
+		}
+	}
+
+	async getCompetentBeforeExpiry(req, res) {
+		try {
+			const result = await competentService.getCompetentBeforeExpiry(req.body);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentBeforeExpiry controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error fetching Competent Before Expiry data'
 			);
 		}
 	}

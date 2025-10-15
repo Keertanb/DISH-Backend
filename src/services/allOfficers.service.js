@@ -108,34 +108,35 @@ class AllOfficersService {
 			const formattedDate = new Date(scheduledInterviewDate).toLocaleDateString('en-GB');
 
 			for (const candidate of candidates) {
-				const { userId, email, name } = candidate;
+				const { userId, email, name, scheduledTime } = candidate;
 
 				if (!email) {
 					console.error(` Missing email for userId ${userId}`);
 					continue;
 				}
 
+
 				const pdfBuffer = await generateInterviewPDF({
 					name: name || '...............................',
 					userId,
 					interviewDate: formattedDate,
-					interviewTime: '11:00',
+					interviewTime: scheduledTime,
 				});
 
-				// send mail
 				await sendMail({
 					to: email,
 					subject: 'Interview Scheduled - Factory Portal',
 					html: `
-				<p>Dear Competent Officer,</p>
-				<p>Your interview has been <b>successfully scheduled</b>.</p>
-				<p>Below are your details:</p>
-				<ul>
-					<li>User ID: <b>${userId}</b></li>
-					<li>Interview Date: <b>${formattedDate}</b></li>
-				</ul>
-				<p>Regards,<br/>Support Team</p>
-				`,
+						<p>Dear Competent Officer,</p>
+						<p>Your interview has been <b>successfully scheduled</b>.</p>
+						<p>Below are your details:</p>
+						<ul>
+							<li>User ID: <b>${userId}</b></li>
+							<li>Interview Date: <b>${formattedDate}</b></li>
+							<li>Interview Time: <b>${scheduledTime}</b></li>
+						</ul>
+						<p>Regards,<br/>Support Team</p>
+						`,
 					attachments: [
 						{
 							filename: `interview_call_${userId}.pdf`,
@@ -153,6 +154,67 @@ class AllOfficersService {
 		}
 	}
 
+	async rescheduleInterview({ interviewCandidates, oldScheduledDate, newScheduledDate }) {
+		try {
+			const userId = interviewCandidates.map(c => c.userId).join(',');
+
+			const candidates = await allOfficersModel.rescheduleInterview(
+				userId,
+				oldScheduledDate,
+				newScheduledDate
+			);
+
+			console.log(candidates);
+
+			const formattedDate = new Date(newScheduledDate).toLocaleDateString('en-GB');
+
+			for (const candidate of candidates) {
+				const { userId, email, name, scheduleTime } = candidate;
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				const pdfBuffer = await generateInterviewPDF({
+					name: name || '...............................',
+					userId,
+					interviewDate: formattedDate,
+					interviewTime: scheduleTime,
+				});
+
+				await sendMail({
+					to: email,
+					subject: 'Interview Rescheduled - Factory Portal',
+					html: `
+							<p>Dear Competent Officer,</p>
+							<p>Your interview has been <b>rescheduled</b>.</p>
+							<p>Below are your updated details:</p>
+							<ul>
+								<li>User ID: <b>${userId}</b></li>
+								<li>Interview Date: <b>${formattedDate}</b></li>
+								<li>Interview Time: <b>${scheduleTime}</b></li>
+							</ul>
+							<p>Regards,<br/>Support Team</p>
+							`,
+					attachments: [
+						{
+							filename: `interview_reschedule_${userId}.pdf`,
+							content: pdfBuffer,
+							contentType: 'application/pdf',
+						},
+					],
+				});
+			}
+
+			return { message: 'Interview rescheduled successfully', candidates };
+		} catch (err) {
+			logger.error('Error in rescheduleInterview service:', { err });
+			console.error('SQL Error Message:', err.message);
+			throw err;
+		}
+	}
+
 	async pauseCompetentOfficer({ userId }) {
 		try {
 			const pause = await allOfficersModel.pauseCompetentOfficer(userId);
@@ -161,7 +223,8 @@ class AllOfficersService {
 				throw new Error('No record found for this userId');
 			}
 
-			const { email, CompetentSuspensionStatus, CompetentSuspensionDate } = pause[0];
+			const { email, CompetentSuspensionStatus, CompetentSuspensionDate, suspensionCount } =
+				pause[0];
 
 			let subject = '';
 			let html = '';
@@ -184,6 +247,16 @@ class AllOfficersService {
                 <p>Please contact the concerned department for any further clarification.</p>
                 <p>Regards,<br/>Support Team</p>
             `;
+			} else if (suspensionCount === 2) {
+				subject = 'Suspension Notice';
+				html = `
+				<p>Dear Competent Officer,</p>
+				<p>This is to inform you that you have been <b>suspended for the second time</b>.</p>
+				<p>As a result, you are no longer allowed to <b>renew your application</b> or <b>login</b> to the system.</p>
+				<p>Your suspension is effective from <b>${CompetentSuspensionDate}</b>.</p>
+				<p>Please contact the concerned department for any further clarification.</p>
+				<p>Regards,<br/>Support Team</p>
+				`;
 			}
 
 			if (email && subject && html) {

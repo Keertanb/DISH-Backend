@@ -8,6 +8,30 @@ import { sendMail } from '../utils/mail.js';
 const competentModel = new CompetentModel();
 
 class CompetentService {
+
+	async updateProfile(userId, data) {
+		try {
+			const result = await competentModel.updateProfile(userId, data);
+			return result;
+		} catch (err) {
+			logger.error('Error in updateProfile service:', { err });
+			throw err;
+		}
+	}
+
+	async applyCompetentOfficer(userId) {
+		try {
+			const result = await competentModel.applyCompetentOfficer(userId);
+			return result;
+		} catch (err) {
+			logger.error('Error in applyCompetentOfficer service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
+
 	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
 			const result = await competentModel.getScheduledInspectionList(
@@ -468,9 +492,8 @@ class CompetentService {
 					html: `
 					<p>Dear Competent Officer,</p>
 
-					<p>We would like to inform you that your <b>competent officer validity period has expired${
-						expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
-					}.</b></p>
+					<p>We would like to inform you that your <b>competent officer validity period has expired${expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+						}.</b></p>
 
 					<p>If you wish to continue your registration as a competent officer, please log in to the <b>DISH Portal</b> and complete the renewal process at your earliest convenience.</p>
 
@@ -517,8 +540,7 @@ class CompetentService {
 					html: `
 						<p>Dear Competent Officer,</p>
 
-						<p>We would like to inform you that your <b>competent officer suspension period has ended${
-							expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+						<p>We would like to inform you that your <b>competent officer suspension period has ended${expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
 						}.</b></p>
 
 						<p>You can now resume your duties as a competent officer. Please log in to the <b>DISH Portal</b> to continue your activities.</p>
@@ -540,6 +562,55 @@ class CompetentService {
 			};
 		} catch (err) {
 			logger.error('Error in getCompetentExpiryPauseEnd service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentBeforeExpiry() {
+		try {
+			const candidates = await competentModel.getCompetentBeforeExpiry();
+
+			if (!candidates.length) {
+				console.error('No competent officers found whose validity period has ended.');
+				return { message: 'No expired competent officers found', data: [] };
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email, expirationDate } = candidate;
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject: 'Competent Officer Validity Reminder - DISH Portal',
+					html: `
+						<p>Dear Competent Officer,</p>
+
+						<p>We would like to inform you that your <b>competent officer validity period of 30 days has now ended${expirationDate ? ' on <b>' + expirationDate + '</b>' : ''
+						}</b>.</p>
+
+						<p>You can now proceed to submit a <b>renewal application</b> if required. Please log in to the <b>DISH Portal</b> to continue your activities and renew your details.</p>
+
+						<p><b>Important:</b> Ensure that your account information is up-to-date before submitting a renewal application.</p>
+
+						<p>If you face any issues accessing your account or submitting your renewal, please contact the <b>DISH Support Team</b>.</p>
+
+						<p>Regards,<br/>
+						<b>DISH Support Team</b><br/>
+						<small>Department of Industrial Safety & Health</small></p>
+					`,
+				});
+			}
+
+			return {
+				message: 'Competent Officer before Expiry Notification sent successfully',
+				candidates,
+			};
+		} catch (err) {
+			logger.error('Error in getCompetentBeforeExpiry service:', { err });
 			throw err;
 		}
 	}

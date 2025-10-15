@@ -61,6 +61,18 @@ export const scheduleInterview = {
 	}),
 };
 
+export const rescheduleInterview = {
+	body: Joi.object().keys({
+		interviewCandidates: Joi.array()
+			.items(Joi.object({ userId: Joi.string().max(30).required() }))
+			.min(1)
+			.required(),
+		oldScheduledDate: Joi.date().required(),
+		newScheduledDate: Joi.date().required(),
+	}),
+};
+
+
 export const InterviewCompetentOfficersStatus = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),

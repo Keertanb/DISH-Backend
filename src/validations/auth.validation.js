@@ -108,7 +108,8 @@ export const factoryOwnerRegistration = {
 				}
 				return value;
 			}, 'not-zero')
-			.required(),
+			.allow('', null)
+			.optional(),
 		bankName: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
 			.message('Invalid name format')
@@ -117,7 +118,7 @@ export const factoryOwnerRegistration = {
 			.max(100)
 			.message('Bank name cannot exceed 100 characters')
 			.allow('', null)
-			.required(),
+			.optional(),
 		accountNumber: Joi.string()
 			.trim()
 			.optional()
@@ -131,7 +132,8 @@ export const factoryOwnerRegistration = {
 				}
 				return value;
 			}, 'valid-account-number')
-			.required(),
+			.allow('', null)
+			.optional(),
 		ifscCode: Joi.string()
 			.trim()
 			.custom((value, helpers) => {
@@ -143,7 +145,8 @@ export const factoryOwnerRegistration = {
 				}
 				return value;
 			}, 'valid-ifsc')
-			.required(),
+			.allow('', null)
+			.optional(),
 		branch: Joi.string()
 
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
@@ -153,7 +156,7 @@ export const factoryOwnerRegistration = {
 			.max(100)
 			.message('Branch name cannot exceed 100 characters')
 			.allow('', null)
-			.required(),
+			.optional(),
 		gstNumber: Joi.string()
 			.trim()
 			.uppercase()
@@ -161,14 +164,15 @@ export const factoryOwnerRegistration = {
 			.message('GST number (GSTIN) must be exactly 15 characters')
 			.pattern(/^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/)
 			.message('GST number must be a valid GSTIN (e.g., 27ABCDE1234F1Z5)')
-			.required(),
+			.allow(null, '')
+			.optional(),
 		factoryRegistrationNumber: Joi.string()
 			.trim()
 			.uppercase()
 			.max(20)
 			.message('Factory registration number cannot exceed 20 characters')
 			.pattern(/^[A-Z0-9][A-Z0-9\/\- ]*$/)
-			.required(),
+			.optional(),
 		companyPanCard: Joi.string()
 			.trim()
 			.uppercase()
@@ -176,7 +180,6 @@ export const factoryOwnerRegistration = {
 			.message('Company PAN must be exactly 10 characters')
 			.pattern(/^[A-Z]{5}\d{4}[A-Z]$/)
 			.message('Company PAN must be in format (e.g., ABCDE1234F)')
-			.required()
 			.max(20)
 			.required(),
 	}),
@@ -249,243 +252,7 @@ export const competentOfficerSchema = {
 				is: 2,
 				then: Joi.required(),
 				otherwise: Joi.allow(null, ''),
-			}),
-
-		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
-		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
-		isDustFumeExtractionSystem: Joi.number().valid(0, 1).allow(null),
-		isPowerPressSafetyDevices: Joi.number().valid(0, 1).allow(null),
-		isWaterSealedGasHolder: Joi.number().valid(0, 1).allow(null),
-		isLiftingMachinesChainsRopes: Joi.number().valid(0, 1).allow(null),
-		isOvenAndDriers: Joi.number().valid(0, 1).allow(null),
-		isCentrifugeMachine: Joi.number().valid(0, 1).allow(null),
-		isThermicFluidHeater: Joi.number().valid(0, 1).allow(null),
-		isConfinedSpace: Joi.number().valid(0, 1).allow(null),
-		isStability: Joi.number().valid(0, 1).allow(null),
-
-		pressureVesselOrPlantDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isPressureVesselOrPlant', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Pressure Vessel or Plant document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-
-		hoistAndLiftsDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isHoistAndLifts', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Hoist and Lifts document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		dustFumeExtractionSystemDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isDustFumeExtractionSystem', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Dust & Fume Extraction System document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-
-		powerPressSafetyDevicesDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isPowerPressSafetyDevices', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Power Press Safety Devices document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		waterSealedGasHolderDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isWaterSealedGasHolder', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Water Sealed Gas Holder document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		liftingMachinesChainsRopesDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isLiftingMachinesChainsRopes', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Lifting Machines, Chains & Ropes document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		ovenAndDriersDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isOvenAndDriers', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Oven and Driers document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		centrifugeMachineDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isCentrifugeMachine', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Centrifuge Machine document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		thermicFluidHeaterDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isThermicFluidHeater', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Thermic Fluid Heater document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		confinedSpaceDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isConfinedSpace', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Pressure Vessel or Plant document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-		stabilityDocument: Joi.string()
-			.max(255)
-			.allow(null, '')
-			.when('isStability', {
-				is: 1,
-				then: Joi.string()
-					.max(255)
-					.message('Pressure Vessel or Plant document is required when selected')
-					.required(),
-				otherwise: Joi.string().max(255).allow(null, ''),
-			}),
-
-		organization: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid organization format')
-			.min(5)
-			.message('Name must be at least 5 characters')
-			.max(70)
-			.message('Name cannot exceed 70 characters')
-			.required(),
-		experienceDesignation: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid experienceDesignation format')
-			.min(5)
-			.message('Name must be at least 5 characters')
-			.max(40)
-			.message('Name cannot exceed 40 characters')
-			.required(),
-		startDate: Joi.date().allow(null),
-		endDate: Joi.date().allow(null),
-		keyResponsibilites: Joi.string()
-			.max(255)
-			.message('Name cannot exceed 255 characters')
-			.allow(null, ''),
-
-		accountHolderName: Joi.string()
-			.uppercase()
-			.max(150)
-			.message('Account holder name cannot exceed 150 characters')
-			.pattern(/^[A-Za-z\s]+$/)
-			.message('Only English characters and spaces are allowed')
-			.custom((value, helpers) => {
-				if (!value || value === '') return value;
-				if (value === '0') {
-					return helpers.error('any.invalid', { message: 'Account holder name cannot be 0' });
-				}
-				return value;
-			}, 'not-zero')
-			.required(),
-		bankName: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid bankName format')
-			.min(5)
-			.message('Bank name must be at least 5 characters')
-			.max(100)
-			.message('Bank name cannot exceed 100 characters')
-			.allow('', null)
-			.required(),
-		accountNumber: Joi.string()
-			.trim()
-			.optional()
-			.allow('0')
-			.custom((value, helpers) => {
-				if (!value || value === '') return value;
-				if (!/^[0-9]{7,30}$/.test(value)) {
-					return helpers.error('any.invalid', {
-						message: 'Bank account number must be 7-30 digits',
-					});
-				}
-				return value;
-			}, 'valid-account-number')
-			.required(),
-		ifscCode: Joi.string()
-			.trim()
-			.custom((value, helpers) => {
-				if (!value || value === '' || value === 'NA') return value;
-				if (!/^[A-Z]{4}[0-9A-Z]{7}$/.test(value)) {
-					return helpers.error('any.invalid', {
-						message: 'IFSC code must be exactly 11 characters',
-					});
-				}
-				if (value === '0') {
-					return helpers.error('any.invalid', { message: 'IFSC code cannot be 0' });
-				}
-				return value;
-			}, 'valid-ifsc')
-			.required(),
-		branch: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid branch format')
-			.min(3)
-			.message('Branch name must be at least 3 characters')
-			.max(100)
-			.message('Branch name cannot exceed 100 characters')
-			.allow('', null)
-			.required(),
-
-		upiId: Joi.string().max(100).allow(null, ''),
-
-		educationalQualification: Joi.string().allow(null, ''),
-		descriptionOfExamination: Joi.string().allow(null, ''),
-		arrangementsForCalibrationAndMaintenance: Joi.string().allow(null, ''),
-		competencyCertificateIsSought: Joi.string().allow(null, ''),
-
-		otherStatute: Joi.number().valid(0, 1).allow(null),
-		statuteCompetency: Joi.when('otherStatute', {
-			is: 1,
-			then: Joi.string().required(),
-			otherwise: Joi.allow(null, ''),
-		}),
-		otherRelevantInformation: Joi.string().allow(null, ''),
+			})
 	}),
 };
 

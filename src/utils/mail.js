@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 export async function sendMail({ to, subject, html, attachments = [] }) {
 	await transporter.sendMail({
 		// from: `"Factory Portal" <${process.env.MAIL_USER}>`,
-		from: `"Factory Portal" <oldeal2k23@gmail.com>`,
+		from: `"Dish Portal" <oldeal2k23@gmail.com>`,
 		to,
 		subject,
 		html,

@@ -1,4 +1,168 @@
 import Joi from 'joi';
+
+export const updateProfile = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		experienceYear: Joi.number().integer().min(1).required(),
+		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
+		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
+		isDustFumeExtractionSystem: Joi.number().valid(0, 1).allow(null),
+		isPowerPressSafetyDevices: Joi.number().valid(0, 1).allow(null),
+		isWaterSealedGasHolder: Joi.number().valid(0, 1).allow(null),
+		isLiftingMachinesChainsRopes: Joi.number().valid(0, 1).allow(null),
+		isOvenAndDriers: Joi.number().valid(0, 1).allow(null),
+		isCentrifugeMachine: Joi.number().valid(0, 1).allow(null),
+		isThermicFluidHeater: Joi.number().valid(0, 1).allow(null),
+		isConfinedSpace: Joi.number().valid(0, 1).allow(null),
+		isStability: Joi.number().valid(0, 1).allow(null),
+
+		pressureVesselOrPlantDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isPressureVesselOrPlant', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Pressure Vessel or Plant document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+
+		hoistAndLiftsDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isHoistAndLifts', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Hoist and Lifts document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		dustFumeExtractionSystemDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isDustFumeExtractionSystem', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Dust & Fume Extraction System document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+
+		powerPressSafetyDevicesDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isPowerPressSafetyDevices', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Power Press Safety Devices document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		waterSealedGasHolderDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isWaterSealedGasHolder', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Water Sealed Gas Holder document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		liftingMachinesChainsRopesDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isLiftingMachinesChainsRopes', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Lifting Machines, Chains & Ropes document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		ovenAndDriersDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isOvenAndDriers', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Oven and Driers document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		centrifugeMachineDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isCentrifugeMachine', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Centrifuge Machine document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		thermicFluidHeaterDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isThermicFluidHeater', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Thermic Fluid Heater document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		confinedSpaceDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isConfinedSpace', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Pressure Vessel or Plant document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+		stabilityDocument: Joi.string()
+			.max(255)
+			.allow(null, '')
+			.when('isStability', {
+				is: 1,
+				then: Joi.string()
+					.max(255)
+					.message('Pressure Vessel or Plant document is required when selected')
+					.required(),
+				otherwise: Joi.string().max(255).allow(null, ''),
+			}),
+
+		cv: Joi.string().max(255).message('CV cannot exceed 255 characters').required(),
+		educationalQualification: Joi.string().allow(null, ''),
+		descriptionOfExamination: Joi.string().allow(null, ''),
+		arrangementsForCalibrationAndMaintenance: Joi.string().allow(null, ''),
+		competencyCertificateIsSought: Joi.string().allow(null, ''),
+
+		otherStatute: Joi.number().valid(0, 1).allow(null),
+		statuteCompetency: Joi.when('otherStatute', {
+			is: 1,
+			then: Joi.string().required(),
+			otherwise: Joi.allow(null, ''),
+		}),
+		otherRelevantInformation: Joi.string().allow(null, ''),
+	}),
+};
+
+
+export const applyCompetentOfficer = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+	}),
+};
+
 export const getScheduledInspectionList = {
 	query: Joi.object().keys({
 		competentUserId: Joi.string().max(30).required(),

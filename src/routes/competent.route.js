@@ -9,6 +9,20 @@ import CompetentController from '../controllers/competent.controller.js';
 const router = express.Router();
 const competentController = new CompetentController();
 
+//update profile
+router.post(
+	'/update-profile',
+	validateSchema(competentValidation.updateProfile),
+	competentController.updateProfile
+);
+
+// Apply for competent officer
+router.post(
+	'/apply-competent-officer',
+	validateSchema(competentValidation.applyCompetentOfficer),
+	competentController.applyCompetentOfficer
+);
+
 // Factory user request for machine inspection
 router.get(
 	'/get-scheduled-inspection',
@@ -217,6 +231,9 @@ router.post('/competent-expiry-end', competentController.getCompetentExpiryEnd);
 
 // All competent expiry Pause end
 router.post('/competent-expiry-pause-end', competentController.getCompetentExpiryPauseEnd);
+
+// All competent expiry before 30 days notification
+router.post('/competent-before-expiry-notification', competentController.getCompetentBeforeExpiry);
 
 // Renew Competent Officer Application
 router.post(
