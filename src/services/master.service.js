@@ -44,6 +44,67 @@ class MasterService {
 			throw err;
 		}
 	}
+
+	async getCompetentCountByDistrictId() {
+		try {
+			const competentCount = await masterModel.getCompetentCountByDistrictId();
+			return competentCount;
+		} catch (err) {
+			logger.error('Error in getCompetentCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getPendingCompetentCountByDistrictId() {
+		try {
+			const pendingCompetentCount = await masterModel.getPendingCompetentCountByDistrictId();
+			return pendingCompetentCount;
+		} catch (err) {
+			logger.error('Error in getPendingCompetentCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getInspectionCompletedCountByDistrictId() {
+		try {
+			const inspectionCompletedCount = await masterModel.getInspectionCompletedCountByDistrictId();
+			return inspectionCompletedCount;
+		} catch (err) {
+			logger.error('Error in getInspectionCompletedCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getFactoryCountByDistrictId() {
+		try {
+			const factoryCount = await masterModel.getFactoryCountByDistrictId();
+			return factoryCount;
+		} catch (err) {
+			logger.error('Error in getFactoryCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getPendingInspectionCountByDistrictId() {
+		try {
+			const pendingInspectionCount = await masterModel.getPendingInspectionCountByDistrictId();
+			return pendingInspectionCount;
+		} catch (err) {
+			logger.error('Error in getPendingInspectionCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getOverduePendingInspectionCountByDistrictId() {
+		try {
+			const overduePendingInspectionCount =
+				await masterModel.getOverduePendingInspectionCountByDistrictId();
+			return overduePendingInspectionCount;
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
 }
 
 export default MasterService;

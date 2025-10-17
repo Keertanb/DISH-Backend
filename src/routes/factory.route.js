@@ -9,6 +9,20 @@ import FactoryController from '../controllers/factory.controller.js';
 const router = express.Router();
 const factoryController = new FactoryController();
 
+// Factory machine register
+router.post(
+	'/register-machine',
+	validateSchema(factoryValidation.registerMachine),
+	factoryController.registerMachine
+);
+
+// Factory machine total count
+router.get(
+	'/get-machine-count',
+	validateSchema(factoryValidation.getMachineCount),
+	factoryController.getMachineCount
+);
+
 // Factory User all machine list
 router.get(
 	'/get-machine-list',

@@ -7,12 +7,35 @@ import { sendMail } from '../utils/mail.js';
 
 const factoryModel = new FactoryModel();
 class FactoryService {
+	async registerMachine({ userId, machineName, totalMachines }) {
+		try {
+			const machine = await factoryModel.registerMachine({
+				userId,
+				machineName,
+				totalMachines,
+			});
+			return machine && machine.length > 0 ? machine[0] : null;
+		} catch (err) {
+			logger.error('Error in registerMachine service:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineCount(userId) {
+		try {
+			const count = await factoryModel.getMachineCount(userId);
+			return count;
+		} catch (err) {
+			logger.error('Error in getMachineCount service:', { err });
+			throw err;
+		}
+	}
+
 	async getMachineList(userId) {
 		try {
 			if (!userId || userId.trim() === '') {
 				throw new Error('Invalid userId provided');
 			}
-
 			const machine = await factoryModel.getMachineList(userId);
 			return machine;
 		} catch (err) {
@@ -31,15 +54,22 @@ class FactoryService {
 		}
 	}
 
-	async machineInspection({ factoryUserId, machineNo, scheduleInspectionDate, competentUserId }) {
+	async machineInspection({
+		factoryUserId,
+		machineName,
+		inspectionCount,
+		inspectionDate,
+		competentUserIds,
+	}) {
 		try {
-			const machine = await factoryModel.machineInspection(
+			const result = await factoryModel.machineInspection({
 				factoryUserId,
-				machineNo,
-				scheduleInspectionDate,
-				competentUserId
-			);
-			return machine;
+				machineName,
+				inspectionCount,
+				inspectionDate,
+				competentUserIds,
+			});
+			return result;
 		} catch (err) {
 			logger.error('Error in machineInspection service:', { err });
 			throw err;

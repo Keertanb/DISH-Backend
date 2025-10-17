@@ -28,4 +28,34 @@ router.get(
 	masterController.getBankDetailByIFSCCode
 );
 
+// DistrictId wise competent counts
+router.get('/get-competent-count-by-districtId', masterController.getCompetentCountByDistrictId);
+
+//DistrictId wise competent status is pending counts
+router.get(
+	'/get-pending-competent-count-by-districtId',
+	masterController.getPendingCompetentCountByDistrictId
+);
+
+// DistrictId wise factory counts
+router.get('/get-factory-count-by-districtId', masterController.getFactoryCountByDistrictId);
+
+// DistrictId wise competent inspection completed this month counts
+router.get(
+	'/get-inspection-completed-count-by-districtId',
+	masterController.getInspectionCompletedCountByDistrictId
+);
+
+//DistrictId wise factory machine pending inspection counts
+router.get(
+	'/get-pending-inspection-count-by-districtId',
+	masterController.getPendingInspectionCountByDistrictId
+);
+
+//DistrictId wise factory machine overdue pending inspection counts
+router.get(
+	'/get-overdue-pending-count-by-districtId',
+	masterController.getOverduePendingInspectionCountByDistrictId
+);
+
 export default router;

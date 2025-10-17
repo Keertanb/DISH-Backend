@@ -5,7 +5,6 @@ import { executeStoredProcedure } from '../database/index.js';
 import logger from '../utils/logger.js';
 
 class CompetentModel {
-
 	async updateProfile(userId, data) {
 		try {
 			const {
@@ -43,78 +42,79 @@ class CompetentModel {
 			} = data;
 			const result = await executeStoredProcedure(
 				'SP_UpdateCompetentOfficerProfile',
-				[{ name: 'userId', type: sql.VarChar(30), value: userId },
-				{ name: 'experienceYear', type: sql.Int, value: experienceYear },
-				{ name: 'isPressureVesselOrPlant', type: sql.Bit, value: isPressureVesselOrPlant },
-				{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts },
-				{ name: 'isDustFumeExtractionSystem', type: sql.Bit, value: isDustFumeExtractionSystem },
-				{ name: 'isPowerPressSafetyDevices', type: sql.Bit, value: isPowerPressSafetyDevices },
-				{ name: 'isWaterSealedGasHolder', type: sql.Bit, value: isWaterSealedGasHolder },
-				{
-					name: 'isLiftingMachinesChainsRopes',
-					type: sql.Bit,
-					value: isLiftingMachinesChainsRopes,
-				},
-				{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers },
-				{
-					name: 'pressureVesselOrPlantDocument',
-					type: sql.VarChar(255),
-					value: pressureVesselOrPlantDocument,
-				},
-				{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine },
-				{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater },
-				{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace },
-				{ name: 'isStability', type: sql.Bit, value: isStability },
-				{ name: 'hoistAndLiftsDocument', type: sql.VarChar(255), value: hoistAndLiftsDocument },
-				{
-					name: 'dustFumeExtractionSystemDocument',
-					type: sql.VarChar(255),
-					value: dustFumeExtractionSystemDocument,
-				},
-				{
-					name: 'powerPressSafetyDevicesDocument',
-					type: sql.VarChar(255),
-					value: powerPressSafetyDevicesDocument,
-				},
-				{
-					name: 'waterSealedGasHolderDocument',
-					type: sql.VarChar(255),
-					value: waterSealedGasHolderDocument,
-				},
-				{
-					name: 'liftingMachinesChainsRopesDocument',
-					type: sql.VarChar(255),
-					value: liftingMachinesChainsRopesDocument,
-				},
-				{ name: 'ovenAndDriersDocument', type: sql.VarChar(255), value: ovenAndDriersDocument },
-				{
-					name: 'centrifugeMachineDocument',
-					type: sql.VarChar(255),
-					value: centrifugeMachineDocument,
-				},
-				{
-					name: 'thermicFluidHeaterDocument',
-					type: sql.VarChar(255),
-					value: thermicFluidHeaterDocument,
-				},
-				{ name: 'confinedSpaceDocument', type: sql.VarChar(255), value: confinedSpaceDocument },
-				{ name: 'stabilityDocument', type: sql.VarChar(255), value: stabilityDocument },
-				{ name: 'cv', type: sql.VarChar(255), value: cv },
-				{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
-				{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
-				{
-					name: 'arrangementsForCalibrationAndMaintenance',
-					type: sql.Text,
-					value: arrangementsForCalibrationAndMaintenance,
-				},
-				{
-					name: 'competencyCertificateIsSought',
-					type: sql.Text,
-					value: competencyCertificateIsSought,
-				},
-				{ name: 'otherStatute', type: sql.Bit, value: otherStatute },
-				{ name: 'statuteCompetency', type: sql.Text, value: statuteCompetency },
-				{ name: 'otherRelevantInformation', type: sql.Text, value: otherRelevantInformation },
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'experienceYear', type: sql.Int, value: experienceYear },
+					{ name: 'isPressureVesselOrPlant', type: sql.Bit, value: isPressureVesselOrPlant },
+					{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts },
+					{ name: 'isDustFumeExtractionSystem', type: sql.Bit, value: isDustFumeExtractionSystem },
+					{ name: 'isPowerPressSafetyDevices', type: sql.Bit, value: isPowerPressSafetyDevices },
+					{ name: 'isWaterSealedGasHolder', type: sql.Bit, value: isWaterSealedGasHolder },
+					{
+						name: 'isLiftingMachinesChainsRopes',
+						type: sql.Bit,
+						value: isLiftingMachinesChainsRopes,
+					},
+					{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers },
+					{
+						name: 'pressureVesselOrPlantDocument',
+						type: sql.VarChar(255),
+						value: pressureVesselOrPlantDocument,
+					},
+					{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine },
+					{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater },
+					{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace },
+					{ name: 'isStability', type: sql.Bit, value: isStability },
+					{ name: 'hoistAndLiftsDocument', type: sql.VarChar(255), value: hoistAndLiftsDocument },
+					{
+						name: 'dustFumeExtractionSystemDocument',
+						type: sql.VarChar(255),
+						value: dustFumeExtractionSystemDocument,
+					},
+					{
+						name: 'powerPressSafetyDevicesDocument',
+						type: sql.VarChar(255),
+						value: powerPressSafetyDevicesDocument,
+					},
+					{
+						name: 'waterSealedGasHolderDocument',
+						type: sql.VarChar(255),
+						value: waterSealedGasHolderDocument,
+					},
+					{
+						name: 'liftingMachinesChainsRopesDocument',
+						type: sql.VarChar(255),
+						value: liftingMachinesChainsRopesDocument,
+					},
+					{ name: 'ovenAndDriersDocument', type: sql.VarChar(255), value: ovenAndDriersDocument },
+					{
+						name: 'centrifugeMachineDocument',
+						type: sql.VarChar(255),
+						value: centrifugeMachineDocument,
+					},
+					{
+						name: 'thermicFluidHeaterDocument',
+						type: sql.VarChar(255),
+						value: thermicFluidHeaterDocument,
+					},
+					{ name: 'confinedSpaceDocument', type: sql.VarChar(255), value: confinedSpaceDocument },
+					{ name: 'stabilityDocument', type: sql.VarChar(255), value: stabilityDocument },
+					{ name: 'cv', type: sql.VarChar(255), value: cv },
+					{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
+					{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
+					{
+						name: 'arrangementsForCalibrationAndMaintenance',
+						type: sql.Text,
+						value: arrangementsForCalibrationAndMaintenance,
+					},
+					{
+						name: 'competencyCertificateIsSought',
+						type: sql.Text,
+						value: competencyCertificateIsSought,
+					},
+					{ name: 'otherStatute', type: sql.Bit, value: otherStatute },
+					{ name: 'statuteCompetency', type: sql.Text, value: statuteCompetency },
+					{ name: 'otherRelevantInformation', type: sql.Text, value: otherRelevantInformation },
 				],
 				true
 			);
@@ -132,7 +132,13 @@ class CompetentModel {
 				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
 				true
 			);
-			return result;
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
 		} catch (err) {
 			logger.error('Error in applyCompetentOfficer model:', { err });
 			throw err;
@@ -159,21 +165,23 @@ class CompetentModel {
 	}
 
 	async scheduledMachineInspectionStatus(
-		userId,
-		machineNo,
-		scheduleInspectionDate,
+		factoryUserId,
+		machineName,
+		inspectionDate,
 		status,
-		reason = null
+		competentReason = null,
+		competentUserId
 	) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_ScheduledMachineInspectionStatus',
 				[
-					{ name: 'userId', type: sql.VarChar(30), value: userId },
-					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
-					{ name: 'scheduleInspectionDate', type: sql.Date, value: scheduleInspectionDate },
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
 					{ name: 'status', type: sql.VarChar(20), value: status },
-					{ name: 'reason', type: sql.VarChar(255), value: reason },
+					{ name: 'competentReason', type: sql.VarChar(255), value: competentReason },
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 				],
 				true
 			);
@@ -197,9 +205,62 @@ class CompetentModel {
 				],
 				true
 			);
+
+			if (result && result[0]?.machineType) {
+				result[0].machineType = JSON.parse(result[0].machineType);
+			}
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory model:', { err });
+			throw err;
+		}
+	}
+
+	async addNewMachine(data) {
+		try {
+			const {
+				competentUserId,
+				factoryUserId,
+				machineName,
+				quantity,
+				machineDescription,
+				serialNumbers,
+				dateOfFirstUse,
+				dateOfInstallation,
+				nameOfManufacture,
+				addressOfManufacture,
+				dateOfConstruction,
+				thicknessOfWall,
+				identityFicationOfMachine,
+				safeWorkingPressure,
+			} = data;
+			const result = await executeStoredProcedure(
+				'SP_RegisterMachineryFactoryAllocation',
+				[
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineName', type: sql.VarChar(40), value: machineName },
+					{ name: 'quantity', type: sql.Int(), value: quantity },
+					{ name: 'machineDescription', type: sql.VarChar(), value: machineDescription },
+					{ name: 'serialNumbers', type: sql.VarChar(50), value: serialNumbers },
+					{ name: 'dateOfFirstUse', type: sql.Date(), value: dateOfFirstUse },
+					{ name: 'dateOfInstallation', type: sql.Date(), value: dateOfInstallation },
+					{ name: 'nameOfManufacture', type: sql.VarChar(50), value: nameOfManufacture },
+					{ name: 'addressOfManufacture', type: sql.VarChar(200), value: addressOfManufacture },
+					{ name: 'dateOfConstruction', type: sql.Date(), value: dateOfConstruction },
+					{ name: 'thicknessOfWall', type: sql.VarChar(30), value: thicknessOfWall },
+					{
+						name: 'identityFicationOfMachine',
+						type: sql.VarChar(50),
+						value: identityFicationOfMachine,
+					},
+					{ name: 'safeWorkingPressure', type: sql.VarChar(50), value: safeWorkingPressure },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in addNewMachine model:', { err });
 			throw err;
 		}
 	}
@@ -278,6 +339,26 @@ class CompetentModel {
 		} catch (error) {
 			logger.error('Error in addExperience model:', { error });
 			throw error;
+		}
+	}
+
+	async getIdentityByMachines(userId, machineName, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetIdentitynoByFactoryMachinery',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getIdentityByMachines model:', { err });
+			throw err;
 		}
 	}
 

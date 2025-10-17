@@ -45,6 +45,81 @@ class MasterController {
 			return res.handler.serverError({}, err.message || 'Error in getBankDetailByIFSCCode');
 		}
 	}
+
+	async getCompetentCountByDistrictId(req, res) {
+		try {
+			const competentCount = await masterService.getCompetentCountByDistrictId();
+
+			return res.handler.success({ competentCount });
+		} catch (err) {
+			logger.error('Error in getCompetentCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getCompetentCountByDistrictId');
+		}
+	}
+
+	async getPendingCompetentCountByDistrictId(req, res) {
+		try {
+			const pendingCompetentCount = await masterService.getPendingCompetentCountByDistrictId();
+			return res.handler.success({ pendingCompetentCount });
+		} catch (err) {
+			logger.error('Error in getPendingCompetentCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getPendingCompetentCountByDistrictId'
+			);
+		}
+	}
+
+	async getInspectionCompletedCountByDistrictId(req, res) {
+		try {
+			const inspectionCompletedCount =
+				await masterService.getInspectionCompletedCountByDistrictId();
+			return res.handler.success({ inspectionCompletedCount });
+		} catch (err) {
+			logger.error('Error in getInspectionCompletedCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getInspectionCompletedCountByDistrictId'
+			);
+		}
+	}
+
+	async getFactoryCountByDistrictId(req, res) {
+		try {
+			const factoryCount = await masterService.getFactoryCountByDistrictId();
+			return res.handler.success({ factoryCount });
+		} catch (err) {
+			logger.error('Error in getFactoryCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getFactoryCountByDistrictId');
+		}
+	}
+
+	async getPendingInspectionCountByDistrictId(req, res) {
+		try {
+			const pendingInspectionCount = await masterService.getPendingInspectionCountByDistrictId();
+			return res.handler.success({ pendingInspectionCount });
+		} catch (err) {
+			logger.error('Error in getPendingInspectionCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getPendingInspectionCountByDistrictId'
+			);
+		}
+	}
+
+	async getOverduePendingInspectionCountByDistrictId(req, res) {
+		try {
+			const overduePendingInspectionCount =
+				await masterService.getOverduePendingInspectionCountByDistrictId();
+			return res.handler.success({ overduePendingInspectionCount });
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getOverduePendingInspectionCountByDistrictId'
+			);
+		}
+	}
 }
 
 export default MasterController;

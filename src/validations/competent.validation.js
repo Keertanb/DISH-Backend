@@ -3,7 +3,7 @@ import Joi from 'joi';
 export const updateProfile = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-		experienceYear: Joi.number().integer().min(1).required(),
+		experienceYear: Joi.number().integer().min(1).optional(),
 		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
 		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
 		isDustFumeExtractionSystem: Joi.number().valid(0, 1).allow(null),
@@ -140,7 +140,7 @@ export const updateProfile = {
 				otherwise: Joi.string().max(255).allow(null, ''),
 			}),
 
-		cv: Joi.string().max(255).message('CV cannot exceed 255 characters').required(),
+		cv: Joi.string().max(255).message('CV cannot exceed 255 characters').optional(),
 		educationalQualification: Joi.string().allow(null, ''),
 		descriptionOfExamination: Joi.string().allow(null, ''),
 		arrangementsForCalibrationAndMaintenance: Joi.string().allow(null, ''),
@@ -155,7 +155,6 @@ export const updateProfile = {
 		otherRelevantInformation: Joi.string().allow(null, ''),
 	}),
 };
-
 
 export const applyCompetentOfficer = {
 	body: Joi.object().keys({
@@ -174,16 +173,17 @@ export const getScheduledInspectionList = {
 
 export const scheduledMachineInspectionStatus = {
 	body: Joi.object().keys({
-		userId: Joi.string().max(30).required(),
-		machineNo: Joi.string().max(30).required(),
-		scheduleInspectionDate: Joi.date().required(),
+		factoryUserId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(70).required(),
+		inspectionDate: Joi.date().required(),
 		status: Joi.string().valid('Approved', 'Rejected').required(),
 
-		reason: Joi.when('status', {
+		competentReason: Joi.when('status', {
 			is: 'Rejected',
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
+		competentUserId: Joi.string().max(30).required(),
 	}),
 };
 
@@ -193,6 +193,29 @@ export const inspectionFactory = {
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().max(100).optional(),
+	}),
+};
+
+export const addNewMachine = {
+	body: Joi.object().keys({
+		competentUserId: Joi.string().max(30).required(),
+		factoryUserId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(40).required(),
+		quantity: Joi.number().required(),
+		machineDescription: Joi.string().max(300).required(),
+		serialNumbers: Joi.string().max(50).required(),
+		dateOfFirstUse: Joi.date().required(),
+		dateOfInstallation: Joi.date().optional(),
+		nameOfManufacture: Joi.string().max(200).required(),
+		addressOfManufacture: Joi.string().max(200).required(),
+		dateOfConstruction: Joi.date().optional(),
+		thicknessOfWall: Joi.string().max(30).optional(),
+		identityFicationOfMachine: Joi.string().max(50).optional(),
+		safeWorkingPressure: Joi.when('machineName', {
+			is: 'Pressure Vessel or Plant',
+			then: Joi.string().max(50).required(),
+			otherwise: Joi.string().optional(),
+		}),
 	}),
 };
 
@@ -230,6 +253,16 @@ export const addExperience = {
 		startDate: Joi.date().allow(null),
 		endDate: Joi.date().allow(null),
 		keyResponsibilites: Joi.string().allow(null, ''),
+	}),
+};
+
+export const getIdentityByMachines = {
+	query: Joi.object().keys({
+		userId: Joi.string().required(),
+		machineName: Joi.string().max(70).required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 

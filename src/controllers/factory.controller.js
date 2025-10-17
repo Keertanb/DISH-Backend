@@ -7,6 +7,32 @@ import logger from '../utils/logger.js';
 const factoryService = new FactoryService();
 
 class FactoryController {
+	async registerMachine(req, res) {
+		try {
+			const { userId, machineName, totalMachines } = req.body;
+			const machine = await factoryService.registerMachine({
+				userId,
+				machineName,
+				totalMachines,
+			});
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in registerMachine controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in registerMachine controller');
+		}
+	}
+
+	async getMachineCount(req, res) {
+		try {
+			const { userId } = req.query;
+			const machineCount = await factoryService.getMachineCount(userId);
+			return res.handler.success(machineCount);
+		} catch (err) {
+			logger.error('Error in getMachineCount controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getMachineCount controller');
+		}
+	}
+
 	async getMachineList(req, res) {
 		try {
 			const { userId } = req.query;
@@ -33,16 +59,19 @@ class FactoryController {
 
 	async machineInspection(req, res) {
 		try {
-			const { factoryUserId, machineNo, scheduleInspectionDate, competentUserId } = req.body;
+			const { factoryUserId, machineName, inspectionCount, inspectionDate, competentUserIds } =
+				req.body;
 
-			const machine = await factoryService.machineInspection({
+			const competentUserIdsJson = JSON.stringify(competentUserIds);
+
+			const result = await factoryService.machineInspection({
 				factoryUserId,
-				machineNo,
-				scheduleInspectionDate,
-				competentUserId,
+				machineName,
+				inspectionCount,
+				inspectionDate,
+				competentUserIds: competentUserIdsJson,
 			});
-
-			return res.handler.success(machine);
+			return res.handler.success(result);
 		} catch (err) {
 			logger.error('Error in machineInspection controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error in machineInspection controller');

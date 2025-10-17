@@ -8,7 +8,6 @@ import { sendMail } from '../utils/mail.js';
 const competentModel = new CompetentModel();
 
 class CompetentService {
-
 	async updateProfile(userId, data) {
 		try {
 			const result = await competentModel.updateProfile(userId, data);
@@ -22,6 +21,24 @@ class CompetentService {
 	async applyCompetentOfficer(userId) {
 		try {
 			const result = await competentModel.applyCompetentOfficer(userId);
+
+			const officer = Array.isArray(result) && result.length > 0 ? result[0] : null;
+			if (!officer || !officer.email) {
+				throw new Error('Officer email not found for the given userId');
+			}
+			const { email } = result;
+			await sendMail({
+				to: officer.email,
+				subject: 'Competent Officer Application Submitted - DISH Portal',
+				html: `
+				<p>Dear Competent Officer,</p>
+				<p>Your application has been <b>successfully submitted</b>.</p>
+				<p>Our team is currently reviewing your application. You will be notified once the verification process is completed.</p>
+				<p>Thank you for registering with the DISH portal and for your interest in contributing to workplace safety.</p>
+				<p>Regards,<br/>Support Team</p
+			`,
+			});
+
 			return result;
 		} catch (err) {
 			logger.error('Error in applyCompetentOfficer service:', {
@@ -48,52 +65,56 @@ class CompetentService {
 	}
 
 	async scheduledMachineInspectionStatus({
-		userId,
-		machineNo,
-		scheduleInspectionDate,
+		factoryUserId,
+		machineName,
+		inspectionDate,
 		status,
-		reason,
+		competentReason,
+		competentUserId,
 	}) {
 		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
+			if (!factoryUserId || factoryUserId.trim() === '') {
+				throw new Error('Invalid factoryUserId provided');
 			}
 			if (!status || !['Approved', 'Rejected'].includes(status)) {
 				throw new Error('Invalid status provided');
 			}
 
-			if (status === 'Rejected' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when status is Rejected');
+			if (status === 'Rejected' && (!competentReason || competentReason.trim() === '')) {
+				throw new Error('competentReason is required when status is Rejected');
 			}
 			const result = await competentModel.scheduledMachineInspectionStatus(
-				userId,
-				machineNo,
-				scheduleInspectionDate,
+				factoryUserId,
+				machineName,
+				inspectionDate,
 				status,
-				reason
+				competentReason,
+				competentUserId
 			);
 			if (result?.email) {
 				let subject = '';
 				let html = '';
 
 				if (status === 'Approved') {
-					subject = `Inspection Approved for Machine ${result.machineNo}`;
+					subject = `Inspection Approved for Machine ${result.machineName}`;
 					html = `
 					<p>Dear Factory Owner,</p>
 					<p><b>Congratulations!</b></p>
-					<p>Your scheduled inspection for Machine No: ${result.machineNo} on 
-					${result.scheduleInspectionDate} has been approved.
+					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
+					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
+					${result.inspectionDate} has been approved.
 					You may proceed with the inspection as scheduled.</p>
 					<p>Regards,<br/>Factory Inspection Team</p>
 				`;
 				} else if (status === 'Rejected') {
-					subject = `Inspection Rejected for Machine ${result.machineNo}`;
+					subject = `Inspection Rejected for Machine ${result.machineName}`;
 					html = `
 					<p>Dear Factory Owner,</p>
-					<p>Your scheduled inspection for Machine No: ${result.machineNo} on 
-					${result.scheduleInspectionDate} 
+					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
+					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
+					${result.inspectionDate} 
 					has been <b>Rejected</b>.</p>
-					<p><b>Reason:</b> ${result.reason}</p>
+					<p><b>Reason:</b> ${result.competentReason}</p>
 					<p>Regards,<br/>Factory Inspection Team</p>
 				`;
 				}
@@ -114,6 +135,16 @@ class CompetentService {
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory service:', { err });
+			throw err;
+		}
+	}
+
+	async addNewMachine(data) {
+		try {
+			const machine = await competentModel.addNewMachine(data);
+			return machine && machine.length > 0 ? machine[0] : null;
+		} catch (err) {
+			logger.error('Error in addNewMachine service:', { err });
 			throw err;
 		}
 	}
@@ -163,6 +194,22 @@ class CompetentService {
 				message: err.message,
 				stack: err.stack,
 			});
+			throw err;
+		}
+	}
+
+	async getIdentityByMachines(userId, machineName, page, limit, search) {
+		try {
+			const result = await competentModel.getIdentityByMachines(
+				userId,
+				machineName,
+				page,
+				limit,
+				search
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getIdentityByMachines service:', { err });
 			throw err;
 		}
 	}
@@ -492,8 +539,9 @@ class CompetentService {
 					html: `
 					<p>Dear Competent Officer,</p>
 
-					<p>We would like to inform you that your <b>competent officer validity period has expired${expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
-						}.</b></p>
+					<p>We would like to inform you that your <b>competent officer validity period has expired${
+						expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+					}.</b></p>
 
 					<p>If you wish to continue your registration as a competent officer, please log in to the <b>DISH Portal</b> and complete the renewal process at your earliest convenience.</p>
 
@@ -540,7 +588,8 @@ class CompetentService {
 					html: `
 						<p>Dear Competent Officer,</p>
 
-						<p>We would like to inform you that your <b>competent officer suspension period has ended${expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
+						<p>We would like to inform you that your <b>competent officer suspension period has ended${
+							expirationDate ? ' on <b>' + expirationDate + '</b>' : ' as of today'
 						}.</b></p>
 
 						<p>You can now resume your duties as a competent officer. Please log in to the <b>DISH Portal</b> to continue your activities.</p>
@@ -589,7 +638,8 @@ class CompetentService {
 					html: `
 						<p>Dear Competent Officer,</p>
 
-						<p>We would like to inform you that your <b>competent officer validity period of 30 days has now ended${expirationDate ? ' on <b>' + expirationDate + '</b>' : ''
+						<p>We would like to inform you that your <b>competent officer validity period of 30 days has now ended${
+							expirationDate ? ' on <b>' + expirationDate + '</b>' : ''
 						}</b>.</p>
 
 						<p>You can now proceed to submit a <b>renewal application</b> if required. Please log in to the <b>DISH Portal</b> to continue your activities and renew your details.</p>

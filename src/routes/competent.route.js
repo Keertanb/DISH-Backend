@@ -44,6 +44,13 @@ router.get(
 	competentController.inspectionFactory
 );
 
+// Competent add new machine for factory
+router.post(
+	'/register-new-machine',
+	validateSchema(competentValidation.addNewMachine),
+	competentController.addNewMachine
+);
+
 // Get all pending machine inspection list in factory wise
 router.get(
 	'/get-factory-machine',
@@ -70,6 +77,13 @@ router.post(
 	'/add-experience',
 	validateSchema(competentValidation.addExperience),
 	competentController.addExperience
+);
+
+// Get list factory machines for competent officer
+router.get(
+	'/get-identity-By-machines',
+	validateSchema(competentValidation.getIdentityByMachines),
+	competentController.getIdentityByMachines
 );
 
 // Pressure Vessel or Plant machine form

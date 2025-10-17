@@ -20,6 +20,38 @@ export const AddMachine = {
 	safeWorkingPressure: null,
 };
 class FactoryModel {
+	async registerMachine({ userId, machineName, totalMachines }) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_RegisterFactoryMachine',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'machineName', type: sql.VarChar(40), value: machineName },
+					{ name: 'totalMachines', type: sql.Int(), value: totalMachines },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in registerMachine model:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineCount(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetFactoryMachineSummary',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getMachineCount model:', { err });
+			throw err;
+		}
+	}
+
 	async getMachineList(userId) {
 		try {
 			const result = await executeStoredProcedure(
@@ -81,15 +113,22 @@ class FactoryModel {
 		}
 	}
 
-	async machineInspection(factoryUserId, machineNo, scheduleInspectionDate, competentUserId) {
+	async machineInspection({
+		factoryUserId,
+		machineName,
+		inspectionCount,
+		inspectionDate,
+		competentUserIds,
+	}) {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_MachineInspection',
+				'SP_MachineInspectionRequest',
 				[
 					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
-					{ name: 'machineNo', type: sql.VarChar(30), value: machineNo },
-					{ name: 'scheduleInspectionDate', type: sql.Date(), value: scheduleInspectionDate },
-					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{ name: 'inspectionCount', type: sql.Int, value: inspectionCount },
+					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
+					{ name: 'competentUserIds', type: sql.NVarChar(sql.MAX), value: competentUserIds },
 				],
 				true
 			);
@@ -104,7 +143,7 @@ class FactoryModel {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetFactoryOwnerProfile',
-				[{ name: 'userId', type: sql.VarChar(30), value: userId ?? null }],
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
 				true
 			);
 			return result;

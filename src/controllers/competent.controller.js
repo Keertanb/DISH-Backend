@@ -6,7 +6,6 @@ import logger from '../utils/logger.js';
 const competentService = new CompetentService();
 
 class CompetentController {
-
 	async updateProfile(req, res) {
 		try {
 			const { userId, ...data } = req.body;
@@ -48,14 +47,22 @@ class CompetentController {
 
 	async scheduledMachineInspectionStatus(req, res) {
 		try {
-			const { userId, machineNo, scheduleInspectionDate, status, reason } = req.body;
+			const {
+				factoryUserId,
+				machineName,
+				inspectionDate,
+				status,
+				competentReason,
+				competentUserId,
+			} = req.body;
 
 			const result = await competentService.scheduledMachineInspectionStatus({
-				userId,
-				machineNo,
-				scheduleInspectionDate,
+				factoryUserId,
+				machineName,
+				inspectionDate,
 				status,
-				reason,
+				competentReason,
+				competentUserId,
 			});
 
 			return res.handler.success(result);
@@ -77,6 +84,17 @@ class CompetentController {
 		} catch (err) {
 			logger.error('Error in inspectionFactory:', { err });
 			return res.handler.serverError({}, err.message || 'Error in inspectionFactory');
+		}
+	}
+
+	async addNewMachine(req, res) {
+		try {
+			const machine = await competentService.addNewMachine(req.body);
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in addNewMachine:', { err });
+			return res.handler.serverError({}, err.message || 'Error in addNewMachine');
 		}
 	}
 
@@ -135,6 +153,24 @@ class CompetentController {
 			return res.handler.serverError({}, err.message || 'Error Add Experience data');
 		}
 	}
+
+	async getIdentityByMachines(req, res) {
+		try {
+			const { userId, machineName, page, limit, search } = req.query;
+			const result = await competentService.getIdentityByMachines(
+				userId,
+				machineName,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getIdentityByMachines controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching Identity By Machines data');
+		}
+	}
+
 	async upsertPressureVesselInspection(req, res) {
 		try {
 			const result = await competentService.upsertPressureVesselInspection(req.body);

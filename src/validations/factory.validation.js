@@ -1,4 +1,19 @@
+import e from 'express';
 import Joi from 'joi';
+
+export const registerMachine = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(70).required(),
+		totalMachines: Joi.number().required(),
+	}),
+};
+
+export const getMachineCount = {
+	query: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+	}),
+};
 
 export const getMachineList = {
 	query: Joi.object().keys({
@@ -31,9 +46,16 @@ export const addNewMachine = {
 export const machineInspection = {
 	body: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
-		machineNo: Joi.string().max(30).required(),
-		scheduleInspectionDate: Joi.date().required(),
-		competentUserId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(70).required(),
+		inspectionCount: Joi.number().integer().required(),
+		inspectionDate: Joi.date().required(),
+		competentUserIds: Joi.array()
+			.items(
+				Joi.object({
+					userId: Joi.string().max(30).required(),
+				})
+			)
+			.required(),
 	}),
 };
 
