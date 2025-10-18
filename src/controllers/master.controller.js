@@ -70,6 +70,51 @@ class MasterController {
 		}
 	}
 
+	async getPendingCompetentListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const pendingCompetentList = await masterService.getPendingCompetentListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ pendingCompetentList });
+		} catch (err) {
+			logger.error('Error in getPendingCompetentListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getPendingCompetentListByDistrictId'
+			);
+		}
+	}
+
+	async getFactoryCountByDistrictId(req, res) {
+		try {
+			const factoryCount = await masterService.getFactoryCountByDistrictId();
+			return res.handler.success({ factoryCount });
+		} catch (err) {
+			logger.error('Error in getFactoryCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getFactoryCountByDistrictId');
+		}
+	}
+
+	async getFactoryListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const factoryList = await masterService.getFactoryListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ factoryList });
+		} catch (err) {
+			logger.error('Error in getFactoryListByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getFactoryListByDistrictId');
+		}
+	}
+
 	async getInspectionCompletedCountByDistrictId(req, res) {
 		try {
 			const inspectionCompletedCount =
@@ -84,13 +129,22 @@ class MasterController {
 		}
 	}
 
-	async getFactoryCountByDistrictId(req, res) {
+	async getInspectionCompletedListByDistrictId(req, res) {
 		try {
-			const factoryCount = await masterService.getFactoryCountByDistrictId();
-			return res.handler.success({ factoryCount });
+			const { districtId, page, limit, search } = req.query;
+			const inspectionCompletedList = await masterService.getInspectionCompletedListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ inspectionCompletedList });
 		} catch (err) {
-			logger.error('Error in getFactoryCountByDistrictId:', { err });
-			return res.handler.serverError({}, err.message || 'Error in getFactoryCountByDistrictId');
+			logger.error('Error in getInspectionCompletedListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getInspectionCompletedListByDistrictId'
+			);
 		}
 	}
 
@@ -107,6 +161,25 @@ class MasterController {
 		}
 	}
 
+	async getPendingInspectionListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const pendingInspectionList = await masterService.getPendingInspectionListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ pendingInspectionList });
+		} catch (err) {
+			logger.error('Error in getPendingInspectionListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getPendingInspectionListByDistrictId'
+			);
+		}
+	}
+
 	async getOverduePendingInspectionCountByDistrictId(req, res) {
 		try {
 			const overduePendingInspectionCount =
@@ -117,6 +190,26 @@ class MasterController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in getOverduePendingInspectionCountByDistrictId'
+			);
+		}
+	}
+
+	async getOverduePendingInspectionListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const overduePendingInspectionList =
+				await masterService.getOverduePendingInspectionListByDistrictId(
+					districtId,
+					page,
+					limit,
+					search
+				);
+			return res.handler.success({ overduePendingInspectionList });
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getOverduePendingInspectionListByDistrictId'
 			);
 		}
 	}

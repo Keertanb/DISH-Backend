@@ -37,13 +37,34 @@ router.get(
 	masterController.getPendingCompetentCountByDistrictId
 );
 
+// DistrictId wise competent status is pending list
+router.get(
+	'/get-pending-competent-list-by-districtId',
+	validateSchema(masterValidation.pendingCompetentListByDistrictId),
+	masterController.getPendingCompetentListByDistrictId
+);
+
 // DistrictId wise factory counts
 router.get('/get-factory-count-by-districtId', masterController.getFactoryCountByDistrictId);
+
+// DistrictId wise factory list
+router.get(
+	'/get-factory-list-by-districtId',
+	validateSchema(masterValidation.factoryListByDistrictId),
+	masterController.getFactoryListByDistrictId
+);
 
 // DistrictId wise competent inspection completed this month counts
 router.get(
 	'/get-inspection-completed-count-by-districtId',
 	masterController.getInspectionCompletedCountByDistrictId
+);
+
+// DistrictId wise competent inspection competent this month List
+router.get(
+	'/get-inspection-completed-list-by-districtId',
+	validateSchema(masterValidation.getInspectionCompletedListByDistrictId),
+	masterController.getInspectionCompletedListByDistrictId
 );
 
 //DistrictId wise factory machine pending inspection counts
@@ -52,10 +73,24 @@ router.get(
 	masterController.getPendingInspectionCountByDistrictId
 );
 
+//DistrictId wise factory machine pending inspection list
+router.get(
+	'/get-pending-inspection-list-by-districtId',
+	validateSchema(masterValidation.getPendingInspectionListByDistrictId),
+	masterController.getPendingInspectionListByDistrictId
+);
+
 //DistrictId wise factory machine overdue pending inspection counts
 router.get(
 	'/get-overdue-pending-count-by-districtId',
 	masterController.getOverduePendingInspectionCountByDistrictId
+);
+
+//DistrictId wise factory machine overdue pending inspection list
+router.get(
+	'/get-overdue-pending-list-by-districtId',
+	validateSchema(masterValidation.getOverduePendingInspectionListByDistrictId),
+	masterController.getOverduePendingInspectionListByDistrictId
 );
 
 export default router;

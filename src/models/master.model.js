@@ -62,6 +62,58 @@ class MasterModel {
 		}
 	}
 
+	async getPendingCompetentListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictCompetentPendingList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
+			return result;
+		} catch (err) {
+			logger.error('Error in getPendingCompetentListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getFactoryCountByDistrictId() {
+		try {
+			const result = await executeStoredProcedure('SP_GetDistrictFactoryCount', [], true);
+			return result;
+		} catch (err) {
+			logger.error('Error in getFactoryCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getFactoryListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictFactoryList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getFactoryListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
 	async getInspectionCompletedCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(
@@ -76,12 +128,21 @@ class MasterModel {
 		}
 	}
 
-	async getFactoryCountByDistrictId() {
+	async getInspectionCompletedListByDistrictId(districtId, page, limit, search) {
 		try {
-			const result = await executeStoredProcedure('SP_GetDistrictFactoryCount', [], true);
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictInspectionThisMonthList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
 			return result;
 		} catch (err) {
-			logger.error('Error in getFactoryCountByDistrictId model:', { err });
+			logger.error('Error in getInspectionCompletedListByDistrictId model:', { err });
 			throw err;
 		}
 	}
@@ -100,6 +161,25 @@ class MasterModel {
 		}
 	}
 
+	async getPendingInspectionListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictMachineInspectionPendingList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getPendingInspectionListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
 	async getOverduePendingInspectionCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(
@@ -110,6 +190,26 @@ class MasterModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in getOverduePendingInspectionCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getOverduePendingInspectionListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictMachineOverduePendingList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionListByDistrictId model:', { err });
 			throw err;
 		}
 	}

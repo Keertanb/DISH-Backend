@@ -65,12 +65,17 @@ class MasterService {
 		}
 	}
 
-	async getInspectionCompletedCountByDistrictId() {
+	async getPendingCompetentListByDistrictId(districtId, page, limit, search) {
 		try {
-			const inspectionCompletedCount = await masterModel.getInspectionCompletedCountByDistrictId();
-			return inspectionCompletedCount;
+			const pendingCompetentList = await masterModel.getPendingCompetentListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return pendingCompetentList;
 		} catch (err) {
-			logger.error('Error in getInspectionCompletedCountByDistrictId service:', { err });
+			logger.error('Error in getPendingCompetentListByDistrictId service:', { err });
 			throw err;
 		}
 	}
@@ -85,12 +90,67 @@ class MasterService {
 		}
 	}
 
+	async getFactoryListByDistrictId(districtId, page, limit, search) {
+		try {
+			const factoryList = await masterModel.getFactoryListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return factoryList;
+		} catch (err) {
+			logger.error('Error in getFactoryListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getInspectionCompletedCountByDistrictId() {
+		try {
+			const inspectionCompletedCount = await masterModel.getInspectionCompletedCountByDistrictId();
+			return inspectionCompletedCount;
+		} catch (err) {
+			logger.error('Error in getInspectionCompletedCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getInspectionCompletedListByDistrictId(districtId, page, limit, search) {
+		try {
+			const inspectionCompletedList = await masterModel.getInspectionCompletedListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return inspectionCompletedList;
+		} catch (err) {
+			logger.error('Error in getInspectionCompletedListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
 	async getPendingInspectionCountByDistrictId() {
 		try {
 			const pendingInspectionCount = await masterModel.getPendingInspectionCountByDistrictId();
 			return pendingInspectionCount;
 		} catch (err) {
 			logger.error('Error in getPendingInspectionCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getPendingInspectionListByDistrictId(districtId, page, limit, search) {
+		try {
+			const pendingInspectionList = await masterModel.getPendingInspectionListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return pendingInspectionList;
+		} catch (err) {
+			logger.error('Error in getPendingInspectionListByDistrictId service:', { err });
 			throw err;
 		}
 	}
@@ -102,6 +162,22 @@ class MasterService {
 			return overduePendingInspectionCount;
 		} catch (err) {
 			logger.error('Error in getOverduePendingInspectionCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getOverduePendingInspectionListByDistrictId(districtId, page, limit, search) {
+		try {
+			const overduePendingInspectionList =
+				await masterModel.getOverduePendingInspectionListByDistrictId(
+					districtId,
+					page,
+					limit,
+					search
+				);
+			return overduePendingInspectionList;
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionListByDistrictId service:', { err });
 			throw err;
 		}
 	}
