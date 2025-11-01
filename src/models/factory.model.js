@@ -4,21 +4,6 @@ import { executeStoredProcedure } from '../database/index.js';
 // UTILS
 import logger from '../utils/logger.js';
 
-export const AddMachine = {
-	userId: '',
-	machineName: '',
-	quantity: 0,
-	machineDescription: '',
-	serialNumbers: '',
-	dateOfFirstUse: null,
-	dateOfInstallation: null,
-	nameOfManufacture: null,
-	addressOfManufacture: null,
-	dateOfConstruction: null,
-	thicknessOfWall: null,
-	identityFicationOfMachine: null,
-	safeWorkingPressure: null,
-};
 class FactoryModel {
 	async registerMachine({ userId, machineName, totalMachines }) {
 		try {
@@ -52,13 +37,21 @@ class FactoryModel {
 		}
 	}
 
-	async getMachineList(userId) {
+	async getMachineList(userId, machineType, page, limit, search) {
 		try {
+			logger.info('getMachineList Params:', { userId, machineType, page, limit, search });
 			const result = await executeStoredProcedure(
 				'SP_GetMachineryFactoryAllocation',
-				[{ name: 'userId', type: sql.VarChar(), value: userId }],
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'machineType', type: sql.VarChar(20), value: machineType ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
 				true
 			);
+
 			return result;
 		} catch (err) {
 			logger.error('Error in getMachineList model:', { err });
@@ -118,6 +111,7 @@ class FactoryModel {
 		machineName,
 		inspectionCount,
 		inspectionDate,
+		machineNo,
 		competentUserIds,
 	}) {
 		try {
@@ -128,6 +122,7 @@ class FactoryModel {
 					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
 					{ name: 'inspectionCount', type: sql.Int, value: inspectionCount },
 					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
+					{ name: 'machineNo', type: sql.VarChar(50), value: machineNo || null },
 					{ name: 'competentUserIds', type: sql.NVarChar(sql.MAX), value: competentUserIds },
 				],
 				true
@@ -155,6 +150,7 @@ class FactoryModel {
 
 	async getFactoryMachineInspectionList(factoryUserId, page, limit, search) {
 		try {
+			logger.info('getMachineList Params:', { factoryUserId, page, limit, search });
 			const result = await executeStoredProcedure(
 				'SP_GetFactoryMachineInspectionsList',
 				[
@@ -200,6 +196,22 @@ class FactoryModel {
 			return [];
 		} catch (err) {
 			logger.error('Error in nextInspectionOnMachine model:', { err });
+			throw err;
+		}
+	}
+
+	async beforePendingInspectionUsers() {
+		try {
+			const result = await executeStoredProcedure('SP_beforePendingInspectionUsers', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in beforePendingInspectionUsers model:', { err });
 			throw err;
 		}
 	}

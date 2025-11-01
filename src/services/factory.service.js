@@ -31,12 +31,9 @@ class FactoryService {
 		}
 	}
 
-	async getMachineList(userId) {
+	async getMachineList(userId, machineType, page, limit, search) {
 		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
-			const machine = await factoryModel.getMachineList(userId);
+			const machine = await factoryModel.getMachineList(userId, machineType, page, limit, search);
 			return machine;
 		} catch (err) {
 			logger.error('Error in getMachineList service:', { err });
@@ -59,6 +56,7 @@ class FactoryService {
 		machineName,
 		inspectionCount,
 		inspectionDate,
+		machineNo,
 		competentUserIds,
 	}) {
 		try {
@@ -67,9 +65,11 @@ class FactoryService {
 				machineName,
 				inspectionCount,
 				inspectionDate,
+				machineNo,
 				competentUserIds,
 			});
-			return result;
+
+			return result && result.length > 0 ? result[0] : null;
 		} catch (err) {
 			logger.error('Error in machineInspection service:', { err });
 			throw err;
@@ -185,6 +185,70 @@ class FactoryService {
 			return { message: 'Machine Inspection Reminder successfully', candidates };
 		} catch (err) {
 			logger.error('Error in nextInspectionOnMachine service:', { err });
+			throw err;
+		}
+	}
+
+	async beforePendingInspectionUsers() {
+		try {
+			const candidates = await factoryModel.beforePendingInspectionUsers();
+			if (!candidates.length) {
+				console.error(
+					' No candidates found. Check if userIds exist in competent_officer or emails are NULL.'
+				);
+			}
+			for (const candidate of candidates) {
+				const { userId, email, machineNo, machineName } = candidate;
+				if (!email) {
+					console.error(` Missing email for userId ${userId}`);
+					continue;
+				}
+				await sendMail({
+					to: email,
+					subject: 'Pending Machine Inspection Reminder - Factory Portal',
+					html: `
+					<p>Dear Factory User,</p>
+					<p>This is a reminder that your machine inspection is pending.</p>
+					<p>Machine details:</p>
+					<ul>
+					    ${
+								userId ? (
+									<li>
+										User ID: <b>${userId} </b>
+									</li>
+								) : (
+									''
+								)
+							}
+						${
+							machineName ? (
+								<li>
+									Machine Name: <b>${machineName}</b>
+								</li>
+							) : (
+								''
+							)
+						}
+						${
+							machineNo ? (
+								<li>
+									Machine No: <b>${machineNo}</b>
+								</li>
+							) : (
+								''
+							)
+						}
+
+					</ul>
+					<p><b>Note:</b> The inspection is pending for more than <b>15 days</b>.</p>
+					<p>We kindly request you to schedule the inspection at the earliest.</p>
+					<p>Regards,<br/>Support Team</p>
+					`,
+				});
+			}
+			return { message: 'Pending Machine Inspection Reminder successfully', candidates };
+		} catch (err) {
+			logger.error('Error in beforePendingInspectionUsers service:', { err });
 			throw err;
 		}
 	}

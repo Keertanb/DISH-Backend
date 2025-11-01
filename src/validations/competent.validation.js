@@ -181,7 +181,7 @@ export const scheduledMachineInspectionStatus = {
 		competentReason: Joi.when('status', {
 			is: 'Rejected',
 			then: Joi.string().max(255).required(),
-			otherwise: Joi.allow(null).optional(),
+			otherwise: Joi.allow(null, '').optional(),
 		}),
 		competentUserId: Joi.string().max(30).required(),
 	}),

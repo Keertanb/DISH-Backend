@@ -73,9 +73,6 @@ class CompetentService {
 		competentUserId,
 	}) {
 		try {
-			if (!factoryUserId || factoryUserId.trim() === '') {
-				throw new Error('Invalid factoryUserId provided');
-			}
 			if (!status || !['Approved', 'Rejected'].includes(status)) {
 				throw new Error('Invalid status provided');
 			}

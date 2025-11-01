@@ -40,7 +40,13 @@ export const updateCompetentOfficersStatus = {
 		userId: Joi.string().max(30).required(),
 
 		applicationType: Joi.string()
-			.valid('Approved', 'Reject', 'RecommendedByDistrict', 'QueryToDistrict')
+			.valid(
+				'Approved',
+				'Reject',
+				'RecommendedByDistrict',
+				'QueryToDistrict',
+				'NonRecommendedByDistrict'
+			)
 			.required(),
 
 		reason: Joi.when('applicationType', {
@@ -71,7 +77,6 @@ export const rescheduleInterview = {
 		newScheduledDate: Joi.date().required(),
 	}),
 };
-
 
 export const InterviewCompetentOfficersStatus = {
 	body: Joi.object().keys({

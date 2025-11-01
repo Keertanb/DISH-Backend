@@ -115,17 +115,15 @@ class AllOfficersController {
 			const result = await allOfficersService.rescheduleInterview({
 				interviewCandidates,
 				oldScheduledDate,
-				newScheduledDate
+				newScheduledDate,
 			});
 
 			return res.handler.success(result);
 		} catch (err) {
 			logger.error('Error in rescheduleInterview controller:', { err });
 			return res.handler.serverError({ sqlError: err.message }, err.message);
-
 		}
 	}
-
 
 	async pauseCompetentOfficer(req, res) {
 		try {

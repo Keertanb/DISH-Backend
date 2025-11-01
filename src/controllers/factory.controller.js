@@ -35,9 +35,9 @@ class FactoryController {
 
 	async getMachineList(req, res) {
 		try {
-			const { userId } = req.query;
+			const { userId, machineType, page, limit, search } = req.query;
 
-			const machine = await factoryService.getMachineList(userId);
+			const machine = await factoryService.getMachineList(userId, machineType, page, limit, search);
 
 			return res.handler.success(machine);
 		} catch (err) {
@@ -59,8 +59,14 @@ class FactoryController {
 
 	async machineInspection(req, res) {
 		try {
-			const { factoryUserId, machineName, inspectionCount, inspectionDate, competentUserIds } =
-				req.body;
+			const {
+				factoryUserId,
+				machineName,
+				inspectionCount,
+				inspectionDate,
+				machineNo,
+				competentUserIds,
+			} = req.body;
 
 			const competentUserIdsJson = JSON.stringify(competentUserIds);
 
@@ -68,6 +74,7 @@ class FactoryController {
 				factoryUserId,
 				machineName,
 				inspectionCount,
+				machineNo,
 				inspectionDate,
 				competentUserIds: competentUserIdsJson,
 			});
@@ -132,6 +139,16 @@ class FactoryController {
 		} catch (err) {
 			logger.error('Error in nextInspectionOnMachine controller:', { err });
 			return res.handler.serverError({}, err.message || 'Error fetching upcoming inspections');
+		}
+	}
+
+	async beforePendingInspectionUsers(req, res) {
+		try {
+			const result = await factoryService.beforePendingInspectionUsers();
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in beforePendingInspectionUsers controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching pending inspections');
 		}
 	}
 }

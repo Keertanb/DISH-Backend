@@ -18,6 +18,10 @@ export const getMachineCount = {
 export const getMachineList = {
 	query: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
+		machineType: Joi.string().max(20).optional(),
+		page: Joi.number().integer().required(),
+		limit: Joi.number().integer().required(),
+		search: Joi.string().max(100).optional(),
 	}),
 };
 
@@ -47,14 +51,20 @@ export const machineInspection = {
 	body: Joi.object().keys({
 		factoryUserId: Joi.string().max(30).required(),
 		machineName: Joi.string().max(70).required(),
-		inspectionCount: Joi.number().integer().required(),
+		inspectionCount: Joi.number().integer().min(1).required(),
 		inspectionDate: Joi.date().required(),
+		machineNo: Joi.when('inspectionCount', {
+			is: 1,
+			then: Joi.string().max(50).required(),
+			otherwise: Joi.string().allow(null).optional(),
+		}),
 		competentUserIds: Joi.array()
 			.items(
 				Joi.object({
 					userId: Joi.string().max(30).required(),
 				})
 			)
+			.min(1)
 			.required(),
 	}),
 };

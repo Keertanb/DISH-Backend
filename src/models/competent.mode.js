@@ -206,9 +206,18 @@ class CompetentModel {
 				true
 			);
 
-			if (result && result[0]?.machineType) {
-				result[0].machineType = JSON.parse(result[0].machineType);
+			if (Array.isArray(result)) {
+				result.forEach((i) => {
+					if (typeof i.machineType === 'string') {
+						try {
+							i.machineType = JSON.parse(i.machineType);
+						} catch {
+							i.machineType = [];
+						}
+					}
+				});
 			}
+
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory model:', { err });

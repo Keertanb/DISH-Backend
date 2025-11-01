@@ -66,6 +66,7 @@ class CompetentController {
 			});
 
 			return res.handler.success(result);
+			console.log(res.handler);
 		} catch (err) {
 			logger.error('Error in scheduledMachineInspectionStatus controller:', { err });
 			return res.handler.serverError(

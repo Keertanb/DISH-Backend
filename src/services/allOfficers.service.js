@@ -61,15 +61,24 @@ class AllOfficersService {
 			}
 			if (
 				!applicationType ||
-				!['Approved', 'Reject', 'RecommendedByDistrict', 'QueryToDistrict'].includes(
-					applicationType
-				)
+				![
+					'Approved',
+					'Reject',
+					'RecommendedByDistrict',
+					'QueryToDistrict',
+					'NonRecommendedByDistrict',
+				].includes(applicationType)
 			) {
 				throw new Error('Invalid applicationType provided');
 			}
 
-			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Reject');
+			if (
+				(applicationType === 'Reject' || applicationType === 'NonRecommendedByDistrict') &&
+				(!reason || reason.trim() === '')
+			) {
+				throw new Error(
+					'Reason is required when applicationType is Reject OR NonRecommendedByDistrict'
+				);
 			}
 			const status = await allOfficersModel.updateCompetentOfficersStatus(
 				userId,
@@ -115,7 +124,6 @@ class AllOfficersService {
 					continue;
 				}
 
-
 				const pdfBuffer = await generateInterviewPDF({
 					name: name || '...............................',
 					userId,
@@ -156,7 +164,7 @@ class AllOfficersService {
 
 	async rescheduleInterview({ interviewCandidates, oldScheduledDate, newScheduledDate }) {
 		try {
-			const userId = interviewCandidates.map(c => c.userId).join(',');
+			const userId = interviewCandidates.map((c) => c.userId).join(',');
 
 			const candidates = await allOfficersModel.rescheduleInterview(
 				userId,
