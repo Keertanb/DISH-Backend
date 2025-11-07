@@ -1,5 +1,6 @@
 import express from 'express';
 // MIDDLEWARES
+import uploadCompetentDocs from '../middlewares/upload.competent.docs.js';
 import validateSchema from '../middlewares/validateSchema.middleware.js';
 // VALIDATIONS
 import * as competentValidation from '../validations/competent.validation.js';
@@ -12,6 +13,7 @@ const competentController = new CompetentController();
 //update profile
 router.post(
 	'/update-profile',
+	uploadCompetentDocs,
 	validateSchema(competentValidation.updateProfile),
 	competentController.updateProfile
 );
@@ -56,6 +58,13 @@ router.get(
 	'/get-factory-machine',
 	validateSchema(competentValidation.getFactoryList),
 	competentController.getFactoryList
+);
+
+//Get Approved machine inspection list date wise
+router.get(
+	'/get-approved-machine-inspection',
+	validateSchema(competentValidation.getApprovedMachineInspectionList),
+	competentController.getApprovedMachineInspectionList
 );
 
 // Competent officer profile

@@ -58,48 +58,48 @@ class CompetentModel {
 					{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers },
 					{
 						name: 'pressureVesselOrPlantDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: pressureVesselOrPlantDocument,
 					},
 					{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine },
 					{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater },
 					{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace },
 					{ name: 'isStability', type: sql.Bit, value: isStability },
-					{ name: 'hoistAndLiftsDocument', type: sql.VarChar(255), value: hoistAndLiftsDocument },
+					{ name: 'hoistAndLiftsDocument', type: sql.NVarChar(255), value: hoistAndLiftsDocument },
 					{
 						name: 'dustFumeExtractionSystemDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: dustFumeExtractionSystemDocument,
 					},
 					{
 						name: 'powerPressSafetyDevicesDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: powerPressSafetyDevicesDocument,
 					},
 					{
 						name: 'waterSealedGasHolderDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: waterSealedGasHolderDocument,
 					},
 					{
 						name: 'liftingMachinesChainsRopesDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: liftingMachinesChainsRopesDocument,
 					},
-					{ name: 'ovenAndDriersDocument', type: sql.VarChar(255), value: ovenAndDriersDocument },
+					{ name: 'ovenAndDriersDocument', type: sql.NVarChar(255), value: ovenAndDriersDocument },
 					{
 						name: 'centrifugeMachineDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: centrifugeMachineDocument,
 					},
 					{
 						name: 'thermicFluidHeaterDocument',
-						type: sql.VarChar(255),
+						type: sql.NVarChar(255),
 						value: thermicFluidHeaterDocument,
 					},
-					{ name: 'confinedSpaceDocument', type: sql.VarChar(255), value: confinedSpaceDocument },
-					{ name: 'stabilityDocument', type: sql.VarChar(255), value: stabilityDocument },
-					{ name: 'cv', type: sql.VarChar(255), value: cv },
+					{ name: 'confinedSpaceDocument', type: sql.NVarChar(255), value: confinedSpaceDocument },
+					{ name: 'stabilityDocument', type: sql.NVarChar(255), value: stabilityDocument },
+					{ name: 'cv', type: sql.NVarChar(255), value: cv },
 					{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
 					{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
 					{
@@ -293,6 +293,34 @@ class CompetentModel {
 		}
 	}
 
+	async getApprovedMachineInspectionList(
+		factoryUserId,
+		machineNoPattern,
+		inspectionDate,
+		page,
+		limit,
+		search
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetApprovedInspectionMachines',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineNoPattern', type: sql.VarChar(50), value: `${machineNoPattern}%` },
+					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getApprovedMachineInspectionList model:', { err });
+			throw err;
+		}
+	}
+
 	async getCompetentOfficerProfile(userId) {
 		try {
 			const result = await executeStoredProcedure(
@@ -351,13 +379,17 @@ class CompetentModel {
 		}
 	}
 
-	async getIdentityByMachines(userId, machineName, page, limit, search) {
+	async getIdentityByMachines(userId, identityFicationOfMachine, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetIdentitynoByFactoryMachinery',
 				[
 					{ name: 'userId', type: sql.VarChar(30), value: userId },
-					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{
+						name: 'identityFicationOfMachine',
+						type: sql.VarChar(50),
+						value: identityFicationOfMachine,
+					},
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
 					{ name: 'search', type: sql.VarChar(100), value: search ?? null },

@@ -27,6 +27,8 @@ import {
 	developmentRateLimiter,
 } from './middlewares/rateLimit.middlewares.js';
 
+import path from 'path';
+
 const app = express();
 dotenv.config();
 const port = config.server.port;
@@ -40,6 +42,8 @@ app.use(cors()); // CORS configuration
 app.use(express.json({ limit: '5mb' })); // ALLOW APPLICATION JSON
 app.use(express.urlencoded({ extended: false })); // ALLOW URL ENCODED PARSER
 app.use(logger.logRequest.bind(logger)); // Request logging
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads'))); // Serve files
 
 // ------------------------    RESPONSE HANDLER    -------------------
 const handlerMiddleware = (req, res, next) => {

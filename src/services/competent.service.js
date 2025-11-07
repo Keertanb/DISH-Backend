@@ -156,6 +156,30 @@ class CompetentService {
 		}
 	}
 
+	async getApprovedMachineInspectionList(
+		factoryUserId,
+		machineNoPattern,
+		inspectionDate,
+		page,
+		limit,
+		search
+	) {
+		try {
+			const result = await competentModel.getApprovedMachineInspectionList(
+				factoryUserId,
+				machineNoPattern,
+				inspectionDate,
+				page,
+				limit,
+				search
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getApprovedMachineInspectionList service:', { err });
+			throw err;
+		}
+	}
+
 	async getCompetentOfficerProfile(userId) {
 		try {
 			const profile = await competentModel.getCompetentOfficerProfile(userId);
@@ -195,11 +219,11 @@ class CompetentService {
 		}
 	}
 
-	async getIdentityByMachines(userId, machineName, page, limit, search) {
+	async getIdentityByMachines(userId, identityFicationOfMachine, page, limit, search) {
 		try {
 			const result = await competentModel.getIdentityByMachines(
 				userId,
-				machineName,
+				identityFicationOfMachine,
 				page,
 				limit,
 				search

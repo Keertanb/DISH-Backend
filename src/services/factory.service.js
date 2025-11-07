@@ -198,54 +198,47 @@ class FactoryService {
 				);
 			}
 			for (const candidate of candidates) {
-				const { userId, email, machineNo, machineName } = candidate;
+				const {
+					userId,
+					email,
+					machineNo,
+					machineName,
+					inspectionDate,
+					inspectedCount,
+					approvedCount,
+					differenceCount,
+				} = candidate;
+
 				if (!email) {
-					console.error(` Missing email for userId ${userId}`);
+					console.error(`Missing email for userId ${userId}`);
 					continue;
 				}
+
 				await sendMail({
 					to: email,
-					subject: 'Pending Machine Inspection Reminder - Factory Portal',
+					subject: 'Reminder: Pending Machine Inspection - Factory Portal',
 					html: `
 					<p>Dear Factory User,</p>
-					<p>This is a reminder that your machine inspection is pending.</p>
-					<p>Machine details:</p>
+					<p>Our records indicate that you have conducted inspections for your machine(s) listed below. However, some inspections remain pending for more than <b>15 days</b>.</p>
+					
+					<p><b>Machine Details:</b></p>
 					<ul>
-					    ${
-								userId ? (
-									<li>
-										User ID: <b>${userId} </b>
-									</li>
-								) : (
-									''
-								)
-							}
-						${
-							machineName ? (
-								<li>
-									Machine Name: <b>${machineName}</b>
-								</li>
-							) : (
-								''
-							)
-						}
-						${
-							machineNo ? (
-								<li>
-									Machine No: <b>${machineNo}</b>
-								</li>
-							) : (
-								''
-							)
-						}
-
+						${machineName ? `<li>Machine Name: <b>${machineName}</b></li>` : ''}
+						${machineNo ? `<li>Machine No: <b>${machineNo}</b></li>` : ''}
+						<li>Inspection Date: <b>${inspectionDate}</b></li
+						<li>Total Inspected Machines: <b>${inspectedCount}</b></li>
+						<li>Approved Machines: <b>${approvedCount ? approvedCount : 0}</b></li>
+						<li>Pending Machines: <b>${differenceCount ? differenceCount : 0}</b></li>
 					</ul>
-					<p><b>Note:</b> The inspection is pending for more than <b>15 days</b>.</p>
-					<p>We kindly request you to schedule the inspection at the earliest.</p>
-					<p>Regards,<br/>Support Team</p>
-					`,
+
+					<p>If necessary, you can also <b>request a re-inspection</b> for the pending machines through the Factory Portal.</p>
+
+					<p>Thank you for your prompt cooperation.</p>
+					<p>Regards,<br/><b>Factory Inspection Support Team</b></p>
+				`,
 				});
 			}
+
 			return { message: 'Pending Machine Inspection Reminder successfully', candidates };
 		} catch (err) {
 			logger.error('Error in beforePendingInspectionUsers service:', { err });

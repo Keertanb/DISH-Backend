@@ -8,7 +8,32 @@ const competentService = new CompetentService();
 class CompetentController {
 	async updateProfile(req, res) {
 		try {
+			console.log(req.body, 'req.body in updateProfile');
 			const { userId, ...data } = req.body;
+			console.log('Update Profile Request Body:', req.body);
+			console.log('Uploaded Files:', req.files);
+			if (req.files) {
+				const fileFields = [
+					'pressureVesselOrPlantDocument',
+					'hoistAndLiftsDocument',
+					'dustFumeExtractionSystemDocument',
+					'powerPressSafetyDevicesDocument',
+					'waterSealedGasHolderDocument',
+					'liftingMachinesChainsRopesDocument',
+					'ovenAndDriersDocument',
+					'centrifugeMachineDocument',
+					'thermicFluidHeaterDocument',
+					'confinedSpaceDocument',
+					'stabilityDocument',
+					'cv',
+				];
+
+				fileFields.forEach((field) => {
+					if (req.files[field] && req.files[field][0]) {
+						data[field] = `competent-documents/${req.files[field][0].filename}`;
+					}
+				});
+			}
 			const result = await competentService.updateProfile(userId, data);
 			return res.handler.success(result);
 		} catch (err) {
@@ -111,6 +136,27 @@ class CompetentController {
 		}
 	}
 
+	async getApprovedMachineInspectionList(req, res) {
+		try {
+			const { factoryUserId, machineNoPattern, inspectionDate, page, limit, search } = req.query;
+			const result = await competentService.getApprovedMachineInspectionList(
+				factoryUserId,
+				machineNoPattern,
+				inspectionDate,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getApprovedMachineInspectionList:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getApprovedMachineInspectionList'
+			);
+		}
+	}
+
 	async getCompetentOfficerProfile(req, res) {
 		try {
 			const { userId } = req.query;
@@ -157,10 +203,10 @@ class CompetentController {
 
 	async getIdentityByMachines(req, res) {
 		try {
-			const { userId, machineName, page, limit, search } = req.query;
+			const { userId, identityFicationOfMachine, page, limit, search } = req.query;
 			const result = await competentService.getIdentityByMachines(
 				userId,
-				machineName,
+				identityFicationOfMachine,
 				page,
 				limit,
 				search

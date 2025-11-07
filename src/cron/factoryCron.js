@@ -33,11 +33,11 @@ const expireInspection = cron.schedule(
 );
 
 const beforePendingInspection = cron.schedule(
-	'* 12 * * *',
+	'8 * * * *',
 	async () => {
 		try {
 			const response = await axios.post(
-				'http://localhost:8000/api/v1/factory//before-pending-inspection'
+				'http://localhost:8000/api/v1/factory/before-pending-inspection'
 			);
 			console.log('Before Pending  Inspection last 15 days API Called:', response.data);
 		} catch (err) {
