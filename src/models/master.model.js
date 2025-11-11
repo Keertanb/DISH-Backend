@@ -41,12 +41,151 @@ class MasterModel {
 		}
 	}
 
-	async getCompetentCountByDistrictId() {
+	async getCompetentRegisterCountByDistrictId() {
 		try {
-			const result = await executeStoredProcedure('SP_GetDistrictCompetentCount', [], true);
+			const result = await executeStoredProcedure('SP_GetDistrictCompetentRegisterCount', [], true);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentRegisterListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictCompetentRegisterList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentCountByDistrictId(
+		isPressureVesselOrPlant,
+		isHoistAndLifts,
+		isDustFumeExtractionSystem,
+		isPowerPressSafetyDevices,
+		isWaterSealedGasHolder,
+		isLiftingMachinesChainsRopes,
+		isOvenAndDriers,
+		isCentrifugeMachine,
+		isThermicFluidHeater,
+		isConfinedSpace,
+		isStability
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictCompetentCount',
+				[
+					{
+						name: 'isPressureVesselOrPlant',
+						type: sql.Bit,
+						value: isPressureVesselOrPlant ?? null,
+					},
+					{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts ?? null },
+					{
+						name: 'isDustFumeExtractionSystem',
+						type: sql.Bit,
+						value: isDustFumeExtractionSystem ?? null,
+					},
+					{
+						name: 'isPowerPressSafetyDevices',
+						type: sql.Bit,
+						value: isPowerPressSafetyDevices ?? null,
+					},
+					{ name: 'isWaterSealedGasHolder', type: sql.Bit, value: isWaterSealedGasHolder ?? null },
+					{
+						name: 'isLiftingMachinesChainsRopes',
+						type: sql.Bit,
+						value: isLiftingMachinesChainsRopes ?? null,
+					},
+					{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers ?? null },
+					{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine ?? null },
+					{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater ?? null },
+					{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace ?? null },
+					{ name: 'isStability', type: sql.Bit, value: isStability ?? null },
+				],
+				true
+			);
 			return result;
 		} catch (err) {
 			logger.error('Error in getCompetentCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineTypeCompetentListByDistrictId(
+		districtId,
+		page,
+		limit,
+		search,
+		isPressureVesselOrPlant,
+		isHoistAndLifts,
+		isDustFumeExtractionSystem,
+		isPowerPressSafetyDevices,
+		isWaterSealedGasHolder,
+		isLiftingMachinesChainsRopes,
+		isOvenAndDriers,
+		isCentrifugeMachine,
+		isThermicFluidHeater,
+		isConfinedSpace,
+		isStability
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetMachineWiseCompetentPersonsList',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+					{
+						name: 'isPressureVesselOrPlant',
+						type: sql.Bit,
+						value: isPressureVesselOrPlant ?? null,
+					},
+					{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts ?? null },
+					{
+						name: 'isDustFumeExtractionSystem',
+						type: sql.Bit,
+						value: isDustFumeExtractionSystem ?? null,
+					},
+					{
+						name: 'isPowerPressSafetyDevices',
+						type: sql.Bit,
+						value: isPowerPressSafetyDevices ?? null,
+					},
+					{ name: 'isWaterSealedGasHolder', type: sql.Bit, value: isWaterSealedGasHolder ?? null },
+					{
+						name: 'isLiftingMachinesChainsRopes',
+						type: sql.Bit,
+						value: isLiftingMachinesChainsRopes ?? null,
+					},
+					{ name: 'isOvenAndDriers', type: sql.Bit, value: isOvenAndDriers ?? null },
+					{ name: 'isCentrifugeMachine', type: sql.Bit, value: isCentrifugeMachine ?? null },
+					{ name: 'isThermicFluidHeater', type: sql.Bit, value: isThermicFluidHeater ?? null },
+					{ name: 'isConfinedSpace', type: sql.Bit, value: isConfinedSpace ?? null },
+					{ name: 'isStability', type: sql.Bit, value: isStability ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getMachineTypeCompetentListByDistrictId model:', { err });
 			throw err;
 		}
 	}
@@ -81,6 +220,20 @@ class MasterModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in getPendingCompetentListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getSuspensionCountByDistrictId() {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictSuspensionCompetentCount',
+				[],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getSuspensionCountByDistrictId model:', { err });
 			throw err;
 		}
 	}

@@ -8,6 +8,11 @@ class CompetentModel {
 	async updateProfile(userId, data) {
 		try {
 			const {
+				mobileNo,
+				email,
+				addressLine1,
+				addressLine2,
+				addressLine3,
 				experienceYear,
 				isPressureVesselOrPlant,
 				isHoistAndLifts,
@@ -37,13 +42,17 @@ class CompetentModel {
 				arrangementsForCalibrationAndMaintenance,
 				competencyCertificateIsSought,
 				otherStatute,
-				statuteCompetency,
 				otherRelevantInformation,
 			} = data;
 			const result = await executeStoredProcedure(
 				'SP_UpdateCompetentOfficerProfile',
 				[
 					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'mobileNo', type: sql.VarChar(15), value: mobileNo },
+					{ name: 'email', type: sql.VarChar(100), value: email },
+					{ name: 'addressLine1', type: sql.VarChar(50), value: addressLine1 },
+					{ name: 'addressLine2', type: sql.VarChar(50), value: addressLine2 },
+					{ name: 'addressLine3', type: sql.VarChar(50), value: addressLine3 },
 					{ name: 'experienceYear', type: sql.Int, value: experienceYear },
 					{ name: 'isPressureVesselOrPlant', type: sql.Bit, value: isPressureVesselOrPlant },
 					{ name: 'isHoistAndLifts', type: sql.Bit, value: isHoistAndLifts },
@@ -113,7 +122,6 @@ class CompetentModel {
 						value: competencyCertificateIsSought,
 					},
 					{ name: 'otherStatute', type: sql.Bit, value: otherStatute },
-					{ name: 'statuteCompetency', type: sql.Text, value: statuteCompetency },
 					{ name: 'otherRelevantInformation', type: sql.Text, value: otherRelevantInformation },
 				],
 				true
@@ -379,17 +387,13 @@ class CompetentModel {
 		}
 	}
 
-	async getIdentityByMachines(userId, identityFicationOfMachine, page, limit, search) {
+	async getIdentityByMachines(userId, machineNoPattern, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_GetIdentitynoByFactoryMachinery',
 				[
 					{ name: 'userId', type: sql.VarChar(30), value: userId },
-					{
-						name: 'identityFicationOfMachine',
-						type: sql.VarChar(50),
-						value: identityFicationOfMachine,
-					},
+					{ name: 'machineNoPattern', type: sql.VarChar(50), value: `${machineNoPattern}%` },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
 					{ name: 'search', type: sql.VarChar(100), value: search ?? null },

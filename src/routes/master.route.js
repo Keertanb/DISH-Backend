@@ -28,8 +28,28 @@ router.get(
 	masterController.getBankDetailByIFSCCode
 );
 
+//DistrictId wise competent Register counts
+router.get(
+	'/get-competent-register-count-by-districtId',
+	masterController.getCompetentRegisterCountByDistrictId
+);
+
+//DistrictId wise competent Register List
+router.get(
+	'/get-competent-register-list-by-districtId',
+	validateSchema(masterValidation.getCompetentRegisterListByDistrictId),
+	masterController.getCompetentRegisterListByDistrictId
+);
+
 // DistrictId wise competent counts
 router.get('/get-competent-count-by-districtId', masterController.getCompetentCountByDistrictId);
+
+//DistrictId machine type wise competent list
+router.get(
+	'/get-machine-type-competent-list-by-districtId',
+	validateSchema(masterValidation.machineTypeCompetentListByDistrictId),
+	masterController.getMachineTypeCompetentListByDistrictId
+);
 
 //DistrictId wise competent status is pending counts
 router.get(
@@ -43,6 +63,22 @@ router.get(
 	validateSchema(masterValidation.pendingCompetentListByDistrictId),
 	masterController.getPendingCompetentListByDistrictId
 );
+
+//DistrictId wise factory machine overdue pending inspection counts
+router.get(
+	'/get-overdue-pending-count-by-districtId',
+	masterController.getOverduePendingInspectionCountByDistrictId
+);
+
+//DistrictId wise factory machine overdue pending inspection list
+router.get(
+	'/get-overdue-pending-list-by-districtId',
+	validateSchema(masterValidation.getOverduePendingInspectionListByDistrictId),
+	masterController.getOverduePendingInspectionListByDistrictId
+);
+
+// DistrictId wise suspension competent counts
+router.get('/get-suspension-count-by-districtId', masterController.getSuspensionCountByDistrictId);
 
 // DistrictId wise factory counts
 router.get('/get-factory-count-by-districtId', masterController.getFactoryCountByDistrictId);
@@ -78,19 +114,6 @@ router.get(
 	'/get-pending-inspection-list-by-districtId',
 	validateSchema(masterValidation.getPendingInspectionListByDistrictId),
 	masterController.getPendingInspectionListByDistrictId
-);
-
-//DistrictId wise factory machine overdue pending inspection counts
-router.get(
-	'/get-overdue-pending-count-by-districtId',
-	masterController.getOverduePendingInspectionCountByDistrictId
-);
-
-//DistrictId wise factory machine overdue pending inspection list
-router.get(
-	'/get-overdue-pending-list-by-districtId',
-	validateSchema(masterValidation.getOverduePendingInspectionListByDistrictId),
-	masterController.getOverduePendingInspectionListByDistrictId
 );
 
 export default router;

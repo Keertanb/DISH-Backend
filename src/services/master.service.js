@@ -45,12 +45,103 @@ class MasterService {
 		}
 	}
 
-	async getCompetentCountByDistrictId() {
+	async getCompetentRegisterCountByDistrictId() {
 		try {
-			const competentCount = await masterModel.getCompetentCountByDistrictId();
+			const competentRegisterCount = await masterModel.getCompetentRegisterCountByDistrictId();
+			return competentRegisterCount;
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentRegisterListByDistrictId(districtId, page, limit, search) {
+		try {
+			const pendingCompetentList = await masterModel.getCompetentRegisterListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return pendingCompetentList;
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentCountByDistrictId(
+		isPressureVesselOrPlant,
+		isHoistAndLifts,
+		isDustFumeExtractionSystem,
+		isPowerPressSafetyDevices,
+		isWaterSealedGasHolder,
+		isLiftingMachinesChainsRopes,
+		isOvenAndDriers,
+		isCentrifugeMachine,
+		isThermicFluidHeater,
+		isConfinedSpace,
+		isStability
+	) {
+		try {
+			const competentCount = await masterModel.getCompetentCountByDistrictId(
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability
+			);
 			return competentCount;
 		} catch (err) {
 			logger.error('Error in getCompetentCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineTypeCompetentListByDistrictId(
+		districtId,
+		page,
+		limit,
+		search,
+		isPressureVesselOrPlant,
+		isHoistAndLifts,
+		isDustFumeExtractionSystem,
+		isPowerPressSafetyDevices,
+		isWaterSealedGasHolder,
+		isLiftingMachinesChainsRopes,
+		isOvenAndDriers,
+		isCentrifugeMachine,
+		isThermicFluidHeater,
+		isConfinedSpace,
+		isStability
+	) {
+		try {
+			const machineTypeCompetentList = await masterModel.getMachineTypeCompetentListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search,
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability
+			);
+			return machineTypeCompetentList;
+		} catch (err) {
+			logger.error('Error in getMachineTypeCompetentListByDistrictId service:', { err });
 			throw err;
 		}
 	}
@@ -76,6 +167,16 @@ class MasterService {
 			return pendingCompetentList;
 		} catch (err) {
 			logger.error('Error in getPendingCompetentListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getSuspensionCountByDistrictId() {
+		try {
+			const suspensionCount = await masterModel.getSuspensionCountByDistrictId();
+			return suspensionCount;
+		} catch (err) {
+			logger.error('Error in getSuspensionCountByDistrictId service:', { err });
 			throw err;
 		}
 	}

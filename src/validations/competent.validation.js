@@ -3,6 +3,11 @@ import Joi from 'joi';
 export const updateProfile = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
+		mobileNo: Joi.string().max(15).required(),
+		email: Joi.string().email().max(100).required(),
+		addressLine1: Joi.string().max(50).required(),
+		addressLine2: Joi.string().max(50).allow(null),
+		addressLine3: Joi.string().max(50).allow(null),
 		experienceYear: Joi.number().integer().min(1).optional(),
 		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
 		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
@@ -147,12 +152,11 @@ export const updateProfile = {
 		competencyCertificateIsSought: Joi.string().allow(null, ''),
 
 		otherStatute: Joi.number().valid(0, 1).allow(null),
-		statuteCompetency: Joi.when('otherStatute', {
+		otherRelevantInformation: Joi.when('otherStatute', {
 			is: 1,
 			then: Joi.string().required(),
 			otherwise: Joi.allow(null, ''),
 		}),
-		otherRelevantInformation: Joi.string().allow(null, ''),
 	}),
 };
 
@@ -270,7 +274,7 @@ export const addExperience = {
 export const getIdentityByMachines = {
 	query: Joi.object().keys({
 		userId: Joi.string().required(),
-		identityFicationOfMachine: Joi.string().max(50).required(),
+		machineNoPattern: Joi.string().max(50).required(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().max(100).optional(),

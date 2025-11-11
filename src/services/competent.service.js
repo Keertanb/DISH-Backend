@@ -219,11 +219,11 @@ class CompetentService {
 		}
 	}
 
-	async getIdentityByMachines(userId, identityFicationOfMachine, page, limit, search) {
+	async getIdentityByMachines(userId, machineNoPattern, page, limit, search) {
 		try {
 			const result = await competentModel.getIdentityByMachines(
 				userId,
-				identityFicationOfMachine,
+				machineNoPattern,
 				page,
 				limit,
 				search

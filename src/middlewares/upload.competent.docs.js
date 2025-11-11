@@ -10,7 +10,7 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 async function getUserId(req) {
 	console.log('Request Body in getUserId:', req.body);
-	return req.body?.userId || req.query?.userId || req.headers['userId'] || null;
+	return req.body?.userId || req.query?.userId || req.headers['userid'] || null;
 }
 
 console.log(getUserId, 'getUserId function');

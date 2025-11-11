@@ -46,14 +46,117 @@ class MasterController {
 		}
 	}
 
+	async getCompetentRegisterCountByDistrictId(req, res) {
+		try {
+			const competentRegisterCount = await masterService.getCompetentRegisterCountByDistrictId();
+			return res.handler.success({ competentRegisterCount });
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentRegisterCountByDistrictId'
+			);
+		}
+	}
+
+	async getCompetentRegisterListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const competentList = await masterService.getCompetentRegisterListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ competentList });
+		} catch (err) {
+			logger.error('Error in getCompetentRegisterListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentRegisterListByDistrictId'
+			);
+		}
+	}
+
 	async getCompetentCountByDistrictId(req, res) {
 		try {
-			const competentCount = await masterService.getCompetentCountByDistrictId();
+			const {
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability,
+			} = req.query;
+			const competentCount = await masterService.getCompetentCountByDistrictId(
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability
+			);
 
 			return res.handler.success({ competentCount });
 		} catch (err) {
 			logger.error('Error in getCompetentCountByDistrictId:', { err });
 			return res.handler.serverError({}, err.message || 'Error in getCompetentCountByDistrictId');
+		}
+	}
+
+	async getMachineTypeCompetentListByDistrictId(req, res) {
+		try {
+			const {
+				districtId,
+				page,
+				limit,
+				search,
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability,
+			} = req.query;
+			const machineTypeCompetentList = await masterService.getMachineTypeCompetentListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search,
+				isPressureVesselOrPlant,
+				isHoistAndLifts,
+				isDustFumeExtractionSystem,
+				isPowerPressSafetyDevices,
+				isWaterSealedGasHolder,
+				isLiftingMachinesChainsRopes,
+				isOvenAndDriers,
+				isCentrifugeMachine,
+				isThermicFluidHeater,
+				isConfinedSpace,
+				isStability
+			);
+			return res.handler.success({ machineTypeCompetentList });
+		} catch (err) {
+			logger.error('Error in getMachineTypeCompetentListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getMachineTypeCompetentListByDistrictId'
+			);
 		}
 	}
 
@@ -86,6 +189,50 @@ class MasterController {
 				{},
 				err.message || 'Error in getPendingCompetentListByDistrictId'
 			);
+		}
+	}
+
+	async getOverduePendingInspectionCountByDistrictId(req, res) {
+		try {
+			const overduePendingInspectionCount =
+				await masterService.getOverduePendingInspectionCountByDistrictId();
+			return res.handler.success({ overduePendingInspectionCount });
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getOverduePendingInspectionCountByDistrictId'
+			);
+		}
+	}
+
+	async getOverduePendingInspectionListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const overduePendingInspectionList =
+				await masterService.getOverduePendingInspectionListByDistrictId(
+					districtId,
+					page,
+					limit,
+					search
+				);
+			return res.handler.success({ overduePendingInspectionList });
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getOverduePendingInspectionListByDistrictId'
+			);
+		}
+	}
+
+	async getSuspensionCountByDistrictId(req, res) {
+		try {
+			const suspensionCount = await masterService.getSuspensionCountByDistrictId();
+			return res.handler.success({ suspensionCount });
+		} catch (err) {
+			logger.error('Error in getSuspensionCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getSuspensionCountByDistrictId');
 		}
 	}
 
@@ -176,40 +323,6 @@ class MasterController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in getPendingInspectionListByDistrictId'
-			);
-		}
-	}
-
-	async getOverduePendingInspectionCountByDistrictId(req, res) {
-		try {
-			const overduePendingInspectionCount =
-				await masterService.getOverduePendingInspectionCountByDistrictId();
-			return res.handler.success({ overduePendingInspectionCount });
-		} catch (err) {
-			logger.error('Error in getOverduePendingInspectionCountByDistrictId:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in getOverduePendingInspectionCountByDistrictId'
-			);
-		}
-	}
-
-	async getOverduePendingInspectionListByDistrictId(req, res) {
-		try {
-			const { districtId, page, limit, search } = req.query;
-			const overduePendingInspectionList =
-				await masterService.getOverduePendingInspectionListByDistrictId(
-					districtId,
-					page,
-					limit,
-					search
-				);
-			return res.handler.success({ overduePendingInspectionList });
-		} catch (err) {
-			logger.error('Error in getOverduePendingInspectionListByDistrictId:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in getOverduePendingInspectionListByDistrictId'
 			);
 		}
 	}

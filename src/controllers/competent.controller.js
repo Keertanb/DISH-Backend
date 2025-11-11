@@ -203,10 +203,10 @@ class CompetentController {
 
 	async getIdentityByMachines(req, res) {
 		try {
-			const { userId, identityFicationOfMachine, page, limit, search } = req.query;
+			const { userId, machineNoPattern, page, limit, search } = req.query;
 			const result = await competentService.getIdentityByMachines(
 				userId,
-				identityFicationOfMachine,
+				machineNoPattern,
 				page,
 				limit,
 				search
