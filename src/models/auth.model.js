@@ -22,27 +22,13 @@ class AuthModel {
 				addressLine2,
 				addressLine3,
 				pincode,
-				machineName,
-				quantity,
-				machineDescription,
-				serialNumbers,
-				dateOfFirstUse,
-				dateOfInstallation,
-				nameOfManufacture,
-				addressOfManufacture,
-				dateOfConstruction,
-				thicknessOfWall,
-				identityFicationOfMachine,
-				safeWorkingPressure,
-				accountHolderName,
-				bankName,
-				accountNumber,
-				ifscCode,
-				branch,
+				machines,
 				gstNumber,
 				factoryRegistrationNumber,
 				companyPanCard,
 			} = data;
+
+			const machinesJson = JSON.stringify(machines || []);
 
 			const result = await executeStoredProcedure('SP_FactoryOwner', [
 				{ name: 'factoryName', type: sql.NVarChar(200), value: factoryName },
@@ -59,27 +45,6 @@ class AuthModel {
 				{ name: 'addressLine2', type: sql.NVarChar(50), value: addressLine2 },
 				{ name: 'addressLine3', type: sql.NVarChar(50), value: addressLine3 },
 				{ name: 'pincode', type: sql.NVarChar(10), value: pincode },
-				{ name: 'machineName', type: sql.VarChar(40), value: machineName },
-				{ name: 'quantity', type: sql.Int(), value: quantity },
-				{ name: 'machineDescription', type: sql.VarChar(), value: machineDescription },
-				{ name: 'serialNumbers', type: sql.VarChar(50), value: serialNumbers },
-				{ name: 'dateOfFirstUse', type: sql.Date(), value: dateOfFirstUse },
-				{ name: 'dateOfInstallation', type: sql.Date(), value: dateOfInstallation },
-				{ name: 'nameOfManufacture', type: sql.VarChar(50), value: nameOfManufacture },
-				{ name: 'addressOfManufacture', type: sql.VarChar(200), value: addressOfManufacture },
-				{ name: 'dateOfConstruction', type: sql.Date(), value: dateOfConstruction },
-				{ name: 'thicknessOfWall', type: sql.VarChar(30), value: thicknessOfWall },
-				{
-					name: 'identityFicationOfMachine',
-					type: sql.VarChar(50),
-					value: identityFicationOfMachine,
-				},
-				{ name: 'safeWorkingPressure', type: sql.VarChar(50), value: safeWorkingPressure },
-				{ name: 'accountHolderName', type: sql.NVarChar(150), value: accountHolderName },
-				{ name: 'bankName', type: sql.NVarChar(100), value: bankName },
-				{ name: 'accountNumber', type: sql.NVarChar(30), value: accountNumber },
-				{ name: 'ifscCode', type: sql.NVarChar(20), value: ifscCode },
-				{ name: 'branch', type: sql.NVarChar(100), value: branch },
 				{ name: 'gstNumber', type: sql.NVarChar(40), value: gstNumber },
 				{
 					name: 'factoryRegistrationNumber',
@@ -88,6 +53,7 @@ class AuthModel {
 				},
 				{ name: 'companyPanCard', type: sql.NVarChar(20), value: companyPanCard },
 				{ name: 'userPassword', type: sql.VarChar(255), value: password },
+				{ name: 'machines', type: sql.NVarChar(sql.MAX), value: machinesJson },
 			]);
 
 			return result;

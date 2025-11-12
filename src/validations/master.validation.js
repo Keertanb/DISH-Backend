@@ -64,6 +64,24 @@ export const getOverduePendingInspectionListByDistrictId = {
 	}),
 };
 
+export const getSuspensionCountByDistrictId = {
+	query: Joi.object().keys({
+		suspensionStatus: Joi.number().valid(1, 2).optional(),
+		suspensionCount: Joi.number().valid(2).optional(),
+	}),
+};
+
+export const getSuspensionListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+		suspensionStatus: Joi.number().valid(1, 2).optional(),
+		suspensionCount: Joi.number().valid(2).optional(),
+	}),
+};
+
 export const factoryListByDistrictId = {
 	query: Joi.object().keys({
 		districtId: Joi.number().optional(),
@@ -82,11 +100,51 @@ export const getInspectionCompletedListByDistrictId = {
 	}),
 };
 
+export const getMachineTypeCountByDistrictId = {
+	query: Joi.object().keys({
+		machineType: Joi.string().required(),
+	}),
+};
+
+export const getMachineTypeListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+		machineType: Joi.string().required(),
+	}),
+};
+
 export const getPendingInspectionListByDistrictId = {
 	query: Joi.object().keys({
 		districtId: Joi.number().optional(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().trim().allow('').optional(),
+	}),
+};
+
+export const getRejectedInspectionListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+	}),
+};
+
+export const getExpiredMachineListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+	}),
+};
+
+export const getCompetentMachineCount = {
+	query: Joi.object().keys({
+		machineAlias: Joi.string().optional(),
 	}),
 };

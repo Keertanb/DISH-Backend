@@ -66,97 +66,15 @@ export const factoryOwnerRegistration = {
 			.pattern(/^[0-9]{6}$/)
 			.message('Pincode must be exactly 6 digits')
 			.allow('', null),
-		machineName: Joi.string().max(40).required(),
-		quantity: Joi.number().min(1).message('At least 1 number required').required(),
-		machineDescription: Joi.string()
-			.max(300)
-			.message('Area cannot exceed 300 characters')
-			.required(),
-		serialNumbers: Joi.string().max(30).required(),
-		dateOfFirstUse: Joi.date().required(),
-		dateOfInstallation: Joi.date().optional(),
-		nameOfManufacture: Joi.string()
-			.max(50)
-			.message('nameOfManufacture cannot exceed 50 characters')
-			.required(),
-		addressOfManufacture: Joi.string().max(200).required(),
-		dateOfConstruction: Joi.date().optional(),
-		thicknessOfWall: Joi.string()
-			.max(30)
-			.message('thicknessOfWall cannot exceed 30 characters')
-			.optional(),
-		identityFicationOfMachine: Joi.string()
-			.max(50)
-			.message('identityFicationOfMachine cannot exceed 30 characters')
-			.optional(),
-		safeWorkingPressure: Joi.when('machineName', {
-			is: 'Pressure Vessel or Plant',
-			then: Joi.string().max(50).required(),
-			otherwise: Joi.string().optional(),
-		}),
-		accountHolderName: Joi.string()
-			.uppercase()
-			.optional()
-			.max(150)
-			.message('Account holder name cannot exceed 150 characters')
-			.pattern(/^[A-Za-z\s]+$/)
-			.message('Only English characters and spaces are allowed')
-			.custom((value, helpers) => {
-				if (!value || value === '') return value;
-				if (value === '0') {
-					return helpers.error('any.invalid', { message: 'Account holder name cannot be 0' });
-				}
-				return value;
-			}, 'not-zero')
-			.allow('', null)
-			.optional(),
-		bankName: Joi.string()
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
-			.min(5)
-			.message('Bank name must be at least 5 characters')
-			.max(100)
-			.message('Bank name cannot exceed 100 characters')
-			.allow('', null)
-			.optional(),
-		accountNumber: Joi.string()
-			.trim()
-			.optional()
-			.allow('0')
-			.custom((value, helpers) => {
-				if (!value || value === '') return value;
-				if (!/^[0-9]{7,30}$/.test(value)) {
-					return helpers.error('any.invalid', {
-						message: 'Bank account number must be 7-30 digits',
-					});
-				}
-				return value;
-			}, 'valid-account-number')
-			.allow('', null)
-			.optional(),
-		ifscCode: Joi.string()
-			.trim()
-			.custom((value, helpers) => {
-				if (!value || value === '' || value === 'NA') return value;
-				if (!/^[A-Z]{4}[0-9A-Z]{7}$/.test(value)) {
-					return helpers.error('any.invalid', {
-						message: 'IFSC code must be exactly 11 characters',
-					});
-				}
-				return value;
-			}, 'valid-ifsc')
-			.allow('', null)
-			.optional(),
-		branch: Joi.string()
 
-			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
-			.message('Invalid name format')
-			.min(3)
-			.message('Branch name must be at least 3 characters')
-			.max(100)
-			.message('Branch name cannot exceed 100 characters')
-			.allow('', null)
-			.optional(),
+		machines: Joi.array()
+			.items(
+				Joi.object({
+					machineName: Joi.string().required(),
+					totalMachines: Joi.number().integer().required(),
+				})
+			)
+			.required(),
 		gstNumber: Joi.string()
 			.trim()
 			.uppercase()
@@ -252,7 +170,7 @@ export const competentOfficerSchema = {
 				is: 2,
 				then: Joi.required(),
 				otherwise: Joi.allow(null, ''),
-			})
+			}),
 	}),
 };
 

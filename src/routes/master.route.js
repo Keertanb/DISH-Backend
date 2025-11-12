@@ -78,7 +78,18 @@ router.get(
 );
 
 // DistrictId wise suspension competent counts
-router.get('/get-suspension-count-by-districtId', masterController.getSuspensionCountByDistrictId);
+router.get(
+	'/get-suspension-count-by-districtId',
+	validateSchema(masterValidation.getSuspensionCountByDistrictId),
+	masterController.getSuspensionCountByDistrictId
+);
+
+//DistrictId wise suspension competent list
+router.get(
+	'/get-suspension-list-by-districtId',
+	validateSchema(masterValidation.getSuspensionListByDistrictId),
+	masterController.getSuspensionListByDistrictId
+);
 
 // DistrictId wise factory counts
 router.get('/get-factory-count-by-districtId', masterController.getFactoryCountByDistrictId);
@@ -103,6 +114,20 @@ router.get(
 	masterController.getInspectionCompletedListByDistrictId
 );
 
+//DistrictId machine type wise machine counts
+router.get(
+	'/get-machine-type-count-by-districtId',
+	validateSchema(masterValidation.getMachineTypeCountByDistrictId),
+	masterController.getMachineTypeCountByDistrictId
+);
+
+//DistrictId machine type wise machine List
+router.get(
+	'/get-machine-type-list-by-districtId',
+	validateSchema(masterValidation.getMachineTypeListByDistrictId),
+	masterController.getMachineTypeListByDistrictId
+);
+
 //DistrictId wise factory machine pending inspection counts
 router.get(
 	'/get-pending-inspection-count-by-districtId',
@@ -114,6 +139,39 @@ router.get(
 	'/get-pending-inspection-list-by-districtId',
 	validateSchema(masterValidation.getPendingInspectionListByDistrictId),
 	masterController.getPendingInspectionListByDistrictId
+);
+
+//DistrictId wise Inspection request rejected counts
+router.get(
+	'/get-rejected-inspection-count-by-districtId',
+	masterController.getRejectedInspectionCountByDistrictId
+);
+
+//DistrictId wise Inspection request rejected list
+router.get(
+	'/get-rejected-inspection-list-by-districtId',
+	validateSchema(masterValidation.getRejectedInspectionListByDistrictId),
+	masterController.getRejectedInspectionListByDistrictId
+);
+
+//District wise expired machine counts
+router.get(
+	'/get-expired-machine-count-by-districtId',
+	masterController.getExpiredMachineCountByDistrictId
+);
+
+//DistrictId wise expired machine list
+router.get(
+	'/get-expired-machine-list-by-districtId',
+	validateSchema(masterValidation.getExpiredMachineListByDistrictId),
+	masterController.getExpiredMachineListByDistrictId
+);
+
+// Competent and machine Count
+router.get(
+	'/get-competent-machine-count',
+	validateSchema(masterValidation.getCompetentMachineCount),
+	masterController.getCompetentMachineCount
 );
 
 export default router;

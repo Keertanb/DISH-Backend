@@ -224,16 +224,84 @@ class MasterModel {
 		}
 	}
 
-	async getSuspensionCountByDistrictId() {
+	async getOverduePendingInspectionCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_GetDistrictSuspensionCompetentCount',
+				'SP_GetDistrictMachineOverduePendingCount',
 				[],
 				true
 			);
 			return result;
 		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getOverduePendingInspectionListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictMachineOverduePendingList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getOverduePendingInspectionListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getSuspensionCountByDistrictId(suspensionStatus, suspensionCount) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictSuspensionCompetentCount',
+				[
+					{ name: 'suspensionStatus', type: sql.Int(), value: suspensionStatus ?? null },
+					{ name: 'suspensionCount', type: sql.Int(), value: suspensionCount ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
 			logger.error('Error in getSuspensionCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getSuspensionListByDistrictId(
+		districtId,
+		page,
+		limit,
+		search,
+		suspensionStatus,
+		suspensionCount
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictSuspensionCompetentList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+					{ name: 'suspensionStatus', type: sql.Int(), value: suspensionStatus ?? null },
+					{ name: 'suspensionCount', type: sql.Int(), value: suspensionCount ?? null },
+				],
+				true
+			);
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
+			return result;
+		} catch (err) {
+			logger.error('Error in getSuspensionListByDistrictId model:', { err });
 			throw err;
 		}
 	}
@@ -300,6 +368,40 @@ class MasterModel {
 		}
 	}
 
+	async getMachineTypeCountByDistrictId(machineType) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictMachineWiseCount',
+				[{ name: 'machineType', type: sql.VarChar(10), value: machineType }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getMachineTypeCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getMachineTypeListByDistrictId(districtId, page, limit, search, machineType) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictMachineWiseList',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+					{ name: 'machineType', type: sql.VarChar(10), value: machineType },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getMachineTypeListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
 	async getPendingInspectionCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(
@@ -333,36 +435,78 @@ class MasterModel {
 		}
 	}
 
-	async getOverduePendingInspectionCountByDistrictId() {
+	async getRejectedInspectionCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_GetDistrictMachineOverduePendingCount',
+				'SP_GetDistrictInspectionRejectedCount',
 				[],
 				true
 			);
 			return result;
 		} catch (err) {
-			logger.error('Error in getOverduePendingInspectionCountByDistrictId model:', { err });
+			logger.error('Error in getRejectedInspectionCountByDistrictId model:', { err });
 			throw err;
 		}
 	}
 
-	async getOverduePendingInspectionListByDistrictId(districtId, page, limit, search) {
+	async getRejectedInspectionListByDistrictId(districtId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_GetDistrictMachineOverduePendingList',
+				'SP_GetDistrictInspectionRejectedList',
 				[
-					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'districtId', type: sql.Int(), value: districtId },
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
 					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
 				],
-
 				true
 			);
 			return result;
 		} catch (err) {
-			logger.error('Error in getOverduePendingInspectionListByDistrictId model:', { err });
+			logger.error('Error in getRejectedInspectionListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getExpiredMachineCountByDistrictId() {
+		try {
+			const result = await executeStoredProcedure('SP_GetDistrictExpiredMachineCount', [], true);
+			return result;
+		} catch (err) {
+			logger.error('Error in getExpiredMachineCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getExpiredMachineListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictExpiredMachineList',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getExpiredMachineListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentMachineCount(machineAlias) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentAndMachineCount',
+				[{ name: 'machineAlias', type: sql.VarChar(10), value: machineAlias }],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentMachineCount model:', { err });
 			throw err;
 		}
 	}

@@ -228,11 +228,33 @@ class MasterController {
 
 	async getSuspensionCountByDistrictId(req, res) {
 		try {
-			const suspensionCount = await masterService.getSuspensionCountByDistrictId();
-			return res.handler.success({ suspensionCount });
+			const { suspensionStatus, suspensionCount } = req.query;
+			const suspensionsCount = await masterService.getSuspensionCountByDistrictId(
+				suspensionStatus,
+				suspensionCount
+			);
+			return res.handler.success({ suspensionsCount });
 		} catch (err) {
 			logger.error('Error in getSuspensionCountByDistrictId:', { err });
 			return res.handler.serverError({}, err.message || 'Error in getSuspensionCountByDistrictId');
+		}
+	}
+
+	async getSuspensionListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search, suspensionStatus, suspensionCount } = req.query;
+			const suspensionList = await masterService.getSuspensionListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search,
+				suspensionStatus,
+				suspensionCount
+			);
+			return res.handler.success({ suspensionList });
+		} catch (err) {
+			logger.error('Error in getSuspensionListByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getSuspensionListByDistrictId');
 		}
 	}
 
@@ -295,6 +317,34 @@ class MasterController {
 		}
 	}
 
+	async getMachineTypeCountByDistrictId(req, res) {
+		try {
+			const { machineType } = req.query;
+			const machineTypeCount = await masterService.getMachineTypeCountByDistrictId(machineType);
+			return res.handler.success({ machineTypeCount });
+		} catch (err) {
+			logger.error('Error in getMachineTypeCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getMachineTypeCountByDistrictId');
+		}
+	}
+
+	async getMachineTypeListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search, machineType } = req.query;
+			const machineTypeList = await masterService.getMachineTypeListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search,
+				machineType
+			);
+			return res.handler.success({ machineTypeList });
+		} catch (err) {
+			logger.error('Error in getMachineTypeListByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getMachineTypeListByDistrictId');
+		}
+	}
+
 	async getPendingInspectionCountByDistrictId(req, res) {
 		try {
 			const pendingInspectionCount = await masterService.getPendingInspectionCountByDistrictId();
@@ -324,6 +374,81 @@ class MasterController {
 				{},
 				err.message || 'Error in getPendingInspectionListByDistrictId'
 			);
+		}
+	}
+
+	async getRejectedInspectionCountByDistrictId(req, res) {
+		try {
+			const rejectedInspectionCount = await masterService.getRejectedInspectionCountByDistrictId();
+			return res.handler.success({ rejectedInspectionCount });
+		} catch (err) {
+			logger.error('Error in getRejectedInspectionCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getRejectedInspectionCountByDistrictId'
+			);
+		}
+	}
+
+	async getRejectedInspectionListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const rejectedInspectionList = await masterService.getRejectedInspectionListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ rejectedInspectionList });
+		} catch (err) {
+			logger.error('Error in getRejectedInspectionListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getRejectedInspectionListByDistrictId'
+			);
+		}
+	}
+
+	async getExpiredMachineCountByDistrictId(req, res) {
+		try {
+			const expiredCount = await masterService.getExpiredMachineCountByDistrictId();
+			return res.handler.success({ expiredCount });
+		} catch (err) {
+			logger.error('Error in getExpiredMachineCountByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getExpiredMachineCountByDistrictId'
+			);
+		}
+	}
+
+	async getExpiredMachineListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const expiredList = await masterService.getExpiredMachineListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ expiredList });
+		} catch (err) {
+			logger.error('Error in getExpiredMachineListByDistrictId:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getExpiredMachineListByDistrictId'
+			);
+		}
+	}
+
+	async getCompetentMachineCount(req, res) {
+		try {
+			const { machineAlias } = req.query;
+			const count = await masterService.getCompetentMachineCount(machineAlias);
+			return res.handler.success({ count });
+		} catch (err) {
+			logger.error('Error in getCompetentMachineCount:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getCompetentMachineCount');
 		}
 	}
 }
