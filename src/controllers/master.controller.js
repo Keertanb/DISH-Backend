@@ -445,7 +445,7 @@ class MasterController {
 		try {
 			const { machineAlias } = req.query;
 			const count = await masterService.getCompetentMachineCount(machineAlias);
-			return res.handler.success({ count });
+			return res.handler.success(count);
 		} catch (err) {
 			logger.error('Error in getCompetentMachineCount:', { err });
 			return res.handler.serverError({}, err.message || 'Error in getCompetentMachineCount');

@@ -499,11 +499,9 @@ class MasterModel {
 
 	async getCompetentMachineCount(machineAlias) {
 		try {
-			const result = await executeStoredProcedure(
-				'SP_GetCompetentAndMachineCount',
-				[{ name: 'machineAlias', type: sql.VarChar(10), value: machineAlias }],
-				true
-			);
+			const result = await executeStoredProcedure('SP_GetCompetentAndMachineCount', [
+				{ name: 'machineAlias', type: sql.VarChar(10), value: machineAlias },
+			]);
 			return result;
 		} catch (err) {
 			logger.error('Error in getCompetentMachineCount model:', { err });
