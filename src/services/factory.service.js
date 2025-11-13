@@ -101,6 +101,16 @@ class FactoryService {
 		}
 	}
 
+	async inactiveMachine(factoryUserId, machineNo) {
+		try {
+			const machine = await factoryModel.inactiveMachine(factoryUserId, machineNo);
+			return machine;
+		} catch (err) {
+			logger.error('Error in inactiveMachine service:', { err });
+			throw err;
+		}
+	}
+
 	async getUpcomingInspectionUsers() {
 		try {
 			const candidates = await factoryModel.getUpcomingInspectionUsers();

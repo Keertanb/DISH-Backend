@@ -58,6 +58,13 @@ router.get(
 	factoryController.getFactoryMachineInspectionList
 );
 
+// Machine Expired
+router.post(
+	'/inactive-machine',
+	validateSchema(factoryValidation.inactiveMachine),
+	factoryController.inactiveMachine
+);
+
 // Re-schedule machine Inspection warning after 5 day  mail
 router.post('/upcoming-inspection', factoryController.getUpcomingInspectionUsers);
 

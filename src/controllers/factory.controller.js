@@ -122,6 +122,19 @@ class FactoryController {
 		}
 	}
 
+	async inactiveMachine(req, res) {
+		try {
+			const { factoryUserId, machineNo } = req.body;
+
+			const machine = await factoryService.inactiveMachine(factoryUserId, machineNo);
+
+			return res.handler.success(machine);
+		} catch (err) {
+			logger.error('Error in inactiveMachine controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in inactiveMachine controller');
+		}
+	}
+
 	async getUpcomingInspectionUsers(req, res) {
 		try {
 			const result = await factoryService.getUpcomingInspectionUsers();

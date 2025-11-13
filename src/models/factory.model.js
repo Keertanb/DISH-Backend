@@ -3,6 +3,7 @@ import sql from 'mssql';
 import { executeStoredProcedure } from '../database/index.js';
 // UTILS
 import logger from '../utils/logger.js';
+import { valid } from 'joi';
 
 class FactoryModel {
 	async registerMachine({ userId, machineName, totalMachines }) {
@@ -150,7 +151,6 @@ class FactoryModel {
 
 	async getFactoryMachineInspectionList(factoryUserId, page, limit, search) {
 		try {
-			logger.info('getMachineList Params:', { factoryUserId, page, limit, search });
 			const result = await executeStoredProcedure(
 				'SP_GetFactoryMachineInspectionsList',
 				[
@@ -164,6 +164,27 @@ class FactoryModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in getFactoryMachineInspectionList model:', { err });
+			throw err;
+		}
+	}
+
+	async inactiveMachine(factoryUserId, machineNo) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_UpdateInActiveMachine',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{
+						name: 'machineNo',
+						type: sql.VarChar(50),
+						value: machineNo,
+					},
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in inactiveMachine model:', { err });
 			throw err;
 		}
 	}

@@ -83,3 +83,10 @@ export const getFactoryMachineInspectionList = {
 		search: Joi.string().max(100).optional(),
 	}),
 };
+
+export const inactiveMachine = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(50).required(),
+	}),
+};
