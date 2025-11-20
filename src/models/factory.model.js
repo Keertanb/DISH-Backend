@@ -3,7 +3,6 @@ import sql from 'mssql';
 import { executeStoredProcedure } from '../database/index.js';
 // UTILS
 import logger from '../utils/logger.js';
-import { valid } from 'joi';
 
 class FactoryModel {
 	async registerMachine({ userId, machineName, totalMachines }) {
@@ -142,6 +141,9 @@ class FactoryModel {
 				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
 				true
 			);
+			if (result && result[0]?.machines) {
+				result[0].machines = JSON.parse(result[0].machines);
+			}
 			return result;
 		} catch (err) {
 			logger.error('Error in getFactoryOwnerProfile model:', { err });
@@ -189,9 +191,9 @@ class FactoryModel {
 		}
 	}
 
-	async getUpcomingInspectionUsers() {
+	async upcomingInspectionUsers() {
 		try {
-			const result = await executeStoredProcedure('SP_GetUpcomingInspectionUsers', [], true);
+			const result = await executeStoredProcedure('SP_UpcomingInspectionUsers', [], true);
 			if (Array.isArray(result)) {
 				return result;
 			}
@@ -200,7 +202,7 @@ class FactoryModel {
 			}
 			return [];
 		} catch (err) {
-			logger.error('Error in getUpcomingInspectionUsers model:', { err });
+			logger.error('Error in upcomingInspectionUsers model:', { err });
 			throw err;
 		}
 	}

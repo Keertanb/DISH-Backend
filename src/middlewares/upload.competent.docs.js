@@ -4,16 +4,11 @@ import fs from 'fs';
 
 const uploadDir = path.join(process.cwd(), 'uploads', 'competent-documents');
 
-console.log('Upload Directory:', uploadDir);
-
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 async function getUserId(req) {
-	console.log('Request Body in getUserId:', req.body);
 	return req.body?.userId || req.query?.userId || req.headers['userid'] || null;
 }
-
-console.log(getUserId, 'getUserId function');
 
 // Storage configuration
 const storage = multer.diskStorage({

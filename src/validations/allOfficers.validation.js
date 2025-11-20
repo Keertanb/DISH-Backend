@@ -143,3 +143,12 @@ export const renewCompetentOfficersStatus = {
 		}),
 	}),
 };
+
+export const getCompetentTimeEndOfficers = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().optional(),
+	}),
+};

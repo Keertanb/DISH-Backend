@@ -15,17 +15,13 @@ import healthRoute from './routes/health.route.js';
 //cron
 import factoryCron from './cron/factoryCron.js';
 import competentCron from './cron/competentCron.js';
+import dishCron from './cron/dishCron.js';
 
 import routes from './routes/v1/index.js';
 // DATABASE
 import { initializeDatabase, closeDatabase } from './database/index.js';
 // RATE LIMITING
-import {
-	generalRateLimiter,
-	apiRateLimiter,
-	healthRateLimiter,
-	developmentRateLimiter,
-} from './middlewares/rateLimit.middlewares.js';
+import { healthRateLimiter } from './middlewares/rateLimit.middlewares.js';
 
 import path from 'path';
 
@@ -56,7 +52,7 @@ app.use(handlerMiddleware);
 // Apply different rate limiters based on environment and route type
 // if (config.server.nodeEnv === 'development') {
 // More lenient rate limiting for development
-app.use(developmentRateLimiter);
+// app.use(developmentRateLimiter);
 // } else {
 // 	app.use(generalRateLimiter);
 // }
@@ -66,7 +62,7 @@ app.use(developmentRateLimiter);
 app.use('/api/ping', healthRateLimiter, healthRoute);
 
 // API routes with API-specific rate limiting
-app.use('/api/v1', apiRateLimiter, routes);
+app.use('/api/v1', routes);
 app.set('trust proxy', true);
 // --------------------------    ERROR HANDLING    ---------------------
 app.use(errorHandler);
@@ -81,7 +77,7 @@ const startServer = async () => {
 			logger.info(`Server started successfully on port ${port}`);
 			console.log('\x1b[32m%s\x1b[0m', 'Compiled Successfully!');
 			console.log(`\n Local:\t\t http://localhost:${port}`);
-
+			dishCron.stopAll();
 			factoryCron.stopAll();
 			competentCron.stopAll();
 		});

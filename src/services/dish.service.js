@@ -24,6 +24,19 @@ class DishService {
 			throw err;
 		}
 	}
+
+	async notReviewCompetentPerson() {
+		try {
+			const result = await dishModel.notReviewCompetentPerson();
+			return result;
+		} catch (err) {
+			logger.error('Error in notReviewCompetentPerson service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
 }
 
 export default DishService;

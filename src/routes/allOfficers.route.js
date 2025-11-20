@@ -51,7 +51,6 @@ router.post(
 	allOfficersController.rescheduleInterview
 );
 
-
 // Update Status Interview competent officers (Approve/Reject)
 router.post(
 	'/interview-competent-officers-status',
@@ -101,11 +100,20 @@ router.get(
 	allOfficersController.getCompetentRenewOfficersList
 );
 
+router.post('/pdf', allOfficersController.sendFactoryNotifications);
+
 // Update Status Renew competent officers (Approve/Reject)
 router.post(
 	'/renew-competent-officers-status',
 	validateSchema(allOfficersValidation.renewCompetentOfficersStatus),
 	allOfficersController.renewCompetentOfficersStatus
+);
+
+// Get all competent person status is TimeEnd
+router.get(
+	'/get-competent-timeend-officers',
+	validateSchema(allOfficersValidation.getCompetentTimeEndOfficers),
+	allOfficersController.getCompetentTimeEndOfficersList
 );
 
 export default router;

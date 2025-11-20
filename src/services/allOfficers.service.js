@@ -162,6 +162,56 @@ class AllOfficersService {
 		}
 	}
 
+	async sendFactoryNotifications() {
+		try {
+			// 1. Fetch emails from DB
+			const factories = await allOfficersModel.getAllFactoryEmails();
+
+			if (!factories.length) {
+				console.error('No factories found or emails are NULL.');
+			}
+
+			// 2. Load your existing PDF
+			const pdfPath = path.join(
+				process.cwd(),
+				'public',
+				'letter_to_628_candidates_with_list_for_cm_function.pdf'
+			);
+			const pdfBuffer = fs.readFileSync(pdfPath);
+
+			// 3. Loop through factories & send mail
+			for (const factory of factories) {
+				const { email } = factory;
+
+				if (!email) {
+					console.error(`Missing email for ${email}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject:
+						'કમિશનર શાળાઓની કચેરીના,જુનિયર ક્લાર્ક,(વર્ગ-૦૩) સંવર્ગમાં સીધી ભરતીથી પસંદગી પામેલ ઉમેદવારોને માન.મુખ્યમંત્રીશ્રીના વરદહસ્તે નિમણૂંકપત્ર મેળવવા માટે હાજર રહેવા બાબત',
+					html: `
+						કમિશનર શાળાઓની કચેરીના,જુનિયર ક્લાર્ક,(વર્ગ-૦૩) સંવર્ગમાં સીધી ભરતીથી પસંદગી પામેલ ઉમેદવારોને માન.મુખ્યમંત્રીશ્રીના વરદહસ્તે નિમણૂંકપત્ર મેળવવા માટે હાજર રહેવા બાબત
+					`,
+					attachments: [
+						{
+							filename: `letter.pdf`,
+							content: pdfBuffer,
+							contentType: 'application/pdf',
+						},
+					],
+				});
+			}
+
+			return { message: 'mail sent successfully', totalSent: factories.length };
+		} catch (err) {
+			logger.error('Error in mail sent service:', { err });
+			throw err;
+		}
+	}
+
 	async rescheduleInterview({ interviewCandidates, oldScheduledDate, newScheduledDate }) {
 		try {
 			const userId = interviewCandidates.map((c) => c.userId).join(',');
@@ -430,6 +480,21 @@ class AllOfficersService {
 			return status;
 		} catch (err) {
 			logger.error('Error in renewCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentTimeEndOfficersList(districtId, page, limit, search) {
+		try {
+			const officers = await allOfficersModel.getCompetentTimeEndOfficersList(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return officers;
+		} catch (err) {
+			logger.error('Error in getCompetentTimeEndOfficersList service:', { err });
 			throw err;
 		}
 	}

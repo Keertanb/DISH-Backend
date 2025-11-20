@@ -134,36 +134,6 @@ class FactoryController {
 			return res.handler.serverError({}, err.message || 'Error in inactiveMachine controller');
 		}
 	}
-
-	async getUpcomingInspectionUsers(req, res) {
-		try {
-			const result = await factoryService.getUpcomingInspectionUsers();
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getUpcomingInspectionUsers controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error fetching upcoming inspections');
-		}
-	}
-
-	async nextInspectionOnMachine(req, res) {
-		try {
-			const result = await factoryService.nextInspectionOnMachine();
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in nextInspectionOnMachine controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error fetching upcoming inspections');
-		}
-	}
-
-	async beforePendingInspectionUsers(req, res) {
-		try {
-			const result = await factoryService.beforePendingInspectionUsers();
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in beforePendingInspectionUsers controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error fetching pending inspections');
-		}
-	}
 }
 
 export default FactoryController;

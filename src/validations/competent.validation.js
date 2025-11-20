@@ -3,9 +3,9 @@ import Joi from 'joi';
 export const updateProfile = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-		mobileNo: Joi.string().max(15).required(),
-		email: Joi.string().email().max(100).required(),
-		addressLine1: Joi.string().max(50).required(),
+		mobileNo: Joi.string().max(15).optional(),
+		email: Joi.string().email().max(100).optional(),
+		addressLine1: Joi.string().max(50).optional(),
 		addressLine2: Joi.string().max(50).allow(''),
 		addressLine3: Joi.string().max(50).allow(''),
 		experienceYear: Joi.number().integer().min(1).optional(),

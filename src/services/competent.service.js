@@ -537,9 +537,9 @@ class CompetentService {
 		}
 	}
 
-	async getCompetentExpiryEnd() {
+	async competentExpiryEnd() {
 		try {
-			const candidates = await competentModel.getCompetentExpiryEnd();
+			const candidates = await competentModel.competentExpiryEnd();
 
 			if (!candidates.length) {
 				console.error('No competent officers found whose validity period has ended.');
@@ -586,9 +586,9 @@ class CompetentService {
 		}
 	}
 
-	async getCompetentExpiryPauseEnd() {
+	async competentExpiryPauseEnd() {
 		try {
-			const candidates = await competentModel.getCompetentExpiryPauseEnd();
+			const candidates = await competentModel.competentExpiryPauseEnd();
 
 			if (!candidates.length) {
 				console.error('No competent officers found whose validity period has ended.');
@@ -636,55 +636,55 @@ class CompetentService {
 		}
 	}
 
-	async getCompetentBeforeExpiry() {
-		try {
-			const candidates = await competentModel.getCompetentBeforeExpiry();
+	// async competentBeforeExpiry() {
+	// 	try {
+	// 		const candidates = await competentModel.competentBeforeExpiry();
 
-			if (!candidates.length) {
-				console.error('No competent officers found whose validity period has ended.');
-				return { message: 'No expired competent officers found', data: [] };
-			}
+	// 		if (!candidates.length) {
+	// 			console.error('No competent officers found whose validity period has ended.');
+	// 			return { message: 'No expired competent officers found', data: [] };
+	// 		}
 
-			for (const candidate of candidates) {
-				const { userId, email, expirationDate } = candidate;
+	// 		for (const candidate of candidates) {
+	// 			const { userId, email, expirationDate } = candidate;
 
-				if (!email) {
-					console.error(`Missing email for userId ${userId}`);
-					continue;
-				}
+	// 			if (!email) {
+	// 				console.error(`Missing email for userId ${userId}`);
+	// 				continue;
+	// 			}
 
-				await sendMail({
-					to: email,
-					subject: 'Competent Officer Validity Reminder - DISH Portal',
-					html: `
-						<p>Dear Competent Officer,</p>
+	// 			await sendMail({
+	// 				to: email,
+	// 				subject: 'Competent Officer Validity Reminder - DISH Portal',
+	// 				html: `
+	// 					<p>Dear Competent Officer,</p>
 
-						<p>We would like to inform you that your <b>competent officer validity period of 30 days has now ended${
-							expirationDate ? ' on <b>' + expirationDate + '</b>' : ''
-						}</b>.</p>
+	// 					<p>We would like to inform you that your <b>competent officer validity period of 30 days has now ended${
+	// 						expirationDate ? ' on <b>' + expirationDate + '</b>' : ''
+	// 					}</b>.</p>
 
-						<p>You can now proceed to submit a <b>renewal application</b> if required. Please log in to the <b>DISH Portal</b> to continue your activities and renew your details.</p>
+	// 					<p>You can now proceed to submit a <b>renewal application</b> if required. Please log in to the <b>DISH Portal</b> to continue your activities and renew your details.</p>
 
-						<p><b>Important:</b> Ensure that your account information is up-to-date before submitting a renewal application.</p>
+	// 					<p><b>Important:</b> Ensure that your account information is up-to-date before submitting a renewal application.</p>
 
-						<p>If you face any issues accessing your account or submitting your renewal, please contact the <b>DISH Support Team</b>.</p>
+	// 					<p>If you face any issues accessing your account or submitting your renewal, please contact the <b>DISH Support Team</b>.</p>
 
-						<p>Regards,<br/>
-						<b>DISH Support Team</b><br/>
-						<small>Department of Industrial Safety & Health</small></p>
-					`,
-				});
-			}
+	// 					<p>Regards,<br/>
+	// 					<b>DISH Support Team</b><br/>
+	// 					<small>Department of Industrial Safety & Health</small></p>
+	// 				`,
+	// 			});
+	// 		}
 
-			return {
-				message: 'Competent Officer before Expiry Notification sent successfully',
-				candidates,
-			};
-		} catch (err) {
-			logger.error('Error in getCompetentBeforeExpiry service:', { err });
-			throw err;
-		}
-	}
+	// 		return {
+	// 			message: 'Competent Officer before Expiry Notification sent successfully',
+	// 			candidates,
+	// 		};
+	// 	} catch (err) {
+	// 		logger.error('Error in getCompetentBeforeExpiry service:', { err });
+	// 		throw err;
+	// 	}
+	// }
 
 	async renewCompetentOfficer(userId) {
 		try {

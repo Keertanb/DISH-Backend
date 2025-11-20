@@ -65,13 +65,4 @@ router.post(
 	factoryController.inactiveMachine
 );
 
-// Re-schedule machine Inspection warning after 5 day  mail
-router.post('/upcoming-inspection', factoryController.getUpcomingInspectionUsers);
-
-// Re-schedule machine Inspection
-router.post('/expire-inspection', factoryController.nextInspectionOnMachine);
-
-// machine inspection pending before 15 days mail
-router.post('/before-pending-inspection', factoryController.beforePendingInspectionUsers);
-
 export default router;

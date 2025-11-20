@@ -24,6 +24,16 @@ class DishModel {
 			throw err;
 		}
 	}
+
+	async notReviewCompetentPerson() {
+		try {
+			const result = await executeStoredProcedure('SP_UpdateQueryToDistrictStatus', []);
+			return result;
+		} catch (err) {
+			logger.error('Error in notReviewCompetentPerson model:', { err });
+			throw err;
+		}
+	}
 }
 
 export default DishModel;

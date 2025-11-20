@@ -96,11 +96,9 @@ class AllOfficersModel {
 
 	async getDashboard(userId = null) {
 		try {
-			const result = await executeStoredProcedure(
-				'SP_GetDashboardCounts',
-				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
-				true
-			);
+			const result = await executeStoredProcedure('SP_GetDashboardCounts', [
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
+			]);
 			return result;
 		} catch (err) {
 			logger.error('Error in getDashboard model:', { err });
@@ -132,6 +130,20 @@ class AllOfficersModel {
 		}
 	}
 
+	async getAllFactoryEmails() {
+		try {
+			const result = await executeStoredProcedure('SP_GetAllFactoryEmails', [], true);
+
+			if (Array.isArray(result)) return result;
+			if (result?.recordset) return result.recordset;
+
+			return [];
+		} catch (err) {
+			logger.error('Error in getAllFactoryEmails model:', { err });
+			throw err;
+		}
+	}
+
 	async rescheduleInterview(userId, oldScheduledDate, newScheduledDate) {
 		try {
 			const result = await executeStoredProcedure(
@@ -156,7 +168,6 @@ class AllOfficersModel {
 			throw err;
 		}
 	}
-
 
 	async interviewCompetentOfficersStatus(userId, applicationType, reason = null) {
 		try {
@@ -284,6 +295,25 @@ class AllOfficersModel {
 			return result[0];
 		} catch (err) {
 			logger.error('Error in renewCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
+
+	async getCompetentTimeEndOfficersList(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetTimeEndCompetentList',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getCompetentTimeEndOfficersList model:', { err });
 			throw err;
 		}
 	}

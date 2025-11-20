@@ -108,6 +108,19 @@ class AllOfficersController {
 		}
 	}
 
+	async sendFactoryNotifications(req, res) {
+		try {
+			const result = await allOfficersService.sendFactoryNotifications();
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in sendFactoryNotifications controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in sendFactoryNotifications controller'
+			);
+		}
+	}
+
 	async rescheduleInterview(req, res) {
 		try {
 			const { interviewCandidates, oldScheduledDate, newScheduledDate } = req.body;
@@ -251,6 +264,25 @@ class AllOfficersController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in renewCompetentOfficersStatus controller'
+			);
+		}
+	}
+
+	async getCompetentTimeEndOfficersList(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const result = await allOfficersService.getCompetentTimeEndOfficersList(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getCompetentTimeEndOfficersList controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentTimeEndOfficersList controller'
 			);
 		}
 	}

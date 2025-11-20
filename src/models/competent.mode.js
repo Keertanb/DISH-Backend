@@ -1547,7 +1547,7 @@ class CompetentModel {
 		}
 	}
 
-	async getCompetentExpiryEnd() {
+	async competentExpiryEnd() {
 		try {
 			const result = await executeStoredProcedure('SP_CompetentExpiryEnd', [], true);
 			if (Array.isArray(result)) {
@@ -1558,12 +1558,12 @@ class CompetentModel {
 			}
 			return [];
 		} catch (err) {
-			logger.error('Error in nextInspectionOnMachine model:', { err });
+			logger.error('Error in competentExpiryEnd model:', { err });
 			throw err;
 		}
 	}
 
-	async getCompetentExpiryPauseEnd() {
+	async competentExpiryPauseEnd() {
 		try {
 			const result = await executeStoredProcedure('SP_CompetentExpiryPauseEnd', [], true);
 			if (Array.isArray(result)) {
@@ -1574,26 +1574,26 @@ class CompetentModel {
 			}
 			return [];
 		} catch (err) {
-			logger.error('Error in getCompetentExpiryPauseEnd model:', { err });
+			logger.error('Error in competentExpiryPauseEnd model:', { err });
 			throw err;
 		}
 	}
 
-	async getCompetentBeforeExpiry() {
-		try {
-			const result = await executeStoredProcedure('SP_GetCompetentOfficersBeforeExpiry', [], true);
-			if (Array.isArray(result)) {
-				return result;
-			}
-			if (result && result.recordset) {
-				return result.recordset;
-			}
-			return [];
-		} catch (err) {
-			logger.error('Error in getCompetentBeforeExpiry model:', { err });
-			throw err;
-		}
-	}
+	// async competentBeforeExpiry() {
+	// 	try {
+	// 		const result = await executeStoredProcedure('SP_CompetentOfficersBeforeExpiry', [], true);
+	// 		if (Array.isArray(result)) {
+	// 			return result;
+	// 		}
+	// 		if (result && result.recordset) {
+	// 			return result.recordset;
+	// 		}
+	// 		return [];
+	// 	} catch (err) {
+	// 		logger.error('Error in getCompetentBeforeExpiry model:', { err });
+	// 		throw err;
+	// 	}
+	// }
 
 	async renewCompetentOfficer(userId) {
 		try {

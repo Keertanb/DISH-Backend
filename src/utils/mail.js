@@ -13,6 +13,10 @@ const transporter = nodemailer.createTransport({
 
 		user: 'oldeal2k23@gmail.com',
 		pass: 'qhlg qfkq ywjy kegh',
+
+		// vidya samiksha kendra mail credential
+		// user: 'gujcosestablishment@gmail.com',
+		// pass: 'nsjk jqgh soji quxk',
 	},
 	tls: {
 		rejectUnauthorized: false,
@@ -21,8 +25,8 @@ const transporter = nodemailer.createTransport({
 
 export async function sendMail({ to, subject, html, attachments = [] }) {
 	await transporter.sendMail({
-		// from: `"Factory Portal" <${process.env.MAIL_USER}>`,
-		from: `"Dish Portal" <oldeal2k23@gmail.com>`,
+		from: `"Factory Portal" <${process.env.MAIL_USER}>`,
+		// from: `"vidya-samiksha-kendra " <gujcosestablishment@gmail.com>`,
 		to,
 		subject,
 		html,

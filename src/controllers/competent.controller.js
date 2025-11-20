@@ -507,42 +507,6 @@ class CompetentController {
 		}
 	}
 
-	async getCompetentExpiryEnd(req, res) {
-		try {
-			const result = await competentService.getCompetentExpiryEnd(req.body);
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getCompetentExpiryEnd controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error fetching Competent Expiry End data');
-		}
-	}
-
-	async getCompetentExpiryPauseEnd(req, res) {
-		try {
-			const result = await competentService.getCompetentExpiryPauseEnd(req.body);
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getCompetentExpiryPauseEnd controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error fetching Competent Expiry Pause End data'
-			);
-		}
-	}
-
-	async getCompetentBeforeExpiry(req, res) {
-		try {
-			const result = await competentService.getCompetentBeforeExpiry(req.body);
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getCompetentBeforeExpiry controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error fetching Competent Before Expiry data'
-			);
-		}
-	}
-
 	async renewCompetentOfficer(req, res) {
 		try {
 			const { userId } = req.body;

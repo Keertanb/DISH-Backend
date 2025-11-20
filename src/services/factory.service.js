@@ -111,9 +111,9 @@ class FactoryService {
 		}
 	}
 
-	async getUpcomingInspectionUsers() {
+	async upcomingInspectionUsers() {
 		try {
-			const candidates = await factoryModel.getUpcomingInspectionUsers();
+			const candidates = await factoryModel.upcomingInspectionUsers();
 
 			if (!candidates.length) {
 				console.error(
@@ -150,7 +150,7 @@ class FactoryService {
 
 			return { message: 'Machine Inspection Reminder successfully', candidates };
 		} catch (err) {
-			logger.error('Error in getUpcomingInspectionUsers service:', { err });
+			logger.error('Error in upcomingInspectionUsers service:', { err });
 			throw err;
 		}
 	}

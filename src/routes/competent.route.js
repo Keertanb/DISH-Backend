@@ -249,15 +249,6 @@ router.get(
 	competentController.getConfinedSpace
 );
 
-// All competent expiry end
-router.post('/competent-expiry-end', competentController.getCompetentExpiryEnd);
-
-// All competent expiry Pause end
-router.post('/competent-expiry-pause-end', competentController.getCompetentExpiryPauseEnd);
-
-// All competent expiry before 30 days notification
-router.post('/competent-before-expiry-notification', competentController.getCompetentBeforeExpiry);
-
 // Renew Competent Officer Application
 router.post(
 	'/renew-competent-officer',

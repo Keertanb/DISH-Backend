@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 // MODELS
 import AuthModel from '../models/auth.model.js';
 
@@ -9,7 +8,6 @@ import { sendMail } from '../utils/mail.js';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 
-dotenv.config();
 const authModel = new AuthModel();
 
 function generatePassword() {
@@ -106,6 +104,32 @@ class AuthService {
 				throw new Error('Invalid UserId or Password');
 			}
 
+			if (login.expirationMessage) {
+				const { userId } = login;
+				const msg = login.expirationMessage.trim().toLowerCase();
+
+				const isTwoMonths = msg.includes('2 months');
+				const isOneMonth = msg.includes('1 month');
+
+				if (isTwoMonths || isOneMonth) {
+					await sendMail({
+						to: login.email,
+						subject: 'Login Access Expiration Reminder',
+						html: `
+						<p>Dear User,</p>
+						<p>This is a reminder that your login access will expire soon.</p>
+
+						<p><b>User ID:</b> ${userId}</p>
+						<p><b>${login.expirationMessage}</b></p>
+
+						<p>Please renew your account before the expiration date to avoid login interruption.</p>
+
+						<p>Regards,<br/>Support Team</p>
+					`,
+					});
+				}
+			}
+
 			return {
 				userId: login.userId,
 				roleName: login.roleName,
@@ -113,6 +137,7 @@ class AuthService {
 				districtId: login.districtId,
 				districtName: login.districtName,
 				accountRenew: login.isRenew,
+				expirationMessage: login.expirationMessage,
 			};
 		} catch (err) {
 			logger.error('Error in login service:', { message: err.message, stack: err.stack });
