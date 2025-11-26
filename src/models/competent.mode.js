@@ -37,6 +37,7 @@ class CompetentModel {
 				confinedSpaceDocument,
 				stabilityDocument,
 				cv,
+				medicalCertificate,
 				educationalQualification,
 				descriptionOfExamination,
 				arrangementsForCalibrationAndMaintenance,
@@ -109,6 +110,7 @@ class CompetentModel {
 					{ name: 'confinedSpaceDocument', type: sql.NVarChar(255), value: confinedSpaceDocument },
 					{ name: 'stabilityDocument', type: sql.NVarChar(255), value: stabilityDocument },
 					{ name: 'cv', type: sql.NVarChar(255), value: cv },
+					{ name: 'medicalCertificate', type: sql.NVarChar(255), value: medicalCertificate },
 					{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
 					{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
 					{
@@ -229,6 +231,21 @@ class CompetentModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory model:', { err });
+			throw err;
+		}
+	}
+
+	async searchFactory(userId) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetSearchFactory',
+				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
+				true
+			);
+
+			return result;
+		} catch (err) {
+			logger.error('Error in searchFactory model:', { err });
 			throw err;
 		}
 	}
@@ -1579,6 +1596,22 @@ class CompetentModel {
 		}
 	}
 
+	async competent24HoursEnd() {
+		try {
+			const result = await executeStoredProcedure('SP_Competent24HoursEnd', [], true);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in competent24HoursEnd model:', { err });
+			throw err;
+		}
+	}
+
 	// async competentBeforeExpiry() {
 	// 	try {
 	// 		const result = await executeStoredProcedure('SP_CompetentOfficersBeforeExpiry', [], true);
@@ -1595,10 +1628,11 @@ class CompetentModel {
 	// 	}
 	// }
 
-	async renewCompetentOfficer(userId) {
+	async renewCompetentOfficer(userId, data) {
 		try {
 			const result = await executeStoredProcedure('SP_UpdateRenewCompetentOfficer', [
 				{ name: 'userId', type: sql.VarChar(30), value: userId },
+				{ name: 'medicalCertificate', type: sql.NVarChar(255), value: data.medicalCertificate },
 			]);
 			return result;
 		} catch (err) {

@@ -40,17 +40,31 @@ const competentExpiryPause = cron.schedule(
 	{ scheduled: false, timezone: API_TIMEZONE }
 );
 
+const competent24HoursEnd = cron.schedule(
+	'51 * * * *',
+	async () => {
+		try {
+			await competentService.competent24HoursEnd();
+		} catch (err) {
+			console.error('Competent 24 Hours Time End API Error:', err.response?.data || err.message);
+		}
+	},
+	{ scheduled: false, timezone: API_TIMEZONE }
+);
+
 export default {
 	startAll: () => {
 		// competentBeforeExpiry.start();
 		competentExpiry.start();
 		competentExpiryPause.start();
+		competent24HoursEnd.start();
 		console.log('start competent cron job');
 	},
 	stopAll: () => {
 		// competentBeforeExpiry.stop();
 		competentExpiry.stop();
 		competentExpiryPause.stop();
+		competent24HoursEnd.stop();
 		console.log('stop competent cron job');
 	},
 };

@@ -8,8 +8,6 @@ import { sendMail } from '../utils/mail.js';
 import fs from 'fs';
 import path from 'path';
 
-import { fileURLToPath } from 'url';
-
 const allOfficersModel = new AllOfficersModel();
 
 class AllOfficersService {
@@ -56,14 +54,11 @@ class AllOfficersService {
 
 	async updateCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
 			if (
 				!applicationType ||
 				![
 					'Approved',
-					'Reject',
+					'Rejected',
 					'RecommendedByDistrict',
 					'QueryToDistrict',
 					'NonRecommendedByDistrict',
@@ -73,11 +68,11 @@ class AllOfficersService {
 			}
 
 			if (
-				(applicationType === 'Reject' || applicationType === 'NonRecommendedByDistrict') &&
+				(applicationType === 'Rejected' || applicationType === 'NonRecommendedByDistrict') &&
 				(!reason || reason.trim() === '')
 			) {
 				throw new Error(
-					'Reason is required when applicationType is Reject OR NonRecommendedByDistrict'
+					'Reason is required when applicationType is Rejected OR NonRecommendedByDistrict'
 				);
 			}
 			const status = await allOfficersModel.updateCompetentOfficersStatus(
@@ -162,62 +157,78 @@ class AllOfficersService {
 		}
 	}
 
-	async sendFactoryNotifications() {
-		try {
-			// 1. Fetch emails from DB
-			const factories = await allOfficersModel.getAllFactoryEmails();
+	// async sendFactoryNotifications() {
+	// 	try {
+	// 		const factories = await allOfficersModel.getAllFactoryEmails();
+	// 		const totalMails = factories.length;
 
-			if (!factories.length) {
-				console.error('No factories found or emails are NULL.');
-			}
+	// 		const tasks = factories.map((factory, index) => async () => {
+	// 			try {
+	// 				const { email, pdfName } = factory;
 
-			// 2. Load your existing PDF
-			const pdfPath = path.join(
-				process.cwd(),
-				'public',
-				'letter_to_628_candidates_with_list_for_cm_function.pdf'
-			);
-			const pdfBuffer = fs.readFileSync(pdfPath);
+	// 				if (!email) {
+	// 					console.log(`⚠ Missing email at index ${index}`);
+	// 					return false;
+	// 				}
 
-			// 3. Loop through factories & send mail
-			for (const factory of factories) {
-				const { email } = factory;
+	// 				const fileName = path.basename(pdfName || '');
+	// 				const pdfPath = path.join(process.cwd(), 'public', 'factory-pdfs', fileName);
 
-				if (!email) {
-					console.error(`Missing email for ${email}`);
-					continue;
-				}
+	// 				if (!fileName || !fs.existsSync(pdfPath)) {
+	// 					console.log(`❌ Missing PDF → email: ${email}, file: ${fileName}`);
+	// 					return false;
+	// 				}
 
-				await sendMail({
-					to: email,
-					subject:
-						'કમિશનર શાળાઓની કચેરીના,જુનિયર ક્લાર્ક,(વર્ગ-૦૩) સંવર્ગમાં સીધી ભરતીથી પસંદગી પામેલ ઉમેદવારોને માન.મુખ્યમંત્રીશ્રીના વરદહસ્તે નિમણૂંકપત્ર મેળવવા માટે હાજર રહેવા બાબત',
-					html: `
-						કમિશનર શાળાઓની કચેરીના,જુનિયર ક્લાર્ક,(વર્ગ-૦૩) સંવર્ગમાં સીધી ભરતીથી પસંદગી પામેલ ઉમેદવારોને માન.મુખ્યમંત્રીશ્રીના વરદહસ્તે નિમણૂંકપત્ર મેળવવા માટે હાજર રહેવા બાબત
-					`,
-					attachments: [
-						{
-							filename: `letter.pdf`,
-							content: pdfBuffer,
-							contentType: 'application/pdf',
-						},
-					],
-				});
-			}
+	// 				const pdfBuffer = fs.readFileSync(pdfPath);
 
-			return { message: 'mail sent successfully', totalSent: factories.length };
-		} catch (err) {
-			logger.error('Error in mail sent service:', { err });
-			throw err;
-		}
-	}
+	// 				const mailStatus = await sendMail({
+	// 					order: index,
+	// 					to: email,
+	// 					subject:
+	// 						'કમિશનર શાળાઓની કચેરી તથા તેની સંલગ્ન કચેરીઓમાં જુનિયર ક્લાર્કની નિમણૂકના આદેશ ',
+	// 					html: 'PFA',
+	// 					attachments: [
+	// 						{
+	// 							filename: fileName,
+	// 							content: pdfBuffer,
+	// 							contentType: 'application/pdf',
+	// 						},
+	// 					],
+	// 				});
 
-	async rescheduleInterview({ interviewCandidates, oldScheduledDate, newScheduledDate }) {
+	// 				return mailStatus;
+	// 			} catch (err) {
+	// 				console.log(`❌ Error sending to ${factory?.email}: ${err.message}`);
+	// 				return false;
+	// 			}
+	// 		});
+
+	// 		const results = await promisePool(tasks, 5);
+
+	// 		return {
+	// 			message: 'FAST bulk mail sending completed!',
+	// 			totalMails,
+	// 			totalSent: results.filter((r) => r.success).length,
+	// 			// accountsStatus: accounts,
+	// 		};
+	// 	} catch (err) {
+	// 		console.error('sendFactoryNotifications failed:', err);
+	// 		throw err;
+	// 	}
+	// }
+
+	async rescheduleInterview({
+		interviewCandidates,
+		rescheduleCount,
+		oldScheduledDate,
+		newScheduledDate,
+	}) {
 		try {
 			const userId = interviewCandidates.map((c) => c.userId).join(',');
 
 			const candidates = await allOfficersModel.rescheduleInterview(
 				userId,
+				rescheduleCount,
 				oldScheduledDate,
 				newScheduledDate
 			);
@@ -330,17 +341,67 @@ class AllOfficersService {
 
 	async interviewCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
-			if (!applicationType || !['Approved', 'Reject'].includes(applicationType)) {
+			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
 				throw new Error('Invalid applicationType provided');
 			}
 
-			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Reject');
+			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Rejected');
 			}
 			const status = await allOfficersModel.interviewCompetentOfficersStatus(
+				userId,
+				applicationType,
+				reason
+			);
+			if (status?.email) {
+				let subject = '';
+				let html = '';
+
+				if (applicationType === 'Rejected') {
+					subject = 'Competent Officer Rejection Notification';
+					html = `
+					<p>Dear Officer,</p>
+					<p>Your application has been <b>Rejected</b>.</p>
+					<p><b>Reason:</b> ${status.reason}</p>
+					<p>Regards,<br/>Factory Portal</p>
+				`;
+				}
+
+				await sendMail({ to: status.email, subject, html });
+			}
+
+			return status;
+		} catch (err) {
+			logger.error('Error in InterviewCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
+
+	async getTransferToSuperAdminCompetentOfficers(districtId, page, limit, search) {
+		try {
+			const officers = await allOfficersModel.getTransferToSuperAdminCompetentOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return officers;
+		} catch (err) {
+			logger.error('Error in getTransferToSuperAdminCompetentOfficers service:', { err });
+			throw err;
+		}
+	}
+
+	async transferToSuperAdminCompetentOfficersStatus({ userId, applicationType, reason }) {
+		try {
+			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
+				throw new Error('Invalid applicationType provided');
+			}
+
+			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Rejected');
+			}
+			const status = await allOfficersModel.transferToSuperAdminCompetentOfficersStatus(
 				userId,
 				applicationType,
 				reason
@@ -359,7 +420,7 @@ class AllOfficersService {
 					<p><b>End Date:</b> ${status.EndDate}</p>
 					<p>Regards,<br/>Factory Portal</p>
 				`;
-				} else if (applicationType === 'Reject') {
+				} else if (applicationType === 'Rejected') {
 					subject = 'Competent Officer Rejection Notification';
 					html = `
 					<p>Dear Officer,</p>
@@ -374,7 +435,7 @@ class AllOfficersService {
 
 			return status;
 		} catch (err) {
-			logger.error('Error in InterviewCompetentOfficersStatus service:', { err });
+			logger.error('Error in transferToSuperAdminCompetentOfficersStatus service:', { err });
 			throw err;
 		}
 	}
@@ -437,12 +498,12 @@ class AllOfficersService {
 			if (!userId || userId.trim() === '') {
 				throw new Error('Invalid userId provided');
 			}
-			if (!applicationType || !['Approved', 'Reject'].includes(applicationType)) {
+			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
 				throw new Error('Invalid applicationType provided');
 			}
 
-			if (applicationType === 'Reject' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Reject');
+			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
+				throw new Error('Reason is required when applicationType is Rejected');
 			}
 			const status = await allOfficersModel.renewCompetentOfficersStatus(
 				userId,
@@ -464,7 +525,7 @@ class AllOfficersService {
 					<p>We appreciate your continued service and dedication.</p>
 					<p>Regards,<br/>Factory Portal</p>
 				`;
-				} else if (applicationType === 'Reject') {
+				} else if (applicationType === 'Rejected') {
 					subject = 'Competent Officer Rejection Notification';
 					html = `
 					<p>Dear Officer,</p>
@@ -495,6 +556,37 @@ class AllOfficersService {
 			return officers;
 		} catch (err) {
 			logger.error('Error in getCompetentTimeEndOfficersList service:', { err });
+			throw err;
+		}
+	}
+
+	async timeEndCompetentOfficersRenewal(userId, status) {
+		try {
+			if (!status || status !== 'Approved') {
+				throw new Error('Invalid status provided');
+			}
+
+			const result = await allOfficersModel.timeEndCompetentOfficersRenewal(userId, status);
+
+			const istTime = result.expirationDateLimit;
+
+			await sendMail({
+				to: result.email,
+				subject: 'Your Renewal is Activated for 24 Hours',
+				html: `
+				<p>Dear Officer,</p>
+				<p>Your final renewal window has been activated.</p>
+				<p><b>Expiration Time:</b> ${istTime}</p>
+				<p>Please complete your renewal before the expiration time.</p>
+			`,
+			});
+
+			return {
+				message: '24 hours renewal activated and mail sent successfully.',
+				data: result,
+			};
+		} catch (err) {
+			logger.error('Error in timeEndCompetentOfficersRenewal service:', { err });
 			throw err;
 		}
 	}

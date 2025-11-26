@@ -136,6 +136,16 @@ class CompetentService {
 		}
 	}
 
+	async searchFactory(userId) {
+		try {
+			const result = await competentModel.searchFactory(userId);
+			return result;
+		} catch (err) {
+			logger.error('Error in inspectionFactory service:', { err });
+			throw err;
+		}
+	}
+
 	async addNewMachine(data) {
 		try {
 			const machine = await competentModel.addNewMachine(data);
@@ -636,6 +646,54 @@ class CompetentService {
 		}
 	}
 
+	async competent24HoursEnd() {
+		try {
+			const candidates = await competentModel.competent24HoursEnd();
+
+			if (!candidates.length) {
+				console.error('No competent officers found whose validity period has ended.');
+				return { message: 'No expired competent officers found', data: [] };
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email, expirationDateLimit } = candidate;
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				await sendMail({
+					to: email,
+					subject: 'Competent Officer 24 Hours Time Ended - DISH Portal',
+					html: `
+					<p>Dear Competent Officer,</p>
+
+					<p>Your <b>24-hour provisional access period</b> has now <b>expired${
+						expirationDateLimit ? ' as of <b>' + expirationDateLimit + '</b>' : ''
+					}.</b></p>
+
+					<p>You will no longer be able to log in to the DISH Portal.</p>
+
+					<p>If you believe this is an error or require further assistance, please contact the DISH Support Team.</p>
+
+					<p>Regards,<br/>
+					<b>DISH Support Team</b><br/>
+					<small>Department of Industrial Safety & Health</small></p>
+				`,
+				});
+			}
+
+			return {
+				message: 'Competent Officer 24 Hours Time End Notification sent successfully',
+				candidates,
+			};
+		} catch (err) {
+			logger.error('Error in competent24HoursEnd service:', { err });
+			throw err;
+		}
+	}
+
 	// async competentBeforeExpiry() {
 	// 	try {
 	// 		const candidates = await competentModel.competentBeforeExpiry();
@@ -686,9 +744,9 @@ class CompetentService {
 	// 	}
 	// }
 
-	async renewCompetentOfficer(userId) {
+	async renewCompetentOfficer(userId, data) {
 		try {
-			const competent = await competentModel.renewCompetentOfficer(userId);
+			const competent = await competentModel.renewCompetentOfficer(userId, data);
 			const { userId: dbUserId, email: dbEmail } = competent;
 			await sendMail({
 				to: dbEmail,

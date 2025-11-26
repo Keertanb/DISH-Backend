@@ -4,6 +4,7 @@ import FactoryService from '../services/factory.service.js';
 const API_TIMEZONE = 'Asia/Kolkata';
 const factoryService = new FactoryService();
 
+// Machine inspection upcoming in next 5 days
 const upcomingInspection = cron.schedule(
 	'* 12 * * *',
 	async () => {

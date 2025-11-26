@@ -3,11 +3,11 @@ import Joi from 'joi';
 export const updateProfile = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-		mobileNo: Joi.string().max(15).optional(),
-		email: Joi.string().email().max(100).optional(),
-		addressLine1: Joi.string().max(50).optional(),
-		addressLine2: Joi.string().max(50).allow(''),
-		addressLine3: Joi.string().max(50).allow(''),
+		mobileNo: Joi.string().max(15).allow(null).optional(),
+		email: Joi.string().email().max(100).allow(null).optional(),
+		addressLine1: Joi.string().max(50).allow(null).optional(),
+		addressLine2: Joi.string().max(50).allow(null, ''),
+		addressLine3: Joi.string().max(50).allow(null, ''),
 		experienceYear: Joi.number().integer().min(1).optional(),
 		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
 		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
@@ -20,132 +20,6 @@ export const updateProfile = {
 		isThermicFluidHeater: Joi.number().valid(0, 1).allow(null),
 		isConfinedSpace: Joi.number().valid(0, 1).allow(null),
 		isStability: Joi.number().valid(0, 1).allow(null),
-
-		// pressureVesselOrPlantDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isPressureVesselOrPlant', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Pressure Vessel or Plant document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-
-		// hoistAndLiftsDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isHoistAndLifts', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Hoist and Lifts document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// dustFumeExtractionSystemDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isDustFumeExtractionSystem', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Dust & Fume Extraction System document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-
-		// powerPressSafetyDevicesDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isPowerPressSafetyDevices', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Power Press Safety Devices document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// waterSealedGasHolderDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isWaterSealedGasHolder', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Water Sealed Gas Holder document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// liftingMachinesChainsRopesDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isLiftingMachinesChainsRopes', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Lifting Machines, Chains & Ropes document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// ovenAndDriersDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isOvenAndDriers', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Oven and Driers document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// centrifugeMachineDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isCentrifugeMachine', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Centrifuge Machine document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// thermicFluidHeaterDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isThermicFluidHeater', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Thermic Fluid Heater document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// confinedSpaceDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isConfinedSpace', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Pressure Vessel or Plant document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-		// stabilityDocument: Joi.string()
-		// 	.max(255)
-		// 	.allow(null, '')
-		// 	.when('isStability', {
-		// 		is: 1,
-		// 		then: Joi.string()
-		// 			.max(255)
-		// 			.message('Pressure Vessel or Plant document is required when selected')
-		// 			.required(),
-		// 		otherwise: Joi.string().max(255).allow(null, ''),
-		// 	}),
-
-		// cv: Joi.string().max(255).message('CV cannot exceed 255 characters').optional(),
 		educationalQualification: Joi.string().allow(null, ''),
 		descriptionOfExamination: Joi.string().allow(null, ''),
 		arrangementsForCalibrationAndMaintenance: Joi.string().allow(null, ''),
@@ -197,6 +71,12 @@ export const inspectionFactory = {
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().max(100).optional(),
+	}),
+};
+
+export const searchFactory = {
+	query: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
 	}),
 };
 

@@ -6,28 +6,23 @@ const uploadDir = path.join(process.cwd(), 'uploads', 'competent-documents');
 
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-async function getUserId(req) {
-	return req.body?.userId || req.query?.userId || req.headers['userid'] || null;
-}
-
-// Storage configuration
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, uploadDir);
 	},
-	filename: async (req, file, cb) => {
-		try {
-			const userId = await getUserId(req);
-			if (!userId) {
-				return cb(new Error('User ID missing — cannot save file.'));
-			}
-			const ext = path.extname(file.originalname).toLowerCase();
-			const base = path.basename(file.originalname, ext);
-			const newName = `${userId}_${base}-${Date.now()}${ext}`;
-			cb(null, newName);
-		} catch (error) {
-			cb(error);
+	filename: (req, file, cb) => {
+		const userId = req.body.userId || req.query.userId || req.headers['userid'];
+
+		if (!userId) {
+			// Temporary fallback
+			return cb(new Error('User ID not found during file upload'));
 		}
+
+		const ext = path.extname(file.originalname).toLowerCase();
+		const base = path.basename(file.originalname, ext);
+		const newName = `${userId}_${base}-${Date.now()}${ext}`;
+
+		cb(null, newName);
 	},
 });
 
@@ -59,6 +54,7 @@ const uploadCompetentDocs = multer({
 	{ name: 'confinedSpaceDocument', maxCount: 1 },
 	{ name: 'stabilityDocument', maxCount: 1 },
 	{ name: 'cv', maxCount: 1 },
+	{ name: 'medicalCertificate', maxCount: 1 },
 ]);
 
 export default uploadCompetentDocs;

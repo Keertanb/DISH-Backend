@@ -51,11 +51,25 @@ router.post(
 	allOfficersController.rescheduleInterview
 );
 
-// Update Status Interview competent officers (Approve/Reject)
+// Update Status Interview competent officers (Transfer To super Admin/Reject)
 router.post(
 	'/interview-competent-officers-status',
 	validateSchema(allOfficersValidation.InterviewCompetentOfficersStatus),
 	allOfficersController.interviewCompetentOfficersStatus
+);
+
+// Get Transfer to super admin competent officers
+router.get(
+	'/get-transfer-super-admin-officers',
+	validateSchema(allOfficersValidation.getTransferToSuperAdminCompetentOfficers),
+	allOfficersController.getTransferToSuperAdminCompetentOfficers
+);
+
+// update Transfer to super admin competent officers (Approve/Rejected)
+router.post(
+	'/transfer-super-admin-competent-officers-status',
+	validateSchema(allOfficersValidation.transferToSuperAdminCompetentOfficersStatus),
+	allOfficersController.transferToSuperAdminCompetentOfficersStatus
 );
 
 // Get all dashboard data Count
@@ -100,7 +114,7 @@ router.get(
 	allOfficersController.getCompetentRenewOfficersList
 );
 
-router.post('/pdf', allOfficersController.sendFactoryNotifications);
+// router.post('/pdf', allOfficersController.sendFactoryNotifications);
 
 // Update Status Renew competent officers (Approve/Reject)
 router.post(
@@ -114,6 +128,13 @@ router.get(
 	'/get-competent-timeend-officers',
 	validateSchema(allOfficersValidation.getCompetentTimeEndOfficers),
 	allOfficersController.getCompetentTimeEndOfficersList
+);
+
+// TimeEnd competent approved last chance renewal
+router.put(
+	'/timeend-competent-officers-renewal',
+	validateSchema(allOfficersValidation.timeEndCompetentOfficersRenewal),
+	allOfficersController.timeEndCompetentOfficersRenewal
 );
 
 export default router;

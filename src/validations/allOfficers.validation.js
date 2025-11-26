@@ -42,7 +42,7 @@ export const updateCompetentOfficersStatus = {
 		applicationType: Joi.string()
 			.valid(
 				'Approved',
-				'Reject',
+				'Rejected',
 				'RecommendedByDistrict',
 				'QueryToDistrict',
 				'NonRecommendedByDistrict'
@@ -50,7 +50,7 @@ export const updateCompetentOfficersStatus = {
 			.required(),
 
 		reason: Joi.when('applicationType', {
-			is: 'Reject',
+			is: 'Rejected',
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
@@ -73,6 +73,7 @@ export const rescheduleInterview = {
 			.items(Joi.object({ userId: Joi.string().max(30).required() }))
 			.min(1)
 			.required(),
+		rescheduleCount: Joi.number().positive().required(),
 		oldScheduledDate: Joi.date().required(),
 		newScheduledDate: Joi.date().required(),
 	}),
@@ -82,10 +83,33 @@ export const InterviewCompetentOfficersStatus = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
 
-		applicationType: Joi.string().valid('Approved', 'Reject').required(),
+		applicationType: Joi.string().valid('Approved', 'Rejected').required(),
 
 		reason: Joi.when('applicationType', {
-			is: 'Reject',
+			is: 'Rejected',
+			then: Joi.string().max(255).required(),
+			otherwise: Joi.allow(null).optional(),
+		}),
+	}),
+};
+
+export const getTransferToSuperAdminCompetentOfficers = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().optional(),
+		limit: Joi.number().optional(),
+		search: Joi.string().optional(),
+	}),
+};
+
+export const transferToSuperAdminCompetentOfficersStatus = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+
+		applicationType: Joi.string().valid('Approved', 'Rejected').required(),
+
+		reason: Joi.when('applicationType', {
+			is: 'Rejected',
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
@@ -134,10 +158,10 @@ export const renewCompetentOfficersStatus = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
 
-		applicationType: Joi.string().valid('Approved', 'Reject').required(),
+		applicationType: Joi.string().valid('Approved', 'Rejected').required(),
 
 		reason: Joi.when('applicationType', {
-			is: 'Reject',
+			is: 'Rejected',
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
@@ -150,5 +174,12 @@ export const getCompetentTimeEndOfficers = {
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().optional(),
+	}),
+};
+
+export const timeEndCompetentOfficersRenewal = {
+	body: Joi.object().keys({
+		userId: Joi.string().max(30).required(),
+		status: Joi.string().valid('Approved').required(),
 	}),
 };

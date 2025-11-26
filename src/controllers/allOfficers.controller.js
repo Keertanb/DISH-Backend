@@ -123,10 +123,11 @@ class AllOfficersController {
 
 	async rescheduleInterview(req, res) {
 		try {
-			const { interviewCandidates, oldScheduledDate, newScheduledDate } = req.body;
+			const { interviewCandidates, rescheduleCount, oldScheduledDate, newScheduledDate } = req.body;
 
 			const result = await allOfficersService.rescheduleInterview({
 				interviewCandidates,
+				rescheduleCount,
 				oldScheduledDate,
 				newScheduledDate,
 			});
@@ -172,6 +173,47 @@ class AllOfficersController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in InterviewCompetentOfficersStatus controller'
+			);
+		}
+	}
+
+	async getTransferToSuperAdminCompetentOfficers(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+
+			const officer = await allOfficersService.getTransferToSuperAdminCompetentOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
+
+			return res.handler.success(officer);
+		} catch (err) {
+			logger.error('Error in getTransferToSuperAdminCompetentOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getTransferToSuperAdminCompetentOfficers controller'
+			);
+		}
+	}
+
+	async transferToSuperAdminCompetentOfficersStatus(req, res) {
+		try {
+			const { userId, applicationType, reason } = req.body;
+
+			const status = await allOfficersService.transferToSuperAdminCompetentOfficersStatus({
+				userId,
+				applicationType,
+				reason,
+			});
+
+			return res.handler.success(status);
+		} catch (err) {
+			logger.error('Error in transferToSuperAdminCompetentOfficersStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in transferToSuperAdminCompetentOfficersStatus controller'
 			);
 		}
 	}
@@ -283,6 +325,20 @@ class AllOfficersController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in getCompetentTimeEndOfficersList controller'
+			);
+		}
+	}
+
+	async timeEndCompetentOfficersRenewal(req, res) {
+		try {
+			const { userId, status } = req.body;
+			const result = await allOfficersService.timeEndCompetentOfficersRenewal(userId, status);
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in timeEndCompetentOfficersRenewal controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in timeEndCompetentOfficersRenewal controller'
 			);
 		}
 	}

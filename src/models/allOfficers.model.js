@@ -144,12 +144,13 @@ class AllOfficersModel {
 		}
 	}
 
-	async rescheduleInterview(userId, oldScheduledDate, newScheduledDate) {
+	async rescheduleInterview(userId, rescheduleCount, oldScheduledDate, newScheduledDate) {
 		try {
 			const result = await executeStoredProcedure(
 				'SP_RescheduleInterview',
 				[
 					{ name: 'userId', type: sql.NVarChar(sql.MAX), value: userId },
+					{ name: 'rescheduleCount', type: sql.Int, value: rescheduleCount },
 					{ name: 'oldScheduledDate', type: sql.Date, value: oldScheduledDate },
 					{ name: 'newScheduledDate', type: sql.Date, value: newScheduledDate },
 				],
@@ -184,6 +185,44 @@ class AllOfficersModel {
 			return result[0];
 		} catch (err) {
 			logger.error('Error in InterviewCompetentOfficersStatus model:', { err });
+			throw err;
+		}
+	}
+
+	async getTransferToSuperAdminCompetentOfficers(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetTransferSuperAdminCompetentsList',
+				[
+					{ name: 'districtId', type: sql.Int(), value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getTransferToSuperAdminCompetentOfficers model:', { err });
+			throw err;
+		}
+	}
+
+	async transferToSuperAdminCompetentOfficersStatus(userId, applicationType, reason = null) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_TransferSuperAdminCompetentStatus',
+				[
+					{ name: 'userId', type: sql.VarChar(sql.MAX), value: userId },
+					{ name: 'applicationType', type: sql.VarChar(30), value: applicationType },
+					{ name: 'reason', type: sql.VarChar(255), value: reason },
+				],
+				true
+			);
+
+			return result[0];
+		} catch (err) {
+			logger.error('Error in transferToSuperAdminCompetentOfficersStatus model:', { err });
 			throw err;
 		}
 	}
@@ -311,9 +350,31 @@ class AllOfficersModel {
 				],
 				true
 			);
+
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
+
 			return result;
 		} catch (err) {
 			logger.error('Error in getCompetentTimeEndOfficersList model:', { err });
+			throw err;
+		}
+	}
+
+	async timeEndCompetentOfficersRenewal(userId, status) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_Update24HoursStatus',
+				[
+					{ name: 'userId', type: sql.VarChar(30), value: userId },
+					{ name: 'status', type: sql.VarChar(20), value: status },
+				],
+				true
+			);
+			return result[0];
+		} catch (err) {
+			logger.error('Error in timeEndCompetentOfficersRenewal model:', { err });
 			throw err;
 		}
 	}

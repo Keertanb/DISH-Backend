@@ -8,10 +8,7 @@ const competentService = new CompetentService();
 class CompetentController {
 	async updateProfile(req, res) {
 		try {
-			console.log(req.body, 'req.body in updateProfile');
 			const { userId, ...data } = req.body;
-			console.log('Update Profile Request Body:', req.body);
-			console.log('Uploaded Files:', req.files);
 			if (req.files) {
 				const fileFields = [
 					'pressureVesselOrPlantDocument',
@@ -26,6 +23,7 @@ class CompetentController {
 					'confinedSpaceDocument',
 					'stabilityDocument',
 					'cv',
+					'medicalCertificate',
 				];
 
 				fileFields.forEach((field) => {
@@ -110,6 +108,18 @@ class CompetentController {
 		} catch (err) {
 			logger.error('Error in inspectionFactory:', { err });
 			return res.handler.serverError({}, err.message || 'Error in inspectionFactory');
+		}
+	}
+
+	async searchFactory(req, res) {
+		try {
+			const { userId } = req.query;
+			const result = await competentService.searchFactory(userId);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in searchFactory:', { err });
+			return res.handler.serverError({}, err.message || 'Error in searchFactory');
 		}
 	}
 
@@ -509,8 +519,17 @@ class CompetentController {
 
 	async renewCompetentOfficer(req, res) {
 		try {
-			const { userId } = req.body;
-			const result = await competentService.renewCompetentOfficer(userId);
+			const { userId, ...data } = req.body;
+			if (req.files) {
+				const fileFields = ['medicalCertificate'];
+
+				fileFields.forEach((field) => {
+					if (req.files[field] && req.files[field][0]) {
+						data[field] = `competent-documents/${req.files[field][0].filename}`;
+					}
+				});
+			}
+			const result = await competentService.renewCompetentOfficer(userId, data);
 			return res.handler.success(result);
 		} catch (err) {
 			logger.error('Error in renewCompetentOfficer controller:', { err });

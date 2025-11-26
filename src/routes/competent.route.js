@@ -46,6 +46,13 @@ router.get(
 	competentController.inspectionFactory
 );
 
+// // Search Factory by name or factory Id
+router.get(
+	'/search-factory',
+	validateSchema(competentValidation.searchFactory),
+	competentController.searchFactory
+);
+
 // Competent add new machine for factory
 router.post(
 	'/register-new-machine',
@@ -252,6 +259,7 @@ router.get(
 // Renew Competent Officer Application
 router.post(
 	'/renew-competent-officer',
+	uploadCompetentDocs,
 	validateSchema(competentValidation.renewCompetentOfficer),
 	competentController.renewCompetentOfficer
 );
