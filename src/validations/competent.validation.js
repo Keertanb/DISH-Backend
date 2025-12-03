@@ -3,33 +3,175 @@ import Joi from 'joi';
 export const updateProfile = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-		mobileNo: Joi.string().max(15).allow(null).optional(),
-		email: Joi.string().email().max(100).allow(null).optional(),
-		addressLine1: Joi.string().max(50).allow(null).optional(),
-		addressLine2: Joi.string().max(50).allow(null, ''),
-		addressLine3: Joi.string().max(50).allow(null, ''),
-		experienceYear: Joi.number().integer().min(1).optional(),
-		isPressureVesselOrPlant: Joi.number().valid(0, 1).allow(null),
-		isHoistAndLifts: Joi.number().valid(0, 1).allow(null),
-		isDustFumeExtractionSystem: Joi.number().valid(0, 1).allow(null),
-		isPowerPressSafetyDevices: Joi.number().valid(0, 1).allow(null),
-		isWaterSealedGasHolder: Joi.number().valid(0, 1).allow(null),
-		isLiftingMachinesChainsRopes: Joi.number().valid(0, 1).allow(null),
-		isOvenAndDriers: Joi.number().valid(0, 1).allow(null),
-		isCentrifugeMachine: Joi.number().valid(0, 1).allow(null),
-		isThermicFluidHeater: Joi.number().valid(0, 1).allow(null),
-		isConfinedSpace: Joi.number().valid(0, 1).allow(null),
-		isStability: Joi.number().valid(0, 1).allow(null),
-		educationalQualification: Joi.string().allow(null, ''),
-		descriptionOfExamination: Joi.string().allow(null, ''),
-		arrangementsForCalibrationAndMaintenance: Joi.string().allow(null, ''),
-		competencyCertificateIsSought: Joi.string().allow(null, ''),
 
-		otherStatute: Joi.number().valid(0, 1).allow(null),
+		mobileNo: Joi.string().max(15).empty('').default(null).optional(),
+
+		email: Joi.string().email().max(100).empty('').default(null).optional(),
+
+		addressLine1: Joi.string().max(50).empty('').default(null).optional(),
+
+		addressLine2: Joi.string().max(50).empty('').default(null).optional(),
+
+		addressLine3: Joi.string().max(50).empty('').default(null).optional(),
+
+		experienceYear: Joi.number().integer().greater(3).empty('').default(null).optional().messages({
+			'number.greater': 'Experience must be more than 3 years',
+		}),
+
+		isPressureVesselOrPlant: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isHoistAndLifts: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isDustFumeExtractionSystem: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isPowerPressSafetyDevices: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isWaterSealedGasHolder: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isLiftingMachinesChainsRopes: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isOvenAndDriers: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isCentrifugeMachine: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isThermicFluidHeater: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isConfinedSpace: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		isStability: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
+		hoistAndLiftsDocument: Joi.when('isHoistAndLifts', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required': 'Hoist & Lifts document is required when isHoistAndLifts is select',
+				'string.base': 'Hoist & Lifts document is required when isHoistAndLifts is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		pressureVesselOrPlantDocument: Joi.when('isPressureVesselOrPlant', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Pressure Vessel document is required when isPressureVesselOrPlant is select',
+				'string.base':
+					'Pressure Vessel document is required when isPressureVesselOrPlant is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		dustFumeExtractionSystemDocument: Joi.when('isDustFumeExtractionSystem', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Dust Fume Extraction document is required when isDustFumeExtractionSystem is select',
+				'string.base':
+					'Dust Fume Extraction document is required when isDustFumeExtractionSystem is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		powerPressSafetyDevicesDocument: Joi.when('isPowerPressSafetyDevices', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Power Press Safety document is required when isPowerPressSafetyDevices is select',
+				'string.base':
+					'Power Press Safety document is required when isPowerPressSafetyDevices is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		waterSealedGasHolderDocument: Joi.when('isWaterSealedGasHolder', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Water Sealed Gas Holder document is required when isWaterSealedGasHolder is select',
+				'string.base':
+					'Water Sealed Gas Holder document is required when isWaterSealedGasHolder is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		liftingMachinesChainsRopesDocument: Joi.when('isLiftingMachinesChainsRopes', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Lifting Machine document is required when isLiftingMachinesChainsRopes is select',
+				'string.base':
+					'Lifting Machine document is required when isLiftingMachinesChainsRopes is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		ovenAndDriersDocument: Joi.when('isOvenAndDriers', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required': 'Oven & Driers document is required when isOvenAndDriers is select',
+				'string.base': 'Oven & Driers document is required when isOvenAndDriers is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		centrifugeMachineDocument: Joi.when('isCentrifugeMachine', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Centrifuge Machine document is required when isCentrifugeMachine is select',
+				'string.base': 'Centrifuge Machine document is required when isCentrifugeMachine is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		thermicFluidHeaterDocument: Joi.when('isThermicFluidHeater', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required':
+					'Thermic Fluid Heater document is required when isThermicFluidHeater is select',
+				'string.base':
+					'Thermic Fluid Heater document is required when isThermicFluidHeater is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		confinedSpaceDocument: Joi.when('isConfinedSpace', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required': 'Confined Space document is required when isConfinedSpace is select',
+				'string.base': 'Confined Space document is required when isConfinedSpace is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		stabilityDocument: Joi.when('isStability', {
+			is: 1,
+			then: Joi.string().required().messages({
+				'any.required': 'Stability document is required when isStability is select',
+				'string.base': 'Stability document is required when isStability is select',
+			}),
+			otherwise: Joi.string().allow(null).empty('').default(null).optional(),
+		}),
+
+		educationalQualification: Joi.string().max(200).empty('').default(null).optional(),
+
+		descriptionOfExamination: Joi.string().max(500).empty('').default(null).optional(),
+
+		arrangementsForCalibrationAndMaintenance: Joi.string()
+			.max(500)
+			.empty('')
+			.default(null)
+			.optional(),
+
+		competencyCertificateIsSought: Joi.string().max(200).empty('').default(null).optional(),
+
+		otherStatute: Joi.number().valid(0, 1).empty('').default(null).optional(),
+
 		otherRelevantInformation: Joi.when('otherStatute', {
 			is: 1,
-			then: Joi.string().required(),
-			otherwise: Joi.allow(null, ''),
+			then: Joi.string().max(500).required().messages({
+				'any.required': 'Other Relevant Information is required when Other Statute is 1',
+			}),
+			otherwise: Joi.string().empty('').default(null).optional(),
 		}),
 	}),
 };
@@ -37,31 +179,6 @@ export const updateProfile = {
 export const applyCompetentOfficer = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
-	}),
-};
-
-export const getScheduledInspectionList = {
-	query: Joi.object().keys({
-		competentUserId: Joi.string().max(30).required(),
-		page: Joi.number().required(),
-		limit: Joi.number().required(),
-		search: Joi.string().max(100).optional(),
-	}),
-};
-
-export const scheduledMachineInspectionStatus = {
-	body: Joi.object().keys({
-		factoryUserId: Joi.string().max(30).required(),
-		machineName: Joi.string().max(70).required(),
-		inspectionDate: Joi.date().required(),
-		status: Joi.string().valid('Approved', 'Rejected').required(),
-
-		competentReason: Joi.when('status', {
-			is: 'Rejected',
-			then: Joi.string().max(255).required(),
-			otherwise: Joi.allow(null, '').optional(),
-		}),
-		competentUserId: Joi.string().max(30).required(),
 	}),
 };
 
@@ -77,6 +194,16 @@ export const inspectionFactory = {
 export const searchFactory = {
 	query: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
+	}),
+};
+
+export const factoryMachineInspection = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(70).required(),
+		inspectionCount: Joi.number().integer().min(1).required(),
+		inspectionDate: Joi.date().required(),
+		competentUserId: Joi.string().max(30).required(),
 	}),
 };
 
@@ -154,7 +281,7 @@ export const addExperience = {
 export const getIdentityByMachines = {
 	query: Joi.object().keys({
 		userId: Joi.string().required(),
-		machineNoPattern: Joi.string().max(50).required(),
+		machineNoPattern: Joi.string().max(50).optional(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
 		search: Joi.string().max(100).optional(),
@@ -165,274 +292,230 @@ export const upsertPressureVesselInspection = {
 	body: Joi.object({
 		isDraft: Joi.number().valid(0, 1).required(),
 
-		factoryUserId: Joi.string().required(),
-		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().required(),
+		factoryUserId: Joi.string().max(30).required(),
+
+		competentUserId: Joi.string().max(30).required(),
+
+		machineNo: Joi.string().max(30).required(),
+
 		scheduleInspectionDate: Joi.date().required(),
 
 		occupierName: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.messages({ 'string.max': 'Occupier Name must be at most 50 characters.' })
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierAddress: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nameOfPressureVesselOrPlant: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		descriptionOfPressureVesselOrPlant: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(500)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		distinctiveNumberOfPressureVesselOrPlant: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(100)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nameManufacturer: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(70)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		addressManufacturer: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		natureOfProcess: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(60)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		temperatureParameters: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureParameters: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateOfConstruction: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		thicknessOfWalls: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateFirstTakenIntoUse: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		safeWorkingPressure: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		lastExternalExamination: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastInternalExamination: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastHydraulicExamination: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastUltrasonicExamination: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		externalExaminationFindings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		internalExaminationFindings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hydraulicTestFindings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		ultrasonicTestFindings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		vesselCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pipingCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureGaugesCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		safetyValveCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		stopValveCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		reducingValveCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		additionalSafetyValveCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherDevicesCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		repairsRequired: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		repairPeriod: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherConditions: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		safeWorkingPressureAfterExamination: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		calculatedSafeWorkingPressure: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		reducedWorkingPressurePendingRepairs: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherPressureObservations: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -442,179 +525,153 @@ export const upsertHoistLiftInspection = {
 	body: Joi.object({
 		isDraft: Joi.number().valid(0, 1).required(),
 
-		factoryUserId: Joi.string().required(),
-		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().required(),
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
 		scheduleInspectionDate: Joi.date().required(),
 
 		registrationNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		licenceNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nicCodeNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierName: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierAddress: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		typeOfHoistOrLift: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateOfConstruction: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		mechanicalConstructionAssessment: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		enclosureOfHoistway: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		landingGatesAndCageGates: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		interlockAndGates: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherGateFastenings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		cageAndPlatformFittings: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		overRunningDevices: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		suspensionRopesOrChain: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		safetyGear: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		brakes: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		wormOrSpurGearing: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherElectricalEquipment: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherParts: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		inaccessibleParts: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		repairsRenewalsOrAlterations: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		maximumSafeWorkingLoad: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherParticulars: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -624,283 +681,241 @@ export const upsertEquipmentInspection = {
 	body: Joi.object({
 		isDraft: Joi.number().valid(0, 1).required(),
 
-		factoryUserId: Joi.string().required(),
-		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().required(),
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
 		scheduleInspectionDate: Joi.date().required(),
 
 		occupierName: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		factoryAddress: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		distinguishingNumberOrMark: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		equipmentDescription: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateFirstUsed: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		examinationDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		examinationBy: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		certificateDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		certificateNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		certificateIssuedBy: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		annealingDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		heatTreatmentBy: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		defectsFound: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		remedialSteps: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
 };
+
 export const upsertDustFumeExtractionSystem = {
 	body: Joi.object({
 		isDraft: Joi.number().valid(0, 1).required(),
 
-		factoryUserId: Joi.string().required(),
-		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().required(),
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
 		scheduleInspectionDate: Joi.date().required(),
 
 		systemDescription: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(255)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hoodSerialNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		contaminantCaptured: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		captureVelocitiesDesignValue: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		captureVelocitiesActualValue: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		captureVelocitiesPoints: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(15)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		volumeExhaustedAtHood: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(30)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hoodStaticPressure: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureDropAtJoints: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureDropAtOtherPoints: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		transportVelocityDustFume: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		transportVelocityPoints: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		airCleaningDeviceType: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		velocityAtInlet: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		staticPressureAtInlet: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		velocityAtOutlet: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		fanType: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		volumeHandled: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(40)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		staticPressures: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureDropAtOutletOfFan: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		fanMotorType: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		speedAndHorsepower: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(50)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		defectsFound: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.max(20)
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -910,108 +925,86 @@ export const upsertOvenDriersInspection = {
 	body: Joi.object({
 		isDraft: Joi.number().valid(0, 1).required(),
 
-		factoryUserId: Joi.string().required(),
-		competentUserId: Joi.string().required(),
-		machineNo: Joi.string().required(),
+		factoryUserId: Joi.string().max(30).required(),
+		competentUserId: Joi.string().max(30).required(),
+		machineNo: Joi.string().max(30).required(),
 		scheduleInspectionDate: Joi.date().required(),
 
-		occupierName: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		address: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		ovenName: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		ovenDistinctiveNumber: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		manufacturerNameAndAddress: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		ovenSize: Joi.string().when('isDraft', {
+		occupierName: Joi.string().max(50).empty('').default(null).when('isDraft', {
 			is: 1,
 			then: Joi.required(),
-			otherwise: Joi.allow(null, ''),
 		}),
-		workingTemperature: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		physicalCondition: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+
+		address: Joi.string().max(255).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		ovenName: Joi.string().max(50).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		ovenDistinctiveNumber: Joi.string().max(20).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		manufacturerNameAndAddress: Joi.string().max(255).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		ovenSize: Joi.string().max(20).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		workingTemperature: Joi.string().max(20).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		physicalCondition: Joi.string().max(30).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
 		separateCircuitWithIsolatingSwitch: Joi.string()
-			.allow(null, '')
+			.max(50)
+			.empty('')
+			.default(null)
 			.when('isDraft', {
 				is: 1,
 				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
 			}),
-		safetyVentilationWithFan: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		temperatureController: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		explosionVentDoor: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		interlockWithFan: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		remarks: Joi.string().allow(null, ''),
-		lastExaminationDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+
+		safetyVentilationWithFan: Joi.string().max(50).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		temperatureController: Joi.string().max(30).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		explosionVentDoor: Joi.string().max(50).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		interlockWithFan: Joi.string().max(50).empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
+
+		remarks: Joi.string().max(50).empty('').default(null),
+
+		lastExaminationDate: Joi.date().empty('').default(null).when('isDraft', {
+			is: 1,
+			then: Joi.required(),
+		}),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -1028,169 +1021,126 @@ export const upsertCentrifugeMachineInspection = {
 
 		registrationNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		licenseNumber: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nicCodeNumber: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierName: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		address: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		machineNameDescription: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		manufacturerNameAndAddress: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateOfManufacture: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		sizeAndCapacity: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		conditionOfMachine: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		topCover: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		electricalInterlockSystem: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		mechanicalLockSystem: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		brakingManagement: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		mechanicalBrakeSystem: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		earthingArrangement: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		conditionOfGuardOverBeltDrive: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		basketSpeedOperatingSpeed: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastExaminationDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		remarks: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		examinationDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -1207,137 +1157,102 @@ export const upsertPowerPressInspection = {
 
 		registrationNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		licenseNumber: Joi.string()
 			.max(20)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nicCodeNumber: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierName: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		address: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		powerPressIdentification: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateOfConstruction: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateFirstTakenIntoUse: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		guardsObservation: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		infraRedPhotoCellSafetyDevice: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		mainDriveSafetyDevice: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		electricalSafetyDevice: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastExaminationDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		repairsRequired: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		repairPeriod: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherConditions: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherObservations: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -1354,193 +1269,144 @@ export const upsertThermicFluidHeater = {
 
 		registrationNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		licenseNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nicCodeNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierName: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		address: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		heaterIdentification: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		manufacturerNameAddress: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		natureOfProcess: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateOfConstruction: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		dateFirstTakenIntoUse: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		coilSizeThickness: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		operatingPressure: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastPressureTestDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureTestDetails: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		coilCondition: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		oilCondition: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		pressureGaugesCondition: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		temperatureGaugesCondition: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		stopValvesCondition: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		temperatureControl: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		differentialPressureSwitchControl: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		thermicFluidLevelControl: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		audioVideoAlarm: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		otherDevices: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		inspectedOn: Joi.date().required(),
 	}),
@@ -1557,114 +1423,85 @@ export const upsertStabilityForm1A = {
 
 		factoryName: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		villageTownDistrict: Joi.string()
 			.max(20)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		fullPostalAddress: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		occupierName: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		natureOfManufacturingProcess: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		numberOfFloors: Joi.number()
 			.integer()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		certificateNumber: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		jointDirectorLetterNumber: Joi.string()
 			.max(30)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		jointDirectorLetterDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		inspectionDetails: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		structuralSoundness: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		stabilityAssessment: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		intendedUse: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		inspectedOn: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 	}),
 };
 
@@ -1679,124 +1516,88 @@ export const upsertWaterSealedGasHolderForm11A = {
 
 		occupierName: Joi.string()
 			.max(200)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		factoryAddress: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		equipmentDescription: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		distinguishingNumber: Joi.string()
 			.max(20)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		manufacturerDetails: Joi.string()
 			.max(255)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		yearOfManufacture: Joi.number()
 			.integer()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		lastInspectionDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		inspectionBy: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		nextInspectionDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		hasPressureGauge: Joi.number()
 			.valid(0, 1)
 			.default(0)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(0, 1),
-			}),
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hasSafetyValve: Joi.number()
 			.valid(0, 1)
 			.default(0)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(0, 1),
-			}),
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hasThermometer: Joi.number()
 			.valid(0, 1)
 			.default(0)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(0, 1),
-			}),
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		hasWaterGauge: Joi.number()
 			.valid(0, 1)
 			.default(0)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(0, 1),
-			}),
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
 		equipmentCondition: Joi.string()
 			.max(100)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
-		remarks: Joi.string().max(255).allow(null, ''),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		remarks: Joi.string().max(255).empty('').default(null),
+
 		inspectedOn: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 	}),
 };
 
@@ -1811,110 +1612,128 @@ export const upsertConfinedSpace = {
 
 		occupierName: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		factoryAddress: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		equipmentDescription: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		distinguishingNumber: Joi.string()
 			.max(50)
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		manufacturerDetails: Joi.string()
-			.allow(null, '')
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
-			}),
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		yearOfManufacture: Joi.number()
 			.integer()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		workingPressure: Joi.number()
 			.precision(2)
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		safeWorkingPressure: Joi.number()
 			.precision(2)
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
 		testPressure: Joi.number()
 			.precision(2)
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
-		lastHydraulicTestDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
-		nextHydraulicTestDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
-		lastInternalInspectionDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
-		nextInternalInspectionDate: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
 
-		remarks: Joi.string().allow(null, ''),
-		inspectedOn: Joi.date()
-			.allow(null)
-			.when('isDraft', {
-				is: 1,
-				then: Joi.required(),
-				otherwise: Joi.allow(null),
-			}),
+		lastHydraulicTestDate: Joi.date()
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		nextHydraulicTestDate: Joi.date()
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		lastInternalInspectionDate: Joi.date()
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		nextInternalInspectionDate: Joi.date()
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		safetyValveDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		safetyValveTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		pressureGaugeDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		pressureGaugeTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		waterLevelIndicatorDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		waterLevelIndicatorTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		fusiblePlugDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		fusiblePlugTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		feedPumpDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		feedPumpTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		blowDownCockDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		blowDownCockTestingDetails: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		mountingsAndFittingsCondition: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+		generalCondition: Joi.string()
+			.empty('')
+			.default(null)
+			.when('isDraft', { is: 1, then: Joi.required() }),
+
+		remarks: Joi.string().empty('').default(null),
+
+		inspectedOn: Joi.date().default(null).when('isDraft', { is: 1, then: Joi.required() }),
 	}),
 };
 
@@ -2009,5 +1828,30 @@ export const getConfinedSpace = {
 export const renewCompetentOfficer = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
+	}),
+};
+
+export const getScheduledInspectionList = {
+	query: Joi.object().keys({
+		competentUserId: Joi.string().max(30).required(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().max(100).optional(),
+	}),
+};
+
+export const scheduledMachineInspectionStatus = {
+	body: Joi.object().keys({
+		factoryUserId: Joi.string().max(30).required(),
+		machineName: Joi.string().max(70).required(),
+		inspectionDate: Joi.date().required(),
+		status: Joi.string().valid('Approved', 'Rejected').required(),
+
+		competentReason: Joi.when('status', {
+			is: 'Rejected',
+			then: Joi.string().max(255).required(),
+			otherwise: Joi.allow(null, '').optional(),
+		}),
+		competentUserId: Joi.string().max(30).required(),
 	}),
 };

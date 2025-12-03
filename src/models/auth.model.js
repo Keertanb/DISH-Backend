@@ -114,12 +114,47 @@ class AuthModel {
 	async login(userId) {
 		try {
 			const result = await executeStoredProcedure('SP_GetUserName', [
-				{ name: 'userId', type: sql.VarChar(80), value: userId },
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
 			]);
 
-			return result || [];
+			return result || null;
 		} catch (error) {
 			logger.error('Error in login model:', { error });
+			throw error;
+		}
+	}
+	async updateLoginToken(userId, token) {
+		try {
+			const result = await executeStoredProcedure('SP_UpdateLoginToken', [
+				{ name: 'userId', type: sql.VarChar(80), value: userId },
+				{ name: 'token', type: sql.VarChar(500), value: token },
+			]);
+
+			return result || null;
+		} catch (error) {
+			logger.error('Error in login model:', { error });
+			throw error;
+		}
+	}
+	async logout(userId) {
+		try {
+			const result = await executeStoredProcedure('SP_LogoutUser', [
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
+			]);
+
+			return result || null;
+		} catch (error) {
+			logger.error('Error in login model:', { error });
+			throw error;
+		}
+	}
+
+	async autoLogoutUsers() {
+		try {
+			const result = await executeStoredProcedure('SP_AutoLogoutUsers');
+			return result;
+		} catch (error) {
+			logger.error('Error in autoLogoutUsers model:', { error });
 			throw error;
 		}
 	}

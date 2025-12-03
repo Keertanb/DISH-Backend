@@ -46,45 +46,6 @@ class FactoryController {
 		}
 	}
 
-	async addNewMachine(req, res) {
-		try {
-			const machine = await factoryService.addNewMachine(req.body);
-
-			return res.handler.success(machine);
-		} catch (err) {
-			logger.error('Error in addNewMachine:', { err });
-			return res.handler.serverError({}, err.message || 'Error in addNewMachine');
-		}
-	}
-
-	async machineInspection(req, res) {
-		try {
-			const {
-				factoryUserId,
-				machineName,
-				inspectionCount,
-				inspectionDate,
-				machineNo,
-				competentUserIds,
-			} = req.body;
-
-			const competentUserIdsJson = JSON.stringify(competentUserIds);
-
-			const result = await factoryService.machineInspection({
-				factoryUserId,
-				machineName,
-				inspectionCount,
-				machineNo,
-				inspectionDate,
-				competentUserIds: competentUserIdsJson,
-			});
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in machineInspection controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error in machineInspection controller');
-		}
-	}
-
 	async getFactoryOwnerProfile(req, res) {
 		try {
 			const { userId } = req.query;

@@ -9,8 +9,10 @@ export const factoryOwnerRegistration = {
 			.message('Factory name must be at least 2 characters')
 			.max(200)
 			.message('Factory name cannot exceed 200 characters')
-			.allow('', null)
+			.empty('')
+			.default(null)
 			.required(),
+
 		managerName: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
 			.message('Invalid name format')
@@ -18,18 +20,25 @@ export const factoryOwnerRegistration = {
 			.message('Manager name must be at least 5 characters')
 			.max(150)
 			.message('Manager name cannot exceed 150 characters')
-			.allow('', null)
+			.empty('')
+			.default(null)
 			.required(),
+
 		email: Joi.string().email().trim().required(),
+
 		mobile: Joi.string()
 			.trim()
 			.allow('0')
 			.pattern(/^[6-9][0-9]{9}$/)
 			.message('Invalid mobile number')
 			.required()
-			.allow('', null),
+			.empty('')
+			.default(null),
+
 		district: Joi.number().integer().required(),
+
 		block: Joi.number().integer().required(),
+
 		factoryLicenseNumber: Joi.string()
 			.trim()
 			.min(5)
@@ -37,9 +46,13 @@ export const factoryOwnerRegistration = {
 			.max(50)
 			.message('Factory License Number must be at least 50 characters')
 			.required(),
-		yearOfEstablishment: Joi.number().integer().min(1800).allow(null),
+
+		yearOfEstablishment: Joi.number().integer().min(1800).empty('').default(null),
+
 		industryType: Joi.number().integer().required(),
-		numberOfEmployees: Joi.number().integer().min(1).allow(null),
+
+		numberOfEmployees: Joi.number().integer().min(1).empty('').default(null),
+
 		addressLine1: Joi.string()
 			.uppercase()
 			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
@@ -47,25 +60,31 @@ export const factoryOwnerRegistration = {
 			.max(50)
 			.message('Area cannot exceed 50 characters')
 			.required(),
+
 		addressLine2: Joi.string()
 			.uppercase()
 			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
 			.message('Only English characters, numbers, spaces, hyphens and dots are allowed')
 			.max(50)
 			.message('Area cannot exceed 50 characters')
-			.allow(null, ''),
+			.empty('')
+			.default(null),
+
 		addressLine3: Joi.string()
 			.uppercase()
 			.pattern(/^[A-Za-z0-9\s\-\\.]+$/)
 			.message('Only English characters, numbers, spaces, hyphens and dots are allowed')
 			.max(50)
 			.message('Area cannot exceed 50 characters')
-			.allow(null, ''),
+			.empty('')
+			.default(null),
+
 		pincode: Joi.string()
 			.trim()
 			.pattern(/^[0-9]{6}$/)
 			.message('Pincode must be exactly 6 digits')
-			.allow('', null),
+			.empty('')
+			.default(null),
 
 		machines: Joi.array()
 			.items(
@@ -75,6 +94,7 @@ export const factoryOwnerRegistration = {
 				})
 			)
 			.required(),
+
 		gstNumber: Joi.string()
 			.trim()
 			.uppercase()
@@ -82,15 +102,20 @@ export const factoryOwnerRegistration = {
 			.message('GST number (GSTIN) must be exactly 15 characters')
 			.pattern(/^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/)
 			.message('GST number must be a valid GSTIN (e.g., 27ABCDE1234F1Z5)')
-			.allow(null, '')
+			.empty('')
+			.default(null)
 			.optional(),
+
 		factoryRegistrationNumber: Joi.string()
 			.trim()
 			.uppercase()
 			.max(20)
 			.message('Factory registration number cannot exceed 20 characters')
 			.pattern(/^[A-Z0-9][A-Z0-9\/\- ]*$/)
+			.empty('')
+			.default(null)
 			.optional(),
+
 		companyPanCard: Joi.string()
 			.trim()
 			.uppercase()
@@ -106,6 +131,7 @@ export const factoryOwnerRegistration = {
 export const competentOfficerSchema = {
 	body: Joi.object({
 		formType: Joi.number().valid(1, 2).required(),
+
 		name: Joi.string()
 			.pattern(/^(?!\s*$)[a-zA-Z. ]+$/)
 			.message('Invalid name format')
@@ -116,45 +142,86 @@ export const competentOfficerSchema = {
 			.when('formType', {
 				is: 1,
 				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
+				otherwise: Joi.string().empty('').default(null),
 			}),
+
 		mobileNo: Joi.string()
 			.trim()
 			.pattern(/^[6-9][0-9]{9}$/)
 			.message('Mobile number must be 10 digits and start with 6 to 9')
-			.allow(null, ''),
+			.empty('')
+			.default(null),
+
 		email: Joi.string().email().max(100).required(),
-		dateOfBirth: Joi.date().when('formType', {
-			is: 1,
-			then: Joi.required(),
-			otherwise: Joi.allow(null),
-		}),
+
+		dateOfBirth: Joi.date()
+			.when('formType', {
+				is: 1,
+				then: Joi.required(),
+				otherwise: Joi.date().empty('').default(null),
+			})
+			.custom((value, helpers) => {
+				if (!value) return value;
+
+				const dob = new Date(value);
+				const today = new Date();
+
+				let age = today.getFullYear() - dob.getFullYear();
+				const monthDiff = today.getMonth() - dob.getMonth();
+
+				if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+					age--;
+				}
+
+				if (age >= 61) {
+					return helpers.message('You are not eligible. Your age must be under 61 years.');
+				}
+
+				return value;
+			}),
+
 		districtId: Joi.number().integer().required(),
+
 		blockId: Joi.number().integer().required(),
+
 		addressLine1: Joi.string().max(50).message('cannot exceed 50 characters').required(),
 
-		addressLine2: Joi.string().max(50).message('cannot exceed 50 characters').allow(null, ''),
+		addressLine2: Joi.string()
+			.max(50)
+			.message('cannot exceed 50 characters')
+			.empty('')
+			.default(null),
 
-		addressLine3: Joi.string().max(50).message('cannot exceed 50 characters').allow(null, ''),
+		addressLine3: Joi.string()
+			.max(50)
+			.message('cannot exceed 50 characters')
+			.empty('')
+			.default(null),
+
 		pincode: Joi.string()
 			.pattern(/^[0-9]{6}$/)
 			.required(),
-		designation: Joi.string().max(50).message('cannot exceed 50 characters').allow(null, ''),
+
+		designation: Joi.string()
+			.max(50)
+			.message('cannot exceed 50 characters')
+			.empty('')
+			.default(null),
 
 		organizationName: Joi.string()
 			.max(200)
 			.when('formType', {
-				is: 2,
+				is: Joi.number().valid(2),
 				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
+				otherwise: Joi.optional().empty('').default(null),
 			}),
 
 		organizationStatus: Joi.number()
 			.integer()
 			.when('formType', {
-				is: 2,
+				is: Joi.number().valid(2),
 				then: Joi.required(),
-				otherwise: Joi.allow(null),
+				otherwise: Joi.optional().allow(null),
 			}),
 
 		currentOrganization: Joi.string()
@@ -162,14 +229,15 @@ export const competentOfficerSchema = {
 			.when('formType', {
 				is: 1,
 				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
+				otherwise: Joi.string().empty('').default(null),
 			}),
+
 		parentOrganization: Joi.string()
 			.max(50)
 			.when('formType', {
 				is: 2,
 				then: Joi.required(),
-				otherwise: Joi.allow(null, ''),
+				otherwise: Joi.string().empty('').default(null),
 			}),
 	}),
 };
@@ -178,6 +246,7 @@ export const login = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(80).required(),
 		userPassword: Joi.string().required(),
+		forceLogin: Joi.number().valid(1).optional(),
 	}),
 };
 

@@ -1,21 +1,11 @@
 import Joi from 'joi';
 
 // Validation for getting competent officers
-export const getCompetentOfficers = {
+export const getCompetentPendingOfficers = {
 	query: Joi.object().keys({
 		districtId: Joi.number().optional(),
 		page: Joi.number().required(),
 		limit: Joi.number().required(),
-		search: Joi.string().optional(),
-	}),
-};
-
-// Validation for getting Active competent officers
-export const getActiveCompetentOfficers = {
-	query: Joi.object().keys({
-		districtId: Joi.number().optional(),
-		page: Joi.number().optional(),
-		limit: Joi.number().optional(),
 		search: Joi.string().optional(),
 	}),
 };
@@ -26,11 +16,12 @@ export const getDashboard = {
 	}),
 };
 
-// Validation for getting Interview competent officers
-export const getInterviewCompetentOfficers = {
+// Validation for getting Active competent officers
+export const getActiveCompetentOfficers = {
 	query: Joi.object().keys({
-		page: Joi.number().required(),
-		limit: Joi.number().required(),
+		districtId: Joi.number().optional(),
+		page: Joi.number().optional(),
+		limit: Joi.number().optional(),
 		search: Joi.string().optional(),
 	}),
 };
@@ -54,6 +45,15 @@ export const updateCompetentOfficersStatus = {
 			then: Joi.string().max(255).required(),
 			otherwise: Joi.allow(null).optional(),
 		}),
+	}),
+};
+
+// Validation for getting Interview competent officers
+export const getInterviewCompetentOfficers = {
+	query: Joi.object().keys({
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().optional(),
 	}),
 };
 

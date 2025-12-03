@@ -10,12 +10,11 @@ const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, uploadDir);
 	},
-	filename: (req, file, cb) => {
-		const userId = req.body.userId || req.query.userId || req.headers['userid'];
 
+	filename: (req, file, cb) => {
+		const userId = req.data?.userId;
 		if (!userId) {
-			// Temporary fallback
-			return cb(new Error('User ID not found during file upload'));
+			return cb(new Error('User ID not found in token during file upload'));
 		}
 
 		const ext = path.extname(file.originalname).toLowerCase();
@@ -26,17 +25,16 @@ const storage = multer.diskStorage({
 	},
 });
 
-// File type filter
 const fileFilter = (req, file, cb) => {
 	const allowedExts = ['.pdf'];
 	const ext = path.extname(file.originalname).toLowerCase();
+
 	if (!allowedExts.includes(ext)) {
-		return cb(new Error('Only PDF file are allowed!'), false);
+		return cb(new Error('Only PDF files are allowed!'), false);
 	}
 	cb(null, true);
 };
 
-// Create multer instance
 const uploadCompetentDocs = multer({
 	storage,
 	fileFilter,
@@ -55,6 +53,10 @@ const uploadCompetentDocs = multer({
 	{ name: 'stabilityDocument', maxCount: 1 },
 	{ name: 'cv', maxCount: 1 },
 	{ name: 'medicalCertificate', maxCount: 1 },
+	{ name: 'experienceDocument', maxCount: 1 },
+	{ name: 'educationDocument', maxCount: 1 },
+	{ name: 'infrastructureDocument', maxCount: 1 },
+	{ name: 'dateOfBirthDocument', maxCount: 1 },
 ]);
 
 export default uploadCompetentDocs;

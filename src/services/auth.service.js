@@ -87,61 +87,52 @@ class AuthService {
 		}
 	}
 
-	async login(userId, userPassword) {
-		try {
-			if (!userId || !userPassword) {
-				throw new Error('UserId ane Password required');
-			}
+	async login(userId, userPassword, forceLogin = false) {
+		if (!userId || !userPassword) {
+			throw new Error('UserId ane Password required');
+		}
 
-			const login = await authModel.login(userId);
+		const login = await authModel.login(userId);
 
-			if (!login || !login.userPassword) {
-				throw new Error('Invalid UserId or Password');
-			}
+		if (!login || !login.userPassword) {
+			throw new Error('Invalid UserId or Password');
+		}
 
-			const isMatch = await bcrypt.compare(userPassword, login.userPassword);
-			if (!isMatch) {
-				throw new Error('Invalid UserId or Password');
-			}
-
-			if (login.expirationMessage) {
-				const { userId } = login;
-				const msg = login.expirationMessage.trim().toLowerCase();
-
-				const isTwoMonths = msg.includes('2 months');
-				const isOneMonth = msg.includes('1 month');
-
-				if (isTwoMonths || isOneMonth) {
-					await sendMail({
-						to: login.email,
-						subject: 'Login Access Expiration Reminder',
-						html: `
-						<p>Dear User,</p>
-						<p>This is a reminder that your login access will expire soon.</p>
-
-						<p><b>User ID:</b> ${userId}</p>
-						<p><b>${login.expirationMessage}</b></p>
-
-						<p>Please renew your account before the expiration date to avoid login interruption.</p>
-
-						<p>Regards,<br/>Support Team</p>
-					`,
-					});
-				}
-			}
-
+		const isMatch = await bcrypt.compare(userPassword, login.userPassword);
+		if (!isMatch) {
+			throw new Error('Invalid UserId or Password');
+		}
+		if (
+			login.token &&
+			login.lastActivityAt &&
+			new Date() - new Date(login.lastActivityAt) < 8 * 60 * 60 * 1000 &&
+			!forceLogin
+		) {
 			return {
-				userId: login.userId,
-				roleName: login.roleName,
-				email: login.email,
-				districtId: login.districtId,
-				districtName: login.districtName,
-				accountRenew: login.isRenew,
-				expirationMessage: login.expirationMessage,
+				alreadyLoggedIn: true,
+				message: 'Already logged in from another device',
 			};
-		} catch (err) {
-			logger.error('Error in login service:', { message: err.message, stack: err.stack });
-			throw err;
+		}
+
+		return {
+			userId: login.userId,
+			roleName: login.roleName,
+			email: login.email,
+			districtId: login.districtId,
+			districtName: login.districtName,
+			accountRenew: login.isRenew,
+			expirationMessage: login.expirationMessage,
+		};
+	}
+
+	async logout(userId) {
+		try {
+			if (!userId) throw new Error('UserId required');
+			await authModel.logout(userId);
+			return { message: 'Logout Successfully' };
+		} catch (error) {
+			logger.error('Error in logout service:', { error });
+			throw error;
 		}
 	}
 

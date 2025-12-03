@@ -24,6 +24,10 @@ class CompetentController {
 					'stabilityDocument',
 					'cv',
 					'medicalCertificate',
+					'experienceDocument',
+					'educationDocument',
+					'infrastructureDocument',
+					'dateOfBirthDocument',
 				];
 
 				fileFields.forEach((field) => {
@@ -51,54 +55,6 @@ class CompetentController {
 		}
 	}
 
-	async getScheduledInspectionList(req, res) {
-		try {
-			const { competentUserId, page, limit, search } = req.query;
-			const result = await competentService.getScheduledInspectionList(
-				competentUserId,
-				page,
-				limit,
-				search
-			);
-
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getScheduledInspectionList:', { err });
-			return res.handler.serverError({}, err.message || 'Error in getScheduledInspectionList');
-		}
-	}
-
-	async scheduledMachineInspectionStatus(req, res) {
-		try {
-			const {
-				factoryUserId,
-				machineName,
-				inspectionDate,
-				status,
-				competentReason,
-				competentUserId,
-			} = req.body;
-
-			const result = await competentService.scheduledMachineInspectionStatus({
-				factoryUserId,
-				machineName,
-				inspectionDate,
-				status,
-				competentReason,
-				competentUserId,
-			});
-
-			return res.handler.success(result);
-			console.log(res.handler);
-		} catch (err) {
-			logger.error('Error in scheduledMachineInspectionStatus controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in scheduledMachineInspectionStatus controller'
-			);
-		}
-	}
-
 	async inspectionFactory(req, res) {
 		try {
 			const { competentUserId, page, limit, search } = req.query;
@@ -120,6 +76,34 @@ class CompetentController {
 		} catch (err) {
 			logger.error('Error in searchFactory:', { err });
 			return res.handler.serverError({}, err.message || 'Error in searchFactory');
+		}
+	}
+
+	async factoryMachineInspection(req, res) {
+		try {
+			const { factoryUserId, machineName, inspectionCount, inspectionDate, competentUserId } =
+				req.body;
+
+			const result = await competentService.factoryMachineInspection(
+				factoryUserId,
+				machineName,
+				inspectionCount,
+				inspectionDate,
+				competentUserId
+			);
+
+			if (result.Status === 'Error') {
+				return res.handler.validationError({}, result.Message);
+			}
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in factoryMachineInspection controller:', { err });
+
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in factoryMachineInspection controller'
+			);
 		}
 	}
 
@@ -536,6 +520,53 @@ class CompetentController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error fetching renew Competent Officer data'
+			);
+		}
+	}
+
+	async getScheduledInspectionList(req, res) {
+		try {
+			const { competentUserId, page, limit, search } = req.query;
+			const result = await competentService.getScheduledInspectionList(
+				competentUserId,
+				page,
+				limit,
+				search
+			);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in getScheduledInspectionList:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getScheduledInspectionList');
+		}
+	}
+
+	async scheduledMachineInspectionStatus(req, res) {
+		try {
+			const {
+				factoryUserId,
+				machineName,
+				inspectionDate,
+				status,
+				competentReason,
+				competentUserId,
+			} = req.body;
+
+			const result = await competentService.scheduledMachineInspectionStatus({
+				factoryUserId,
+				machineName,
+				inspectionDate,
+				status,
+				competentReason,
+				competentUserId,
+			});
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in scheduledMachineInspectionStatus controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in scheduledMachineInspectionStatus controller'
 			);
 		}
 	}

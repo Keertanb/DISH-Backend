@@ -20,6 +20,7 @@ const upcomingInspection = cron.schedule(
 	{ scheduled: false, timezone: API_TIMEZONE }
 );
 
+// Machine expiration data
 const expireInspection = cron.schedule(
 	'04 * * * *',
 	async () => {
@@ -32,11 +33,12 @@ const expireInspection = cron.schedule(
 	{ scheduled: false, timezone: API_TIMEZONE }
 );
 
-const beforePendingInspection = cron.schedule(
-	'8 * * * *',
+// Under Inspection Schedule change flag
+const beforeUnderInspectionSchedule = cron.schedule(
+	'28 * * * *',
 	async () => {
 		try {
-			await factoryService.beforePendingInspectionUsers();
+			await factoryService.beforeUnderInspectionSchedule();
 		} catch (err) {
 			console.error(
 				'Before Pending Inspection last 15 days API Error:',
@@ -51,13 +53,13 @@ export default {
 	startAll: () => {
 		upcomingInspection.start();
 		expireInspection.start();
-		beforePendingInspection.start();
+		beforeUnderInspectionSchedule.start();
 		console.log('start cron job');
 	},
 	stopAll: () => {
 		upcomingInspection.stop();
 		expireInspection.stop();
-		beforePendingInspection.stop();
+		beforeUnderInspectionSchedule.stop();
 		console.log('stop cron job');
 	},
 };

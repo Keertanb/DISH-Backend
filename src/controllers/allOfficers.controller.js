@@ -6,11 +6,11 @@ import logger from '../utils/logger.js';
 const allOfficersService = new AllOfficersService();
 
 class AllOfficersController {
-	async getCompetentOfficers(req, res) {
+	async getCompetentPendingOfficers(req, res) {
 		try {
 			const { districtId, page, limit, search } = req.query;
 
-			const officer = await allOfficersService.getCompetentOfficers(
+			const officer = await allOfficersService.getCompetentPendingOfficers(
 				districtId,
 				page,
 				limit,
@@ -19,8 +19,23 @@ class AllOfficersController {
 
 			return res.handler.success(officer);
 		} catch (err) {
-			logger.error('Error in getCompetentOfficers controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error in getCompetentOfficers controller');
+			logger.error('Error in getCompetentPendingOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getCompetentPendingOfficers controller'
+			);
+		}
+	}
+
+	async getDashboard(req, res) {
+		try {
+			const { userId } = req.query;
+			const dashboard = await allOfficersService.getDashboard(userId);
+
+			return res.handler.success(dashboard);
+		} catch (err) {
+			logger.error('Error in getDashboard controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getDashboard controller');
 		}
 	}
 
@@ -45,21 +60,6 @@ class AllOfficersController {
 		}
 	}
 
-	async getInterviewCompetentOfficers(req, res) {
-		try {
-			const { page, limit, search } = req.query;
-			const officer = await allOfficersService.getInterviewCompetentOfficers(page, limit, search);
-
-			return res.handler.success(officer);
-		} catch (err) {
-			logger.error('Error in getInterviewCompetentOfficers controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in getInterviewCompetentOfficers controller'
-			);
-		}
-	}
-
 	async updateCompetentOfficersStatus(req, res) {
 		try {
 			const { userId, applicationType, reason } = req.body;
@@ -80,15 +80,18 @@ class AllOfficersController {
 		}
 	}
 
-	async getDashboard(req, res) {
+	async getInterviewCompetentOfficers(req, res) {
 		try {
-			const { userId } = req.query;
-			const dashboard = await allOfficersService.getDashboard(userId);
+			const { page, limit, search } = req.query;
+			const officer = await allOfficersService.getInterviewCompetentOfficers(page, limit, search);
 
-			return res.handler.success(dashboard);
+			return res.handler.success(officer);
 		} catch (err) {
-			logger.error('Error in getDashboard controller:', { err });
-			return res.handler.serverError({}, err.message || 'Error in getDashboard controller');
+			logger.error('Error in getInterviewCompetentOfficers controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in getInterviewCompetentOfficers controller'
+			);
 		}
 	}
 
@@ -108,19 +111,6 @@ class AllOfficersController {
 		}
 	}
 
-	async sendFactoryNotifications(req, res) {
-		try {
-			const result = await allOfficersService.sendFactoryNotifications();
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in sendFactoryNotifications controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in sendFactoryNotifications controller'
-			);
-		}
-	}
-
 	async rescheduleInterview(req, res) {
 		try {
 			const { interviewCandidates, rescheduleCount, oldScheduledDate, newScheduledDate } = req.body;
@@ -136,24 +126,6 @@ class AllOfficersController {
 		} catch (err) {
 			logger.error('Error in rescheduleInterview controller:', { err });
 			return res.handler.serverError({ sqlError: err.message }, err.message);
-		}
-	}
-
-	async pauseCompetentOfficer(req, res) {
-		try {
-			const { userId } = req.body;
-
-			const pause = await allOfficersService.pauseCompetentOfficer({
-				userId,
-			});
-
-			return res.handler.success(pause);
-		} catch (err) {
-			logger.error('Error in pauseCompetentOfficer controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in pauseCompetentOfficer controller'
-			);
 		}
 	}
 
@@ -214,6 +186,24 @@ class AllOfficersController {
 			return res.handler.serverError(
 				{},
 				err.message || 'Error in transferToSuperAdminCompetentOfficersStatus controller'
+			);
+		}
+	}
+
+	async pauseCompetentOfficer(req, res) {
+		try {
+			const { userId } = req.body;
+
+			const pause = await allOfficersService.pauseCompetentOfficer({
+				userId,
+			});
+
+			return res.handler.success(pause);
+		} catch (err) {
+			logger.error('Error in pauseCompetentOfficer controller:', { err });
+			return res.handler.serverError(
+				{},
+				err.message || 'Error in pauseCompetentOfficer controller'
 			);
 		}
 	}
@@ -342,6 +332,19 @@ class AllOfficersController {
 			);
 		}
 	}
+
+	// async sendFactoryNotifications(req, res) {
+	// 	try {
+	// 		const result = await allOfficersService.sendFactoryNotifications();
+	// 		return res.handler.success(result);
+	// 	} catch (err) {
+	// 		logger.error('Error in sendFactoryNotifications controller:', { err });
+	// 		return res.handler.serverError(
+	// 			{},
+	// 			err.message || 'Error in sendFactoryNotifications controller'
+	// 		);
+	// 	}
+	// }
 }
 
 export default AllOfficersController;

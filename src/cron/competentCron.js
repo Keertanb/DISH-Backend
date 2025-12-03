@@ -16,6 +16,18 @@ const competentService = new CompetentService();
 // 	{ scheduled: false, timezone: API_TIMEZONE }
 // );
 
+const competentExpirationReminder = cron.schedule(
+	'21 * * * *',
+	async () => {
+		try {
+			await competentService.competentExpirationReminder();
+		} catch (err) {
+			console.error('Competent Expiration Reminder API Error:', err.response?.data || err.message);
+		}
+	},
+	{ scheduled: false, timezone: API_TIMEZONE }
+);
+
 const competentExpiry = cron.schedule(
 	'12 * * * *',
 	async () => {
@@ -54,14 +66,15 @@ const competent24HoursEnd = cron.schedule(
 
 export default {
 	startAll: () => {
-		// competentBeforeExpiry.start();
+		console.log('✅ competent startAll() EXECUTED');
+		competentExpirationReminder.start();
 		competentExpiry.start();
 		competentExpiryPause.start();
 		competent24HoursEnd.start();
 		console.log('start competent cron job');
 	},
 	stopAll: () => {
-		// competentBeforeExpiry.stop();
+		competentExpirationReminder.stop();
 		competentExpiry.stop();
 		competentExpiryPause.stop();
 		competent24HoursEnd.stop();

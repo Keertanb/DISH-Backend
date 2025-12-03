@@ -4,8 +4,10 @@ import AuthService from '../services/auth.service.js';
 import logger from '../utils/logger.js';
 // Config
 import { createToken } from '../config/jwt.js';
+import AuthModel from '../models/auth.model.js';
 
 const authService = new AuthService();
+const authModel = new AuthModel();
 
 class AuthController {
 	async factoryOwnerRegistration(req, res) {
@@ -39,13 +41,37 @@ class AuthController {
 
 	async login(req, res) {
 		try {
-			const { userId, userPassword } = req.body;
-			const login = await authService.login(userId, userPassword);
+			const { userId, userPassword, forceLogin } = req.body;
+
+			const login = await authService.login(userId, userPassword, forceLogin);
+
+			if (login.alreadyLoggedIn) {
+				return res.status(409).send({
+					success: false,
+					message: login.message,
+					code: 'ALREADY_LOGGED_IN',
+				});
+			}
+
 			const authToken = createToken(login);
+
+			await authModel.updateLoginToken(login.userId, authToken);
+
 			return res.handler.success({ ...login, authToken });
 		} catch (err) {
-			logger.error('Error in login controller:', { message: err.message, stack: err.stack });
-			return res.handler.serverError({}, err.message || 'Error in login controller');
+			return res.handler.serverError({}, err.message);
+		}
+	}
+
+	async logout(req, res) {
+		try {
+			const userId = req.data.userId;
+
+			const result = await authService.logout(userId);
+
+			return res.handler.success(result);
+		} catch (err) {
+			return res.handler.serverError({}, err.message);
 		}
 	}
 

@@ -5,10 +5,10 @@ import { executeStoredProcedure } from '../database/index.js';
 import logger from '../utils/logger.js';
 
 class AllOfficersModel {
-	async getCompetentOfficers(districtId, page, limit, search) {
+	async getCompetentPendingOfficers(districtId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_GetCompetentOfficers',
+				'SP_GetCompetentPendingOfficers',
 				[
 					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
 					{ name: 'page', type: sql.Int(), value: page },
@@ -33,7 +33,19 @@ class AllOfficersModel {
 
 			return result;
 		} catch (err) {
-			logger.error('Error in getCompetentOfficers model:', { err });
+			logger.error('Error in getCompetentPendingOfficers model:', { err });
+			throw err;
+		}
+	}
+
+	async getDashboard(userId = null) {
+		try {
+			const result = await executeStoredProcedure('SP_GetDashboardCounts', [
+				{ name: 'userId', type: sql.VarChar(30), value: userId },
+			]);
+			return result;
+		} catch (err) {
+			logger.error('Error in getDashboard model:', { err });
 			throw err;
 		}
 	}
@@ -94,18 +106,6 @@ class AllOfficersModel {
 		}
 	}
 
-	async getDashboard(userId = null) {
-		try {
-			const result = await executeStoredProcedure('SP_GetDashboardCounts', [
-				{ name: 'userId', type: sql.VarChar(30), value: userId },
-			]);
-			return result;
-		} catch (err) {
-			logger.error('Error in getDashboard model:', { err });
-			throw err;
-		}
-	}
-
 	async scheduleInterview(userIds, scheduledInterviewDate) {
 		try {
 			const result = await executeStoredProcedure(
@@ -126,20 +126,6 @@ class AllOfficersModel {
 			return [];
 		} catch (err) {
 			logger.error('Error in scheduleInterview model:', { err });
-			throw err;
-		}
-	}
-
-	async getAllFactoryEmails() {
-		try {
-			const result = await executeStoredProcedure('SP_GetAllFactoryEmails', [], true);
-
-			if (Array.isArray(result)) return result;
-			if (result?.recordset) return result.recordset;
-
-			return [];
-		} catch (err) {
-			logger.error('Error in getAllFactoryEmails model:', { err });
 			throw err;
 		}
 	}
@@ -378,6 +364,20 @@ class AllOfficersModel {
 			throw err;
 		}
 	}
+
+	// async getAllFactoryEmails() {
+	// 	try {
+	// 		const result = await executeStoredProcedure('SP_GetAllFactoryEmails', [], true);
+
+	// 		if (Array.isArray(result)) return result;
+	// 		if (result?.recordset) return result.recordset;
+
+	// 		return [];
+	// 	} catch (err) {
+	// 		logger.error('Error in getAllFactoryEmails model:', { err });
+	// 		throw err;
+	// 	}
+	// }
 }
 
 export default AllOfficersModel;

@@ -59,81 +59,6 @@ class FactoryModel {
 		}
 	}
 
-	async addNewMachine(data) {
-		try {
-			const {
-				userId,
-				machineName,
-				quantity,
-				machineDescription,
-				serialNumbers,
-				dateOfFirstUse,
-				dateOfInstallation,
-				nameOfManufacture,
-				addressOfManufacture,
-				dateOfConstruction,
-				thicknessOfWall,
-				identityFicationOfMachine,
-				safeWorkingPressure,
-			} = data;
-			const result = await executeStoredProcedure(
-				'SP_RegisterMachineryFactoryAllocation',
-				[
-					{ name: 'userId', type: sql.VarChar(30), value: userId },
-					{ name: 'machineName', type: sql.VarChar(40), value: machineName },
-					{ name: 'quantity', type: sql.Int(), value: quantity },
-					{ name: 'machineDescription', type: sql.VarChar(), value: machineDescription },
-					{ name: 'serialNumbers', type: sql.VarChar(50), value: serialNumbers },
-					{ name: 'dateOfFirstUse', type: sql.Date(), value: dateOfFirstUse },
-					{ name: 'dateOfInstallation', type: sql.Date(), value: dateOfInstallation },
-					{ name: 'nameOfManufacture', type: sql.VarChar(50), value: nameOfManufacture },
-					{ name: 'addressOfManufacture', type: sql.VarChar(200), value: addressOfManufacture },
-					{ name: 'dateOfConstruction', type: sql.Date(), value: dateOfConstruction },
-					{ name: 'thicknessOfWall', type: sql.VarChar(30), value: thicknessOfWall },
-					{
-						name: 'identityFicationOfMachine',
-						type: sql.VarChar(50),
-						value: identityFicationOfMachine,
-					},
-					{ name: 'safeWorkingPressure', type: sql.VarChar(50), value: safeWorkingPressure },
-				],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in addNewMachine model:', { err });
-			throw err;
-		}
-	}
-
-	async machineInspection({
-		factoryUserId,
-		machineName,
-		inspectionCount,
-		inspectionDate,
-		machineNo,
-		competentUserIds,
-	}) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_MachineInspectionRequest',
-				[
-					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
-					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
-					{ name: 'inspectionCount', type: sql.Int, value: inspectionCount },
-					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
-					{ name: 'machineNo', type: sql.VarChar(50), value: machineNo || null },
-					{ name: 'competentUserIds', type: sql.NVarChar(sql.MAX), value: competentUserIds },
-				],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in machineInspection model:', { err });
-			throw err;
-		}
-	}
-
 	async getFactoryOwnerProfile(userId) {
 		try {
 			const result = await executeStoredProcedure(
@@ -223,9 +148,9 @@ class FactoryModel {
 		}
 	}
 
-	async beforePendingInspectionUsers() {
+	async beforeUnderInspectionSchedule() {
 		try {
-			const result = await executeStoredProcedure('SP_beforePendingInspectionUsers', [], true);
+			const result = await executeStoredProcedure('SP_beforeUnderInspectionSchedule', [], true);
 			if (Array.isArray(result)) {
 				return result;
 			}
@@ -234,7 +159,7 @@ class FactoryModel {
 			}
 			return [];
 		} catch (err) {
-			logger.error('Error in beforePendingInspectionUsers model:', { err });
+			logger.error('Error in beforeUnderInspectionSchedule model:', { err });
 			throw err;
 		}
 	}

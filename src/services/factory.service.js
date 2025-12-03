@@ -41,41 +41,6 @@ class FactoryService {
 		}
 	}
 
-	async addNewMachine(data) {
-		try {
-			const machine = await factoryModel.addNewMachine(data);
-			return machine && machine.length > 0 ? machine[0] : null;
-		} catch (err) {
-			logger.error('Error in addNewMachine service:', { err });
-			throw err;
-		}
-	}
-
-	async machineInspection({
-		factoryUserId,
-		machineName,
-		inspectionCount,
-		inspectionDate,
-		machineNo,
-		competentUserIds,
-	}) {
-		try {
-			const result = await factoryModel.machineInspection({
-				factoryUserId,
-				machineName,
-				inspectionCount,
-				inspectionDate,
-				machineNo,
-				competentUserIds,
-			});
-
-			return result && result.length > 0 ? result[0] : null;
-		} catch (err) {
-			logger.error('Error in machineInspection service:', { err });
-			throw err;
-		}
-	}
-
 	async getFactoryOwnerProfile(userId) {
 		try {
 			const profile = await factoryModel.getFactoryOwnerProfile(userId);
@@ -199,9 +164,9 @@ class FactoryService {
 		}
 	}
 
-	async beforePendingInspectionUsers() {
+	async beforeUnderInspectionSchedule() {
 		try {
-			const candidates = await factoryModel.beforePendingInspectionUsers();
+			const candidates = await factoryModel.beforeUnderInspectionSchedule();
 			if (!candidates.length) {
 				console.error(
 					' No candidates found. Check if userIds exist in competent_officer or emails are NULL.'
@@ -211,6 +176,8 @@ class FactoryService {
 				const {
 					userId,
 					email,
+					competentName,
+					competentMo,
 					machineNo,
 					machineName,
 					inspectionDate,
@@ -226,13 +193,15 @@ class FactoryService {
 
 				await sendMail({
 					to: email,
-					subject: 'Reminder: Pending Machine Inspection - Factory Portal',
+					subject: 'Reminder: Under Inspection Machines - Factory Portal',
 					html: `
 					<p>Dear Factory User,</p>
-					<p>Our records indicate that you have conducted inspections for your machine(s) listed below. However, some inspections remain pending for more than <b>15 days</b>.</p>
+					<p>Our records indicate that you have conducted inspections for your machine(s) listed below. However, some inspections remain under for more than <b>7 days</b>.</p>
 					
 					<p><b>Machine Details:</b></p>
 					<ul>
+						<li>Competent person name : <b>${competentName}</b></li>
+						<li>Competent Context No : <b>${competentMo}</b></li>
 						${machineName ? `<li>Machine Name: <b>${machineName}</b></li>` : ''}
 						${machineNo ? `<li>Machine No: <b>${machineNo}</b></li>` : ''}
 						<li>Inspection Date: <b>${inspectionDate}</b></li
@@ -251,7 +220,7 @@ class FactoryService {
 
 			return { message: 'Pending Machine Inspection Reminder successfully', candidates };
 		} catch (err) {
-			logger.error('Error in beforePendingInspectionUsers service:', { err });
+			logger.error('Error in beforeUnderInspectionSchedule service:', { err });
 			throw err;
 		}
 	}

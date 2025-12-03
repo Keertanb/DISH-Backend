@@ -5,6 +5,7 @@ import validateSchema from '../middlewares/validateSchema.middleware.js';
 import * as authValidation from '../validations/auth.validation.js';
 // CONTROLLERS
 import AuthController from '../controllers/auth.controller.js';
+import { jwtMiddleware } from '../config/jwt.js';
 
 const router = express.Router();
 
@@ -26,6 +27,9 @@ router.post(
 
 // All user login api
 router.post('/login', validateSchema(authValidation.login), authController.login);
+
+// Logout api
+router.post('/logout', jwtMiddleware, authController.logout);
 
 //User forgot password link send mail throw
 router.post(

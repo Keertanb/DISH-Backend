@@ -1,7 +1,7 @@
 // MODELS
 import AllOfficersModel from '../models/allOfficers.model.js';
 import { generateInterviewPDF } from '../pdf/generateInterviewPDF.js';
-
+import { generateSuspensionPDF } from '../pdf/generateSuspensionPDF.js';
 // UTILS
 import logger from '../utils/logger.js';
 import { sendMail } from '../utils/mail.js';
@@ -11,24 +11,33 @@ import path from 'path';
 const allOfficersModel = new AllOfficersModel();
 
 class AllOfficersService {
-	async getCompetentOfficers(districtId, page, limit, search) {
+	async getCompetentPendingOfficers(districtId, page, limit, search) {
 		try {
-			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
-				throw new Error('Invalid districtId provided');
-			}
-			const officers = await allOfficersModel.getCompetentOfficers(districtId, page, limit, search);
+			const officers = await allOfficersModel.getCompetentPendingOfficers(
+				districtId,
+				page,
+				limit,
+				search
+			);
 			return officers;
 		} catch (err) {
-			logger.error('Error in getCompetentOfficers service:', { err });
+			logger.error('Error in getCompetentPendingOfficers service:', { err });
+			throw err;
+		}
+	}
+
+	async getDashboard(userId) {
+		try {
+			const dashboard = await allOfficersModel.getDashboard(userId);
+			return dashboard;
+		} catch (err) {
+			logger.error('Error in getDashboard service:', { err });
 			throw err;
 		}
 	}
 
 	async getActiveCompetentOfficers(districtId, page, limit, search) {
 		try {
-			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
-				throw new Error('Invalid districtId provided');
-			}
 			const officers = await allOfficersModel.getActiveCompetentOfficers(
 				districtId,
 				page,
@@ -38,16 +47,6 @@ class AllOfficersService {
 			return officers;
 		} catch (err) {
 			logger.error('Error in getActiveCompetentOfficers service:', { err });
-			throw err;
-		}
-	}
-
-	async getInterviewCompetentOfficers(page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit, search);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getInterviewCompetentOfficers service:', { err });
 			throw err;
 		}
 	}
@@ -87,12 +86,12 @@ class AllOfficersService {
 		}
 	}
 
-	async getDashboard(userId) {
+	async getInterviewCompetentOfficers(page, limit, search) {
 		try {
-			const dashboard = await allOfficersModel.getDashboard(userId);
-			return dashboard;
+			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit, search);
+			return officers;
 		} catch (err) {
-			logger.error('Error in getDashboard service:', { err });
+			logger.error('Error in getInterviewCompetentOfficers service:', { err });
 			throw err;
 		}
 	}
@@ -157,66 +156,6 @@ class AllOfficersService {
 		}
 	}
 
-	// async sendFactoryNotifications() {
-	// 	try {
-	// 		const factories = await allOfficersModel.getAllFactoryEmails();
-	// 		const totalMails = factories.length;
-
-	// 		const tasks = factories.map((factory, index) => async () => {
-	// 			try {
-	// 				const { email, pdfName } = factory;
-
-	// 				if (!email) {
-	// 					console.log(`⚠ Missing email at index ${index}`);
-	// 					return false;
-	// 				}
-
-	// 				const fileName = path.basename(pdfName || '');
-	// 				const pdfPath = path.join(process.cwd(), 'public', 'factory-pdfs', fileName);
-
-	// 				if (!fileName || !fs.existsSync(pdfPath)) {
-	// 					console.log(`❌ Missing PDF → email: ${email}, file: ${fileName}`);
-	// 					return false;
-	// 				}
-
-	// 				const pdfBuffer = fs.readFileSync(pdfPath);
-
-	// 				const mailStatus = await sendMail({
-	// 					order: index,
-	// 					to: email,
-	// 					subject:
-	// 						'કમિશનર શાળાઓની કચેરી તથા તેની સંલગ્ન કચેરીઓમાં જુનિયર ક્લાર્કની નિમણૂકના આદેશ ',
-	// 					html: 'PFA',
-	// 					attachments: [
-	// 						{
-	// 							filename: fileName,
-	// 							content: pdfBuffer,
-	// 							contentType: 'application/pdf',
-	// 						},
-	// 					],
-	// 				});
-
-	// 				return mailStatus;
-	// 			} catch (err) {
-	// 				console.log(`❌ Error sending to ${factory?.email}: ${err.message}`);
-	// 				return false;
-	// 			}
-	// 		});
-
-	// 		const results = await promisePool(tasks, 5);
-
-	// 		return {
-	// 			message: 'FAST bulk mail sending completed!',
-	// 			totalMails,
-	// 			totalSent: results.filter((r) => r.success).length,
-	// 			// accountsStatus: accounts,
-	// 		};
-	// 	} catch (err) {
-	// 		console.error('sendFactoryNotifications failed:', err);
-	// 		throw err;
-	// 	}
-	// }
-
 	async rescheduleInterview({
 		interviewCandidates,
 		rescheduleCount,
@@ -280,61 +219,6 @@ class AllOfficersService {
 		} catch (err) {
 			logger.error('Error in rescheduleInterview service:', { err });
 			console.error('SQL Error Message:', err.message);
-			throw err;
-		}
-	}
-
-	async pauseCompetentOfficer({ userId }) {
-		try {
-			const pause = await allOfficersModel.pauseCompetentOfficer(userId);
-
-			if (!pause || pause.length === 0) {
-				throw new Error('No record found for this userId');
-			}
-
-			const { email, CompetentSuspensionStatus, CompetentSuspensionDate, suspensionCount } =
-				pause[0];
-
-			let subject = '';
-			let html = '';
-
-			if (CompetentSuspensionStatus === 1) {
-				subject = 'Warning Notice';
-				html = `
-                <p>Dear Competent Officer,</p>
-                <p>This is to inform you that you have received a <b>warning from the state authorities</b>.</p>
-                <p>If any mistake occurs again in the future, you will be suspended for a period of <b>6 months</b>.</p>
-                <p>Please take this warning seriously and ensure compliance with all required regulations.</p>
-                <p>Regards,<br/>Support Team</p>
-            `;
-			} else if (CompetentSuspensionStatus === 2) {
-				subject = 'Suspension Notice';
-				html = `
-                <p>Dear Competent Officer,</p>
-                <p>This is to notify you that you have been <b>suspended for a period of 6 months</b>.</p>
-                <p>Your suspension will remain effective until <b>${CompetentSuspensionDate}</b>.</p>
-                <p>Please contact the concerned department for any further clarification.</p>
-                <p>Regards,<br/>Support Team</p>
-            `;
-			} else if (suspensionCount === 2) {
-				subject = 'Suspension Notice';
-				html = `
-				<p>Dear Competent Officer,</p>
-				<p>This is to inform you that you have been <b>suspended for the second time</b>.</p>
-				<p>As a result, you are no longer allowed to <b>renew your application</b> or <b>login</b> to the system.</p>
-				<p>Your suspension is effective from <b>${CompetentSuspensionDate}</b>.</p>
-				<p>Please contact the concerned department for any further clarification.</p>
-				<p>Regards,<br/>Support Team</p>
-				`;
-			}
-
-			if (email && subject && html) {
-				await sendMail({ to: email, subject, html });
-			}
-
-			return pause[0];
-		} catch (err) {
-			logger.error('Error in pauseCompetentOfficer service:', { err });
 			throw err;
 		}
 	}
@@ -436,6 +320,100 @@ class AllOfficersService {
 			return status;
 		} catch (err) {
 			logger.error('Error in transferToSuperAdminCompetentOfficersStatus service:', { err });
+			throw err;
+		}
+	}
+
+	async pauseCompetentOfficer({ userId }) {
+		try {
+			const pause = await allOfficersModel.pauseCompetentOfficer(userId);
+
+			if (!pause || pause.length === 0) {
+				throw new Error('No record found for this userId');
+			}
+
+			const data = pause[0];
+
+			const {
+				userId: cUserId,
+				name,
+				email,
+				CompetentSuspensionStatus,
+				suspensionCount,
+				firstWarningDate,
+				temporarySuspendDate,
+				finalSuspendDate,
+			} = data;
+
+			let subject = '';
+			let html = '';
+			let attachments = [];
+
+			if (CompetentSuspensionStatus === 1 && (!suspensionCount || suspensionCount === 0)) {
+				subject = 'Warning Notice - First Time';
+				html = `
+				<p>Dear ${name || 'Competent Officer'},</p>
+				<p>This is to inform you that you have received a <b>warning from the state authorities</b>.</p>
+				<p>If any mistake occurs again in the future, you will be suspended for a period of <b>6 months</b>.</p>
+				<p>Please take this warning seriously and ensure compliance with all regulations.</p>
+				<p>Best Regards,<br/>DISH Portal Support Team</p>
+			`;
+			} else if (CompetentSuspensionStatus === 2 && suspensionCount === 1) {
+				subject = 'Temporary Suspension Notice - 6 Months';
+				html = `
+				<p>Dear ${name || 'Competent Officer'},</p>
+				<p>You have been <b>suspended for a period of 6 months</b> due to repeated violations.</p>
+				<p>This is your final opportunity. Any further violations will result in permanent suspension.</p>
+				<p>Please contact the concerned department for further clarification.</p>
+				<p>Best Regards,<br/>DISH Portal Support Team</p>
+			`;
+			} else if (CompetentSuspensionStatus === 2 && suspensionCount === 2) {
+				subject = 'Permanent Suspension Notice';
+
+				html = `
+				<p>Dear ${name || 'Competent Officer'},</p>
+				<p>You have been <b>permanently suspended</b>.</p>
+				<p>Please find the attached <b>official suspension PDF</b>.</p>
+				<p>Best Regards,<br/>DISH Portal</p>
+			`;
+
+				try {
+					const pdfBuffer = await generateSuspensionPDF({
+						name: name || 'Competent Officer',
+						firstWarningDate: firstWarningDate || 'N/A',
+						temporarySuspendDate: temporarySuspendDate || 'N/A',
+						finalSuspendDate: finalSuspendDate || new Date().toISOString().split('T')[0],
+					});
+
+					if (!pdfBuffer || !Buffer.isBuffer(pdfBuffer)) {
+						throw new Error('PDF Buffer not generated');
+					}
+
+					attachments = [
+						{
+							filename: `permanent_suspension_${cUserId}.pdf`,
+							content: pdfBuffer,
+							encoding: 'base64',
+							contentType: 'application/pdf',
+						},
+					];
+				} catch (pdfError) {
+					throw pdfError;
+				}
+			}
+
+			// ✅ Send email
+			if (email && subject && html) {
+				await sendMail({
+					to: email,
+					subject,
+					html,
+					attachments,
+				});
+			}
+
+			return data;
+		} catch (err) {
 			throw err;
 		}
 	}
@@ -590,6 +568,66 @@ class AllOfficersService {
 			throw err;
 		}
 	}
+
+	// async sendFactoryNotifications() {
+	// 	try {
+	// 		const factories = await allOfficersModel.getAllFactoryEmails();
+	// 		const totalMails = factories.length;
+
+	// 		const tasks = factories.map((factory, index) => async () => {
+	// 			try {
+	// 				const { email, pdfName } = factory;
+
+	// 				if (!email) {
+	// 					console.log(`⚠ Missing email at index ${index}`);
+	// 					return false;
+	// 				}
+
+	// 				const fileName = path.basename(pdfName || '');
+	// 				const pdfPath = path.join(process.cwd(), 'public', 'factory-pdfs', fileName);
+
+	// 				if (!fileName || !fs.existsSync(pdfPath)) {
+	// 					console.log(`❌ Missing PDF → email: ${email}, file: ${fileName}`);
+	// 					return false;
+	// 				}
+
+	// 				const pdfBuffer = fs.readFileSync(pdfPath);
+
+	// 				const mailStatus = await sendMail({
+	// 					order: index,
+	// 					to: email,
+	// 					subject:
+	// 						'કમિશનર શાળાઓની કચેરી તથા તેની સંલગ્ન કચેરીઓમાં જુનિયર ક્લાર્કની નિમણૂકના આદેશ ',
+	// 					html: 'PFA',
+	// 					attachments: [
+	// 						{
+	// 							filename: fileName,
+	// 							content: pdfBuffer,
+	// 							contentType: 'application/pdf',
+	// 						},
+	// 					],
+	// 				});
+
+	// 				return mailStatus;
+	// 			} catch (err) {
+	// 				console.log(`❌ Error sending to ${factory?.email}: ${err.message}`);
+	// 				return false;
+	// 			}
+	// 		});
+
+	// 		const results = await promisePool(tasks, 5);
+
+	// 		return {
+	// 			message: 'FAST bulk mail sending completed!',
+	// 			totalMails,
+	// 			totalSent: results.filter((r) => r.success).length,
+	// 			// accountsStatus: accounts,
+	// 		};
+	// 	} catch (err) {
+	// 		console.error('sendFactoryNotifications failed:', err);
+	// 		throw err;
+	// 	}
+	// }
 }
 
 export default AllOfficersService;

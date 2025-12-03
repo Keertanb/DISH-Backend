@@ -49,83 +49,6 @@ class CompetentService {
 		}
 	}
 
-	async getScheduledInspectionList(competentUserId, page, limit, search) {
-		try {
-			const result = await competentModel.getScheduledInspectionList(
-				competentUserId,
-				page,
-				limit,
-				search
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in getScheduledInspectionList service:', { err });
-			throw err;
-		}
-	}
-
-	async scheduledMachineInspectionStatus({
-		factoryUserId,
-		machineName,
-		inspectionDate,
-		status,
-		competentReason,
-		competentUserId,
-	}) {
-		try {
-			if (!status || !['Approved', 'Rejected'].includes(status)) {
-				throw new Error('Invalid status provided');
-			}
-
-			if (status === 'Rejected' && (!competentReason || competentReason.trim() === '')) {
-				throw new Error('competentReason is required when status is Rejected');
-			}
-			const result = await competentModel.scheduledMachineInspectionStatus(
-				factoryUserId,
-				machineName,
-				inspectionDate,
-				status,
-				competentReason,
-				competentUserId
-			);
-			if (result?.email) {
-				let subject = '';
-				let html = '';
-
-				if (status === 'Approved') {
-					subject = `Inspection Approved for Machine ${result.machineName}`;
-					html = `
-					<p>Dear Factory Owner,</p>
-					<p><b>Congratulations!</b></p>
-					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
-					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
-					${result.inspectionDate} has been approved.
-					You may proceed with the inspection as scheduled.</p>
-					<p>Regards,<br/>Factory Inspection Team</p>
-				`;
-				} else if (status === 'Rejected') {
-					subject = `Inspection Rejected for Machine ${result.machineName}`;
-					html = `
-					<p>Dear Factory Owner,</p>
-					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
-					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
-					${result.inspectionDate} 
-					has been <b>Rejected</b>.</p>
-					<p><b>Reason:</b> ${result.competentReason}</p>
-					<p>Regards,<br/>Factory Inspection Team</p>
-				`;
-				}
-
-				await sendMail({ to: result.email, subject, html });
-			}
-
-			return result;
-		} catch (err) {
-			logger.error('Error in scheduledMachineInspectionStatus service:', { err });
-			throw err;
-		}
-	}
-
 	async inspectionFactory(competentUserId, page, limit, search) {
 		try {
 			const result = await competentModel.inspectionFactory(competentUserId, page, limit, search);
@@ -142,6 +65,71 @@ class CompetentService {
 			return result;
 		} catch (err) {
 			logger.error('Error in inspectionFactory service:', { err });
+			throw err;
+		}
+	}
+
+	async factoryMachineInspection(
+		factoryUserId,
+		machineName,
+		inspectionCount,
+		inspectionDate,
+		competentUserId
+	) {
+		try {
+			const result = await competentModel.factoryMachineInspection(
+				factoryUserId,
+				machineName,
+				inspectionCount,
+				inspectionDate,
+				competentUserId
+			);
+
+			const data = Array.isArray(result) && result.length > 0 ? result[0] : null;
+
+			if (data.Status === 'Error') {
+				return {
+					Status: 'Error',
+					Message: data.Message,
+				};
+			}
+
+			if (!data.email) {
+				throw new Error('Factory email not found');
+			}
+
+			// ✅ SEND EMAIL ONLY ON SUCCESS
+			await sendMail({
+				to: data.email,
+				subject: 'Machine Inspection Scheduled - DISH Portal',
+				html: `
+				<p>Dear Factory Owner,</p>
+
+				<p>A machine inspection has been <b>successfully scheduled</b>. Below are the details:</p>
+
+				<p>
+					<b>Competent Officer Name:</b> ${data.officerName}<br/>
+					<b>Competent Officer Contact:</b> ${data.officerContact}<br/>
+					<b>Machine Name:</b> ${data.machineName}<br/>
+					<b>Total Machines for Inspection:</b> ${data.inspectionCount}<br/>
+					<b>Inspection Date:</b> ${data.inspectionDate}<br/>
+					<b>Factory User ID:</b> ${factoryUserId}
+				</p>
+
+				<p>Regards,<br/>Support Team</p>
+			`,
+			});
+
+			return {
+				Status: 'Success',
+				Message: 'Inspection created successfully & email sent',
+				Data: data,
+			};
+		} catch (err) {
+			logger.error('Error in factoryMachineInspection service:', {
+				message: err.message,
+				stack: err.stack,
+			});
 			throw err;
 		}
 	}
@@ -596,6 +584,58 @@ class CompetentService {
 		}
 	}
 
+	async competentExpirationReminder() {
+		try {
+			const candidates = await competentModel.competentExpirationReminder();
+
+			if (!candidates.length) {
+				console.error('No competent officers found for Expiration Reminder.');
+				return { message: 'No Expiration Reminder competent officers found', data: [] };
+			}
+
+			for (const candidate of candidates) {
+				const { userId, email, expirationDate } = candidate;
+
+				const msg = candidate.expirationMessage.trim().toLowerCase();
+
+				const isTwoMonths = msg.includes('2 months');
+				const isOneMonth = msg.includes('1 month');
+
+				if (!email) {
+					console.error(`Missing email for userId ${userId}`);
+					continue;
+				}
+
+				if (isTwoMonths || isOneMonth) {
+					await sendMail({
+						to: email,
+						subject: 'Login Access Expiration Reminder',
+						html: `
+						<p>Dear User,</p>
+						<p>This is a reminder that your login access will expire soon.</p>
+
+						<p><b>User ID:</b> ${userId}</p>
+						<p><b>Expiration Date:</b> ${expirationDate}</p>
+						<p><b>${candidate.expirationMessage}</b></p>
+
+						<p>Please renew your account before the expiration date to avoid login interruption.</p>
+
+						<p>Regards,<br/>Support Team</p>
+					`,
+					});
+				}
+			}
+
+			return {
+				message: 'Competent Officer Expiration Reminder Notification sent successfully',
+				candidates,
+			};
+		} catch (err) {
+			logger.error('Error in competent24HoursEnd service:', { message: err.message });
+			throw err;
+		}
+	}
+
 	async competentExpiryPauseEnd() {
 		try {
 			const candidates = await competentModel.competentExpiryPauseEnd();
@@ -766,6 +806,83 @@ class CompetentService {
 				message: err.message,
 				stack: err.stack,
 			});
+			throw err;
+		}
+	}
+
+	async getScheduledInspectionList(competentUserId, page, limit, search) {
+		try {
+			const result = await competentModel.getScheduledInspectionList(
+				competentUserId,
+				page,
+				limit,
+				search
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getScheduledInspectionList service:', { err });
+			throw err;
+		}
+	}
+
+	async scheduledMachineInspectionStatus({
+		factoryUserId,
+		machineName,
+		inspectionDate,
+		status,
+		competentReason,
+		competentUserId,
+	}) {
+		try {
+			if (!status || !['Approved', 'Rejected'].includes(status)) {
+				throw new Error('Invalid status provided');
+			}
+
+			if (status === 'Rejected' && (!competentReason || competentReason.trim() === '')) {
+				throw new Error('competentReason is required when status is Rejected');
+			}
+			const result = await competentModel.scheduledMachineInspectionStatus(
+				factoryUserId,
+				machineName,
+				inspectionDate,
+				status,
+				competentReason,
+				competentUserId
+			);
+			if (result?.email) {
+				let subject = '';
+				let html = '';
+
+				if (status === 'Approved') {
+					subject = `Inspection Approved for Machine ${result.machineName}`;
+					html = `
+					<p>Dear Factory Owner,</p>
+					<p><b>Congratulations!</b></p>
+					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
+					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
+					${result.inspectionDate} has been approved.
+					You may proceed with the inspection as scheduled.</p>
+					<p>Regards,<br/>Factory Inspection Team</p>
+				`;
+				} else if (status === 'Rejected') {
+					subject = `Inspection Rejected for Machine ${result.machineName}`;
+					html = `
+					<p>Dear Factory Owner,</p>
+					<p><b>Machine Count :- ${result.inspectedCount}</b></p>
+					<p>Your scheduled inspection for Machine Name: ${result.machineName} on 
+					${result.inspectionDate} 
+					has been <b>Rejected</b>.</p>
+					<p><b>Reason:</b> ${result.competentReason}</p>
+					<p>Regards,<br/>Factory Inspection Team</p>
+				`;
+				}
+
+				await sendMail({ to: result.email, subject, html });
+			}
+
+			return result;
+		} catch (err) {
+			logger.error('Error in scheduledMachineInspectionStatus service:', { err });
 			throw err;
 		}
 	}

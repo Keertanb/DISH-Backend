@@ -5,6 +5,8 @@ import validateSchema from '../middlewares/validateSchema.middleware.js';
 import * as factoryValidation from '../validations/factory.validation.js';
 // CONTROLLERS
 import FactoryController from '../controllers/factory.controller.js';
+//config
+import { jwtMiddleware } from '../config/jwt.js';
 
 const router = express.Router();
 const factoryController = new FactoryController();
@@ -12,6 +14,7 @@ const factoryController = new FactoryController();
 // Factory machine register
 router.post(
 	'/register-machine',
+	jwtMiddleware,
 	validateSchema(factoryValidation.registerMachine),
 	factoryController.registerMachine
 );
@@ -19,6 +22,7 @@ router.post(
 // Factory machine total count
 router.get(
 	'/get-machine-count',
+	jwtMiddleware,
 	validateSchema(factoryValidation.getMachineCount),
 	factoryController.getMachineCount
 );
@@ -26,27 +30,15 @@ router.get(
 // Factory User all machine list
 router.get(
 	'/get-machine-list',
+	jwtMiddleware,
 	validateSchema(factoryValidation.getMachineList),
 	factoryController.getMachineList
-);
-
-// Factory user add new machine
-router.post(
-	'/register-new-machine',
-	validateSchema(factoryValidation.addNewMachine),
-	factoryController.addNewMachine
-);
-
-// Factory user schedule machine inspection
-router.post(
-	'/machine-inspection',
-	validateSchema(factoryValidation.machineInspection),
-	factoryController.machineInspection
 );
 
 // factory profile data
 router.get(
 	'/factory-owner-profile',
+	jwtMiddleware,
 	validateSchema(factoryValidation.getFactoryOwnerProfile),
 	factoryController.getFactoryOwnerProfile
 );
@@ -54,6 +46,7 @@ router.get(
 // Get List By Factory machine inspection list
 router.get(
 	'/get-factory-machine-approved',
+	jwtMiddleware,
 	validateSchema(factoryValidation.getFactoryMachineInspectionList),
 	factoryController.getFactoryMachineInspectionList
 );
@@ -61,6 +54,7 @@ router.get(
 // Machine Expired
 router.post(
 	'/inactive-machine',
+	jwtMiddleware,
 	validateSchema(factoryValidation.inactiveMachine),
 	factoryController.inactiveMachine
 );

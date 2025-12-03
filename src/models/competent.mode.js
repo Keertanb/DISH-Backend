@@ -38,6 +38,10 @@ class CompetentModel {
 				stabilityDocument,
 				cv,
 				medicalCertificate,
+				experienceDocument,
+				educationDocument,
+				infrastructureDocument,
+				dateOfBirthDocument,
 				educationalQualification,
 				descriptionOfExamination,
 				arrangementsForCalibrationAndMaintenance,
@@ -111,6 +115,14 @@ class CompetentModel {
 					{ name: 'stabilityDocument', type: sql.NVarChar(255), value: stabilityDocument },
 					{ name: 'cv', type: sql.NVarChar(255), value: cv },
 					{ name: 'medicalCertificate', type: sql.NVarChar(255), value: medicalCertificate },
+					{ name: 'experienceDocument', type: sql.NVarChar(255), value: experienceDocument },
+					{ name: 'educationDocument', type: sql.NVarChar(255), value: educationDocument },
+					{
+						name: 'infrastructureDocument',
+						type: sql.NVarChar(255),
+						value: infrastructureDocument,
+					},
+					{ name: 'dateOfBirthDocument', type: sql.NVarChar(255), value: dateOfBirthDocument },
 					{ name: 'educationalQualification', type: sql.Text, value: educationalQualification },
 					{ name: 'descriptionOfExamination', type: sql.Text, value: descriptionOfExamination },
 					{
@@ -155,58 +167,10 @@ class CompetentModel {
 		}
 	}
 
-	async getScheduledInspectionList(competentUserId, page, limit, search) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_GetScheduledMachineInspection',
-				[
-					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
-					{ name: 'page', type: sql.Int(), value: page },
-					{ name: 'limit', type: sql.Int(), value: limit },
-					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
-				],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in getScheduledInspectionList model:', { err });
-			throw err;
-		}
-	}
-
-	async scheduledMachineInspectionStatus(
-		factoryUserId,
-		machineName,
-		inspectionDate,
-		status,
-		competentReason = null,
-		competentUserId
-	) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_ScheduledMachineInspectionStatus',
-				[
-					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
-					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
-					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
-					{ name: 'status', type: sql.VarChar(20), value: status },
-					{ name: 'competentReason', type: sql.VarChar(255), value: competentReason },
-					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
-				],
-				true
-			);
-
-			return result[0];
-		} catch (err) {
-			logger.error('Error in scheduledMachineInspectionStatus model:', { err });
-			throw err;
-		}
-	}
-
 	async inspectionFactory(competentUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(
-				'SP_GetPendingFactoriesByCompetent',
+				'SP_GetInspectionFactoriesByCompetent',
 				[
 					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
 					{ name: 'page', type: sql.Int(), value: page },
@@ -242,10 +206,51 @@ class CompetentModel {
 				[{ name: 'userId', type: sql.VarChar(30), value: userId }],
 				true
 			);
+			if (Array.isArray(result)) {
+				result.forEach((i) => {
+					if (typeof i.machineType === 'string') {
+						try {
+							i.machineType = JSON.parse(i.machineType);
+						} catch {
+							i.machineType = [];
+						}
+					}
+				});
+			}
 
 			return result;
 		} catch (err) {
 			logger.error('Error in searchFactory model:', { err });
+			throw err;
+		}
+	}
+
+	async factoryMachineInspection(
+		factoryUserId,
+		machineName,
+		inspectionCount,
+		inspectionDate,
+		competentUserId
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_FactoryMachineInspection',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{ name: 'inspectionCount', type: sql.Int, value: inspectionCount },
+					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+				],
+				true
+			);
+
+			if (Array.isArray(result)) return result;
+			if (result?.recordset) return result.recordset;
+
+			return [];
+		} catch (err) {
+			logger.error('Error in factoryMachineInspection model:', { err });
 			throw err;
 		}
 	}
@@ -410,7 +415,11 @@ class CompetentModel {
 				'SP_GetIdentitynoByFactoryMachinery',
 				[
 					{ name: 'userId', type: sql.VarChar(30), value: userId },
-					{ name: 'machineNoPattern', type: sql.VarChar(50), value: `${machineNoPattern}%` },
+					{
+						name: 'machineNoPattern',
+						type: sql.VarChar(50),
+						value: machineNoPattern ? `${machineNoPattern}%` : null,
+					},
 					{ name: 'page', type: sql.Int(), value: page },
 					{ name: 'limit', type: sql.Int(), value: limit },
 					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
@@ -1564,6 +1573,26 @@ class CompetentModel {
 		}
 	}
 
+	async competentExpirationReminder() {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetCompetentUsersForExpirationReminder',
+				[],
+				true
+			);
+			if (Array.isArray(result)) {
+				return result;
+			}
+			if (result && result.recordset) {
+				return result.recordset;
+			}
+			return [];
+		} catch (err) {
+			logger.error('Error in competentExpirationReminder model:', { err });
+			throw err;
+		}
+	}
+
 	async competentExpiryEnd() {
 		try {
 			const result = await executeStoredProcedure('SP_CompetentExpiryEnd', [], true);
@@ -1637,6 +1666,54 @@ class CompetentModel {
 			return result;
 		} catch (err) {
 			logger.error('Error in renewCompetentOfficer model:', { err });
+			throw err;
+		}
+	}
+
+	async getScheduledInspectionList(competentUserId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetScheduledMachineInspection',
+				[
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getScheduledInspectionList model:', { err });
+			throw err;
+		}
+	}
+
+	async scheduledMachineInspectionStatus(
+		factoryUserId,
+		machineName,
+		inspectionDate,
+		status,
+		competentReason = null,
+		competentUserId
+	) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_ScheduledMachineInspectionStatus',
+				[
+					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
+					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
+					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
+					{ name: 'status', type: sql.VarChar(20), value: status },
+					{ name: 'competentReason', type: sql.VarChar(255), value: competentReason },
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+				],
+				true
+			);
+
+			return result[0];
+		} catch (err) {
+			logger.error('Error in scheduledMachineInspectionStatus model:', { err });
 			throw err;
 		}
 	}

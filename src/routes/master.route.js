@@ -31,22 +31,29 @@ router.get(
 //DistrictId wise competent Register counts
 router.get(
 	'/get-competent-register-count-by-districtId',
+	jwtMiddleware,
 	masterController.getCompetentRegisterCountByDistrictId
 );
 
 //DistrictId wise competent Register List
 router.get(
 	'/get-competent-register-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getCompetentRegisterListByDistrictId),
 	masterController.getCompetentRegisterListByDistrictId
 );
 
 // DistrictId wise competent counts
-router.get('/get-competent-count-by-districtId', masterController.getCompetentCountByDistrictId);
+router.get(
+	'/get-competent-count-by-districtId',
+	jwtMiddleware,
+	masterController.getCompetentCountByDistrictId
+);
 
 //DistrictId machine type wise competent list
 router.get(
 	'/get-machine-type-competent-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.machineTypeCompetentListByDistrictId),
 	masterController.getMachineTypeCompetentListByDistrictId
 );
@@ -54,12 +61,14 @@ router.get(
 //DistrictId wise competent status is pending counts
 router.get(
 	'/get-pending-competent-count-by-districtId',
+	jwtMiddleware,
 	masterController.getPendingCompetentCountByDistrictId
 );
 
 // DistrictId wise competent status is pending list
 router.get(
 	'/get-pending-competent-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.pendingCompetentListByDistrictId),
 	masterController.getPendingCompetentListByDistrictId
 );
@@ -67,12 +76,14 @@ router.get(
 //DistrictId wise factory machine overdue pending inspection counts
 router.get(
 	'/get-overdue-pending-count-by-districtId',
+	jwtMiddleware,
 	masterController.getOverduePendingInspectionCountByDistrictId
 );
 
 //DistrictId wise factory machine overdue pending inspection list
 router.get(
 	'/get-overdue-pending-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getOverduePendingInspectionListByDistrictId),
 	masterController.getOverduePendingInspectionListByDistrictId
 );
@@ -80,6 +91,7 @@ router.get(
 // DistrictId wise suspension competent counts
 router.get(
 	'/get-suspension-count-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getSuspensionCountByDistrictId),
 	masterController.getSuspensionCountByDistrictId
 );
@@ -87,16 +99,22 @@ router.get(
 //DistrictId wise suspension competent list
 router.get(
 	'/get-suspension-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getSuspensionListByDistrictId),
 	masterController.getSuspensionListByDistrictId
 );
 
 // DistrictId wise factory counts
-router.get('/get-factory-count-by-districtId', masterController.getFactoryCountByDistrictId);
+router.get(
+	'/get-factory-count-by-districtId',
+	jwtMiddleware,
+	masterController.getFactoryCountByDistrictId
+);
 
 // DistrictId wise factory list
 router.get(
 	'/get-factory-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.factoryListByDistrictId),
 	masterController.getFactoryListByDistrictId
 );
@@ -104,12 +122,14 @@ router.get(
 // DistrictId wise competent inspection completed this month counts
 router.get(
 	'/get-inspection-completed-count-by-districtId',
+	jwtMiddleware,
 	masterController.getInspectionCompletedCountByDistrictId
 );
 
 // DistrictId wise competent inspection competent this month List
 router.get(
 	'/get-inspection-completed-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getInspectionCompletedListByDistrictId),
 	masterController.getInspectionCompletedListByDistrictId
 );
@@ -117,6 +137,7 @@ router.get(
 //DistrictId machine type wise machine counts
 router.get(
 	'/get-machine-type-count-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getMachineTypeCountByDistrictId),
 	masterController.getMachineTypeCountByDistrictId
 );
@@ -124,6 +145,7 @@ router.get(
 //DistrictId machine type wise machine List
 router.get(
 	'/get-machine-type-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getMachineTypeListByDistrictId),
 	masterController.getMachineTypeListByDistrictId
 );
@@ -131,12 +153,14 @@ router.get(
 //DistrictId wise factory machine pending inspection counts
 router.get(
 	'/get-pending-inspection-count-by-districtId',
+	jwtMiddleware,
 	masterController.getPendingInspectionCountByDistrictId
 );
 
 //DistrictId wise factory machine pending inspection list
 router.get(
 	'/get-pending-inspection-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getPendingInspectionListByDistrictId),
 	masterController.getPendingInspectionListByDistrictId
 );
@@ -144,12 +168,14 @@ router.get(
 //DistrictId wise Inspection request rejected counts
 router.get(
 	'/get-rejected-inspection-count-by-districtId',
+	jwtMiddleware,
 	masterController.getRejectedInspectionCountByDistrictId
 );
 
 //DistrictId wise Inspection request rejected list
 router.get(
 	'/get-rejected-inspection-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getRejectedInspectionListByDistrictId),
 	masterController.getRejectedInspectionListByDistrictId
 );
@@ -157,12 +183,14 @@ router.get(
 //District wise expired machine counts
 router.get(
 	'/get-expired-machine-count-by-districtId',
+	jwtMiddleware,
 	masterController.getExpiredMachineCountByDistrictId
 );
 
 //DistrictId wise expired machine list
 router.get(
 	'/get-expired-machine-list-by-districtId',
+	jwtMiddleware,
 	validateSchema(masterValidation.getExpiredMachineListByDistrictId),
 	masterController.getExpiredMachineListByDistrictId
 );
@@ -170,6 +198,7 @@ router.get(
 // Competent and machine Count
 router.get(
 	'/get-competent-machine-count',
+	jwtMiddleware,
 	validateSchema(masterValidation.getCompetentMachineCount),
 	masterController.getCompetentMachineCount
 );
