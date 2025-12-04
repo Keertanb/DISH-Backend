@@ -18,6 +18,9 @@ class DishModel {
 				],
 				true
 			);
+			if (result && result[0]?.experiences) {
+				result[0].experiences = JSON.parse(result[0].experiences);
+			}
 			return result;
 		} catch (err) {
 			logger.error('Error in allQueryToDistrictOfficersController model:', { err });

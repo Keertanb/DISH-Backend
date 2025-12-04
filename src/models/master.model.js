@@ -335,6 +335,68 @@ class MasterModel {
 		}
 	}
 
+	async getDueCountByDistrictId() {
+		try {
+			const result = await executeStoredProcedure('SP_GetDistrictHydraulicDue2YearCount', [], true);
+			return result;
+		} catch (err) {
+			logger.error('Error in getDueCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getDueListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictHydraulicDue2YearList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getDueListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getOverDueCountByDistrictId() {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictHydraulicOverDue4YearCount',
+				[],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getOverDueCountByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
+	async getOverDueListByDistrictId(districtId, page, limit, search) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetDistrictHydraulicOverDue4YearList',
+				[
+					{ name: 'districtId', type: sql.Int, value: districtId ?? null },
+					{ name: 'page', type: sql.Int(), value: page },
+					{ name: 'limit', type: sql.Int(), value: limit },
+					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
+				],
+				true
+			);
+			return result;
+		} catch (err) {
+			logger.error('Error in getOverDueListByDistrictId model:', { err });
+			throw err;
+		}
+	}
+
 	async getInspectionCompletedCountByDistrictId() {
 		try {
 			const result = await executeStoredProcedure(

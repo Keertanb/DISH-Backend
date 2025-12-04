@@ -284,6 +284,58 @@ class MasterController {
 		}
 	}
 
+	async getDueCountByDistrictId(req, res) {
+		try {
+			const factoryCount = await masterService.getDueCountByDistrictId();
+			return res.handler.success({ factoryCount });
+		} catch (err) {
+			logger.error('Error in getDueCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getDueCountByDistrictId');
+		}
+	}
+
+	async getDueListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const factoryList = await masterService.getDueListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ factoryList });
+		} catch (err) {
+			logger.error('Error in getDueListByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getDueListByDistrictId');
+		}
+	}
+
+	async getOverDueCountByDistrictId(req, res) {
+		try {
+			const factoryCount = await masterService.getOverDueCountByDistrictId();
+			return res.handler.success({ factoryCount });
+		} catch (err) {
+			logger.error('Error in getOverDueCountByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getOverDueCountByDistrictId');
+		}
+	}
+
+	async getOverDueListByDistrictId(req, res) {
+		try {
+			const { districtId, page, limit, search } = req.query;
+			const factoryList = await masterService.getOverDueListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return res.handler.success({ factoryList });
+		} catch (err) {
+			logger.error('Error in getOverDueListByDistrictId:', { err });
+			return res.handler.serverError({}, err.message || 'Error in getOverDueListByDistrictId');
+		}
+	}
+
 	async getInspectionCompletedCountByDistrictId(req, res) {
 		try {
 			const inspectionCompletedCount =

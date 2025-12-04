@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import AuthModel from '../models/auth.model';
+import AuthModel from '../models/auth.model.js';
 
 const API_TIMEZONE = 'Asia/Kolkata';
 const authModel = new AuthModel();

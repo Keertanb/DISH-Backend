@@ -260,6 +260,51 @@ class MasterService {
 		}
 	}
 
+	async getDueCountByDistrictId() {
+		try {
+			const factoryCount = await masterModel.getDueCountByDistrictId();
+			return factoryCount;
+		} catch (err) {
+			logger.error('Error in getDueCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getDueListByDistrictId(districtId, page, limit, search) {
+		try {
+			const factoryList = await masterModel.getDueListByDistrictId(districtId, page, limit, search);
+			return factoryList;
+		} catch (err) {
+			logger.error('Error in getDueListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getOverDueCountByDistrictId() {
+		try {
+			const factoryCount = await masterModel.getOverDueCountByDistrictId();
+			return factoryCount;
+		} catch (err) {
+			logger.error('Error in getOverDueCountByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
+	async getOverDueListByDistrictId(districtId, page, limit, search) {
+		try {
+			const factoryList = await masterModel.getOverDueListByDistrictId(
+				districtId,
+				page,
+				limit,
+				search
+			);
+			return factoryList;
+		} catch (err) {
+			logger.error('Error in getOverDueListByDistrictId service:', { err });
+			throw err;
+		}
+	}
+
 	async getInspectionCompletedCountByDistrictId() {
 		try {
 			const inspectionCompletedCount = await masterModel.getInspectionCompletedCountByDistrictId();

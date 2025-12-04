@@ -119,6 +119,32 @@ router.get(
 	masterController.getFactoryListByDistrictId
 );
 
+// DistrictId wise Hydraulic due 2 years count
+router.get('/get-due-count-by-districtId', jwtMiddleware, masterController.getDueCountByDistrictId);
+
+// DistrictId wise Hydraulic due 2 years List
+router.get(
+	'/get-due-list-by-districtId',
+	jwtMiddleware,
+	validateSchema(masterValidation.getDueListByDistrictId),
+	masterController.getDueListByDistrictId
+);
+
+// DistrictId wise Hydraulic over due 4 years
+router.get(
+	'/get-over-due-count-by-districtId',
+	jwtMiddleware,
+	masterController.getOverDueCountByDistrictId
+);
+
+// DistrictId wise Hydraulic due 2 years List
+router.get(
+	'/get-over-due-list-by-districtId',
+	jwtMiddleware,
+	validateSchema(masterValidation.getOverDueListByDistrictId),
+	masterController.getOverDueListByDistrictId
+);
+
 // DistrictId wise competent inspection completed this month counts
 router.get(
 	'/get-inspection-completed-count-by-districtId',

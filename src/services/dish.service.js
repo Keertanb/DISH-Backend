@@ -9,9 +9,6 @@ const dishModel = new DishModel();
 class DishService {
 	async allQueryToDistrictOfficersController(districtId, page, limit, search) {
 		try {
-			if (districtId !== undefined && (isNaN(districtId) || districtId <= 0)) {
-				throw new Error('Invalid districtId provided');
-			}
 			const officers = await dishModel.allQueryToDistrictOfficersController(
 				districtId,
 				page,

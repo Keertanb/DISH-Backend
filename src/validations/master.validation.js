@@ -91,6 +91,24 @@ export const factoryListByDistrictId = {
 	}),
 };
 
+export const getDueListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+	}),
+};
+
+export const getOverDueListByDistrictId = {
+	query: Joi.object().keys({
+		districtId: Joi.number().optional(),
+		page: Joi.number().required(),
+		limit: Joi.number().required(),
+		search: Joi.string().trim().allow('').optional(),
+	}),
+};
+
 export const getInspectionCompletedListByDistrictId = {
 	query: Joi.object().keys({
 		districtId: Joi.number().optional(),

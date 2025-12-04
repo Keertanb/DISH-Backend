@@ -13,6 +13,7 @@ import { errorHandler } from './utils/errorHandler.js';
 import healthRoute from './routes/health.route.js';
 
 //cron
+import authCron from './cron/authCron.js';
 import factoryCron from './cron/factoryCron.js';
 import competentCron from './cron/competentCron.js';
 import dishCron from './cron/dishCron.js';
@@ -77,6 +78,7 @@ const startServer = async () => {
 			logger.info(`Server started successfully on port ${port}`);
 			console.log('\x1b[32m%s\x1b[0m', 'Compiled Successfully!');
 			console.log(`\n Local:\t\t http://localhost:${port}`);
+			authCron.startAll();
 			dishCron.stopAll();
 			factoryCron.stopAll();
 			competentCron.stopAll();
