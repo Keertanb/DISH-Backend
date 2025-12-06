@@ -294,6 +294,13 @@ router.post(
 	competentController.renewCompetentOfficer
 );
 
+// Competent Generate log book
+router.get(
+	'/log-book',
+	validateSchema(competentValidation.competentLogBook),
+	competentController.competentLogBook
+);
+
 // Factory user request for machine inspection
 router.get(
 	'/get-scheduled-inspection',

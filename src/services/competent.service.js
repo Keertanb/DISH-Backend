@@ -810,6 +810,19 @@ class CompetentService {
 		}
 	}
 
+	async competentLogBook(competentUserId, startDate, endDate) {
+		try {
+			const result = await competentModel.competentLogBook(competentUserId, startDate, endDate);
+			return result;
+		} catch (err) {
+			logger.error('Error in competentLogBook service:', {
+				message: err.message,
+				stack: err.stack,
+			});
+			throw err;
+		}
+	}
+
 	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
 			const result = await competentModel.getScheduledInspectionList(

@@ -2222,6 +2222,25 @@ export const renewCompetentOfficer = {
 	}),
 };
 
+export const competentLogBook = {
+	query: Joi.object().keys({
+		competentUserId: Joi.string().max(30).required().messages({
+			'any.required': 'Competent User Id is required',
+			'string.max': 'competentUserId must be at most 30 characters',
+		}),
+
+		startDate: Joi.date().required().messages({
+			'date.base': 'Start Date must be a valid date',
+			'any.required': 'Start Date is required',
+		}),
+
+		endDate: Joi.date().required().messages({
+			'date.base': 'End Date must be a valid date',
+			'any.required': 'End Date is required',
+		}),
+	}),
+};
+
 export const getScheduledInspectionList = {
 	query: Joi.object().keys({
 		competentUserId: Joi.string().max(30).required(),

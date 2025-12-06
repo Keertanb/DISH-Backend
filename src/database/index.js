@@ -76,30 +76,27 @@ export const executeQuery = async (query, params) => {
  */
 export const executeStoredProcedure = async (
 	procedureName,
-	params,
-	isMultipleResults = false,
-	resultType = 'recordset'
+	params = [],
+	returnFullResult = false // NEW FLAG
 ) => {
 	try {
 		const connection = getConnection();
 		const request = connection.request();
 
-		// Add parameters if provided
-		if (params) {
-			params.forEach((param) => {
-				request.input(param.name, param.type, param.value);
-			});
-		}
-
-		if (resultType === 'output') request.output('result', sql.Int);
+		// Add all inputs
+		params.forEach((p) => {
+			request.input(p.name, p.type, p.value);
+		});
 
 		const result = await request.execute(procedureName);
 
-		return resultType === 'output'
-			? result.output.result
-			: isMultipleResults
-				? result?.[resultType]
-				: result.recordset?.[0];
+		// 🔥 If user wants full result (for multi-SELECT SP)
+		if (returnFullResult) {
+			return result; // includes recordsets
+		}
+
+		// Default behavior: return first row of first recordset
+		return result.recordset?.[0] || null;
 	} catch (error) {
 		logger.error('Stored procedure execution failed:', { error });
 		throw error;

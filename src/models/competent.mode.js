@@ -1670,6 +1670,48 @@ class CompetentModel {
 		}
 	}
 
+	async competentLogBook(competentUserId, startDate, endDate) {
+		try {
+			const result = await executeStoredProcedure(
+				'SP_GetAllInspectionData',
+				[
+					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
+					{ name: 'startDate', type: sql.Date, value: startDate },
+					{ name: 'endDate', type: sql.Date, value: endDate },
+				],
+				true
+			);
+
+			const recordsets = result?.recordsets || [];
+
+			const finalResponse = [];
+
+			recordsets.forEach((rs) => {
+				if (Array.isArray(rs) && rs.length > 0) {
+					const machineType = rs[0].machineType;
+
+					const data = rs.map((row) => {
+						const copy = { ...row };
+						delete copy.machineType;
+						return copy;
+					});
+
+					if (data.length > 0) {
+						finalResponse.push({
+							machineType,
+							data,
+						});
+					}
+				}
+			});
+
+			return finalResponse;
+		} catch (error) {
+			logger.error('Error in competentLogBook model:', { error });
+			throw error;
+		}
+	}
+
 	async getScheduledInspectionList(competentUserId, page, limit, search) {
 		try {
 			const result = await executeStoredProcedure(

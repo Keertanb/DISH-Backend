@@ -524,6 +524,19 @@ class CompetentController {
 		}
 	}
 
+	async competentLogBook(req, res) {
+		try {
+			const { competentUserId, startDate, endDate } = req.query;
+
+			const result = await competentService.competentLogBook(competentUserId, startDate, endDate);
+
+			return res.handler.success(result);
+		} catch (err) {
+			logger.error('Error in competentLogBook controller:', { err });
+			return res.handler.serverError({}, err.message || 'Error fetching inspection data');
+		}
+	}
+
 	async getScheduledInspectionList(req, res) {
 		try {
 			const { competentUserId, page, limit, search } = req.query;
