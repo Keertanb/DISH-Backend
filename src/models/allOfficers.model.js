@@ -367,20 +367,6 @@ class AllOfficersModel {
 			throw err;
 		}
 	}
-
-	// async getAllFactoryEmails() {
-	// 	try {
-	// 		const result = await executeStoredProcedure('SP_GetAllFactoryEmails', [], true);
-
-	// 		if (Array.isArray(result)) return result;
-	// 		if (result?.recordset) return result.recordset;
-
-	// 		return [];
-	// 	} catch (err) {
-	// 		logger.error('Error in getAllFactoryEmails model:', { err });
-	// 		throw err;
-	// 	}
-	// }
 }
 
 export default AllOfficersModel;

@@ -301,20 +301,4 @@ router.get(
 	competentController.competentLogBook
 );
 
-// Factory user request for machine inspection
-router.get(
-	'/get-scheduled-inspection',
-	jwtMiddleware,
-	validateSchema(competentValidation.getScheduledInspectionList),
-	competentController.getScheduledInspectionList
-);
-
-// Machine inspection request(Approved/rejected)
-router.post(
-	'/scheduled-machine-status',
-	jwtMiddleware,
-	validateSchema(competentValidation.scheduledMachineInspectionStatus),
-	competentController.scheduledMachineInspectionStatus
-);
-
 export default router;

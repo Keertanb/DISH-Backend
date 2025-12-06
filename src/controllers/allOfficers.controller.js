@@ -332,19 +332,6 @@ class AllOfficersController {
 			);
 		}
 	}
-
-	// async sendFactoryNotifications(req, res) {
-	// 	try {
-	// 		const result = await allOfficersService.sendFactoryNotifications();
-	// 		return res.handler.success(result);
-	// 	} catch (err) {
-	// 		logger.error('Error in sendFactoryNotifications controller:', { err });
-	// 		return res.handler.serverError(
-	// 			{},
-	// 			err.message || 'Error in sendFactoryNotifications controller'
-	// 		);
-	// 	}
-	// }
 }
 
 export default AllOfficersController;

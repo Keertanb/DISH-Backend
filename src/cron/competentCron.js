@@ -4,18 +4,6 @@ import CompetentService from '../services/competent.service.js';
 const API_TIMEZONE = 'Asia/Kolkata';
 const competentService = new CompetentService();
 
-// const competentBeforeExpiry = cron.schedule(
-// 	'36 * * * *',
-// 	async () => {
-// 		try {
-// 			await competentService.competentBeforeExpiry();
-// 		} catch (err) {
-// 			console.error('Competent before Expiry API Error:', err.response?.data || err.message);
-// 		}
-// 	},
-// 	{ scheduled: false, timezone: API_TIMEZONE }
-// );
-
 const competentExpirationReminder = cron.schedule(
 	'21 * * * *',
 	async () => {

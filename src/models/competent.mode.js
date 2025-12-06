@@ -1641,22 +1641,6 @@ class CompetentModel {
 		}
 	}
 
-	// async competentBeforeExpiry() {
-	// 	try {
-	// 		const result = await executeStoredProcedure('SP_CompetentOfficersBeforeExpiry', [], true);
-	// 		if (Array.isArray(result)) {
-	// 			return result;
-	// 		}
-	// 		if (result && result.recordset) {
-	// 			return result.recordset;
-	// 		}
-	// 		return [];
-	// 	} catch (err) {
-	// 		logger.error('Error in getCompetentBeforeExpiry model:', { err });
-	// 		throw err;
-	// 	}
-	// }
-
 	async renewCompetentOfficer(userId, data) {
 		try {
 			const result = await executeStoredProcedure('SP_UpdateRenewCompetentOfficer', [
@@ -1709,54 +1693,6 @@ class CompetentModel {
 		} catch (error) {
 			logger.error('Error in competentLogBook model:', { error });
 			throw error;
-		}
-	}
-
-	async getScheduledInspectionList(competentUserId, page, limit, search) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_GetScheduledMachineInspection',
-				[
-					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
-					{ name: 'page', type: sql.Int(), value: page },
-					{ name: 'limit', type: sql.Int(), value: limit },
-					{ name: 'search', type: sql.VarChar(100), value: search ?? null },
-				],
-				true
-			);
-			return result;
-		} catch (err) {
-			logger.error('Error in getScheduledInspectionList model:', { err });
-			throw err;
-		}
-	}
-
-	async scheduledMachineInspectionStatus(
-		factoryUserId,
-		machineName,
-		inspectionDate,
-		status,
-		competentReason = null,
-		competentUserId
-	) {
-		try {
-			const result = await executeStoredProcedure(
-				'SP_ScheduledMachineInspectionStatus',
-				[
-					{ name: 'factoryUserId', type: sql.VarChar(30), value: factoryUserId },
-					{ name: 'machineName', type: sql.VarChar(70), value: machineName },
-					{ name: 'inspectionDate', type: sql.Date, value: inspectionDate },
-					{ name: 'status', type: sql.VarChar(20), value: status },
-					{ name: 'competentReason', type: sql.VarChar(255), value: competentReason },
-					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },
-				],
-				true
-			);
-
-			return result[0];
-		} catch (err) {
-			logger.error('Error in scheduledMachineInspectionStatus model:', { err });
-			throw err;
 		}
 	}
 }

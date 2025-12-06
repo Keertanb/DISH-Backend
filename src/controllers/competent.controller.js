@@ -536,53 +536,6 @@ class CompetentController {
 			return res.handler.serverError({}, err.message || 'Error fetching inspection data');
 		}
 	}
-
-	async getScheduledInspectionList(req, res) {
-		try {
-			const { competentUserId, page, limit, search } = req.query;
-			const result = await competentService.getScheduledInspectionList(
-				competentUserId,
-				page,
-				limit,
-				search
-			);
-
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in getScheduledInspectionList:', { err });
-			return res.handler.serverError({}, err.message || 'Error in getScheduledInspectionList');
-		}
-	}
-
-	async scheduledMachineInspectionStatus(req, res) {
-		try {
-			const {
-				factoryUserId,
-				machineName,
-				inspectionDate,
-				status,
-				competentReason,
-				competentUserId,
-			} = req.body;
-
-			const result = await competentService.scheduledMachineInspectionStatus({
-				factoryUserId,
-				machineName,
-				inspectionDate,
-				status,
-				competentReason,
-				competentUserId,
-			});
-
-			return res.handler.success(result);
-		} catch (err) {
-			logger.error('Error in scheduledMachineInspectionStatus controller:', { err });
-			return res.handler.serverError(
-				{},
-				err.message || 'Error in scheduledMachineInspectionStatus controller'
-			);
-		}
-	}
 }
 
 export default CompetentController;

@@ -568,66 +568,6 @@ class AllOfficersService {
 			throw err;
 		}
 	}
-
-	// async sendFactoryNotifications() {
-	// 	try {
-	// 		const factories = await allOfficersModel.getAllFactoryEmails();
-	// 		const totalMails = factories.length;
-
-	// 		const tasks = factories.map((factory, index) => async () => {
-	// 			try {
-	// 				const { email, pdfName } = factory;
-
-	// 				if (!email) {
-	// 					console.log(`⚠ Missing email at index ${index}`);
-	// 					return false;
-	// 				}
-
-	// 				const fileName = path.basename(pdfName || '');
-	// 				const pdfPath = path.join(process.cwd(), 'public', 'factory-pdfs', fileName);
-
-	// 				if (!fileName || !fs.existsSync(pdfPath)) {
-	// 					console.log(`❌ Missing PDF → email: ${email}, file: ${fileName}`);
-	// 					return false;
-	// 				}
-
-	// 				const pdfBuffer = fs.readFileSync(pdfPath);
-
-	// 				const mailStatus = await sendMail({
-	// 					order: index,
-	// 					to: email,
-	// 					subject:
-	// 						'કમિશનર શાળાઓની કચેરી તથા તેની સંલગ્ન કચેરીઓમાં જુનિયર ક્લાર્કની નિમણૂકના આદેશ ',
-	// 					html: 'PFA',
-	// 					attachments: [
-	// 						{
-	// 							filename: fileName,
-	// 							content: pdfBuffer,
-	// 							contentType: 'application/pdf',
-	// 						},
-	// 					],
-	// 				});
-
-	// 				return mailStatus;
-	// 			} catch (err) {
-	// 				console.log(`❌ Error sending to ${factory?.email}: ${err.message}`);
-	// 				return false;
-	// 			}
-	// 		});
-
-	// 		const results = await promisePool(tasks, 5);
-
-	// 		return {
-	// 			message: 'FAST bulk mail sending completed!',
-	// 			totalMails,
-	// 			totalSent: results.filter((r) => r.success).length,
-	// 			// accountsStatus: accounts,
-	// 		};
-	// 	} catch (err) {
-	// 		console.error('sendFactoryNotifications failed:', err);
-	// 		throw err;
-	// 	}
-	// }
 }
 
 export default AllOfficersService;

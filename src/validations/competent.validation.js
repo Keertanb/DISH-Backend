@@ -2240,28 +2240,3 @@ export const competentLogBook = {
 		}),
 	}),
 };
-
-export const getScheduledInspectionList = {
-	query: Joi.object().keys({
-		competentUserId: Joi.string().max(30).required(),
-		page: Joi.number().required(),
-		limit: Joi.number().required(),
-		search: Joi.string().max(100).optional(),
-	}),
-};
-
-export const scheduledMachineInspectionStatus = {
-	body: Joi.object().keys({
-		factoryUserId: Joi.string().max(30).required(),
-		machineName: Joi.string().max(70).required(),
-		inspectionDate: Joi.date().required(),
-		status: Joi.string().valid('Approved', 'Rejected').required(),
-
-		competentReason: Joi.when('status', {
-			is: 'Rejected',
-			then: Joi.string().max(255).required(),
-			otherwise: Joi.allow(null, '').optional(),
-		}),
-		competentUserId: Joi.string().max(30).required(),
-	}),
-};

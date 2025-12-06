@@ -155,6 +155,4 @@ router.put(
 	allOfficersController.timeEndCompetentOfficersRenewal
 );
 
-// router.post('/pdf', allOfficersController.sendFactoryNotifications);
-
 export default router;
