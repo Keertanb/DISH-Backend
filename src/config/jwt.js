@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import AuthModel from '../models/auth.model.js';
+import config from '../config/index.js';
 
 const authModel = new AuthModel();
-const secretKey = 'DISH_PORTAL_JWT';
+const secretKey = config.jwt.secret || 'DISH_PORTAL_JWT';
 
 export const createToken = (data) => jwt.sign({ data }, secretKey);
 

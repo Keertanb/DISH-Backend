@@ -8,31 +8,11 @@ const dishModel = new DishModel();
 
 class DishService {
 	async allQueryToDistrictOfficersController(districtId, page, limit, search) {
-		try {
-			const officers = await dishModel.allQueryToDistrictOfficersController(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in allQueryToDistrictOfficersController service:', { err });
-			throw err;
-		}
+		return await dishModel.allQueryToDistrictOfficersController(districtId, page, limit, search);
 	}
 
 	async notReviewCompetentPerson() {
-		try {
-			const result = await dishModel.notReviewCompetentPerson();
-			return result;
-		} catch (err) {
-			logger.error('Error in notReviewCompetentPerson service:', {
-				message: err.message,
-				stack: err.stack,
-			});
-			throw err;
-		}
+		return await dishModel.notReviewCompetentPerson();
 	}
 }
 

@@ -18,8 +18,13 @@ const config = {
 			idleTimeoutMillis: parseInt(process.env.DB_POOL_IDLE_TIMEOUT || '30000', 10),
 		},
 	},
+	MAIL: {
+		mail: process.env.MAIL_USER,
+		password: process.env.MAIL_PASS || 'qhlg qfkq ywjy kegh',
+	},
+
 	jwt: {
-		secret: process.env.JWT_SECRET || 'your-secret-key',
+		secret: process.env.JWT_SECRET || 'DISH_PORTAL_JWT',
 		expiresIn: process.env.JWT_EXPIRES_IN || '2d',
 	},
 	server: {

@@ -2219,6 +2219,12 @@ export const getConfinedSpace = {
 export const renewCompetentOfficer = {
 	body: Joi.object().keys({
 		userId: Joi.string().max(30).required(),
+		logBook: Joi.string().required().messages({
+			'any.required': 'Log Book document is required',
+		}),
+		medicalCertificate: Joi.string().required().messages({
+			'any.required': 'Medical Certificate document is required',
+		}),
 	}),
 };
 

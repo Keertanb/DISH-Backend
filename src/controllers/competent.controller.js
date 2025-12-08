@@ -505,7 +505,7 @@ class CompetentController {
 		try {
 			const { userId, ...data } = req.body;
 			if (req.files) {
-				const fileFields = ['medicalCertificate'];
+				const fileFields = ['logBook', 'medicalCertificate'];
 
 				fileFields.forEach((field) => {
 					if (req.files[field] && req.files[field][0]) {

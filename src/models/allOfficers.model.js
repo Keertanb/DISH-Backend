@@ -322,7 +322,7 @@ class AllOfficersModel {
 
 			return result[0];
 		} catch (err) {
-			logger.error('Error in renewCompetentOfficersStatus model:', { err });
+			logger.error('Error in renewCompetentOfficersStatus model:', { err: err });
 			throw err;
 		}
 	}

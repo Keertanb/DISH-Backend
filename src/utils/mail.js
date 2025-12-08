@@ -1,22 +1,13 @@
-import dotenv from 'dotenv';
+import config from '../config/index.js';
 import nodemailer from 'nodemailer';
-
-dotenv.config();
 
 const transporter = nodemailer.createTransport({
 	host: 'smtp.gmail.com',
 	port: 587,
 	secure: false,
 	auth: {
-		// user: process.env.MAIL_USER,
-		// pass: process.env.MAIL_PASS,
-
-		user: 'oldeal2k23@gmail.com',
-		pass: 'qhlg qfkq ywjy kegh',
-
-		// vidya samiksha kendra mail credential
-		// user: 'gujcosestablishment@gmail.com',
-		// pass: 'nsjk jqgh soji quxk',
+		user: config.MAIL.mail,
+		pass: config.MAIL.password,
 	},
 	tls: {
 		rejectUnauthorized: false,
@@ -25,7 +16,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendMail({ to, subject, html, attachments = [] }) {
 	await transporter.sendMail({
-		from: `"Dish Portal" <oldeal2k23@gmail.com>`,
+		from: `"Dish Portal" <${transporter.user}>`,
 		// from: `"vidya-samiksha-kendra " <gujcosestablishment@gmail.com>`,
 		to,
 		subject,
