@@ -4,10 +4,10 @@ dotenv.config();
 
 const config = {
 	database: {
-		server: process.env.DB_SERVER || 'localhost',
+		server: process.env.DB_SERVER || 'dish-db.c0ryweokuiro.us-east-1.rds.amazonaws.com',
 		database: process.env.DB_NAME || 'DISHPortal',
-		user: process.env.DB_USER || 'sa',
-		password: process.env.DB_PASSWORD || 'admin@123',
+		user: process.env.DB_USER || 'admin',
+		password: process.env.DB_PASSWORD || 'XXwm$i#:luF6Q*aONO7u3n9g)jf9',
 		port: parseInt(process.env.DB_PORT || '1433', 10),
 		encrypt: process.env.DB_ENCRYPT === 'true',
 		trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
@@ -38,5 +38,7 @@ const config = {
 		healthWindowMs: parseInt(process.env.RATE_LIMIT_HEALTH_WINDOW_MS || '60000', 10), // 1 minute
 	},
 };
+
+console.log(config.database, config.server);
 
 export default config;
