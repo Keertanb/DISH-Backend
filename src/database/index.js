@@ -76,26 +76,63 @@ export const executeQuery = async (query, params) => {
  */
 export const executeStoredProcedure = async (
 	procedureName,
-	params = [],
-	returnFullResult = false // NEW FLAG
+	params,
+	isMultipleResults = false,
+	resultType = 'recordset'
 ) => {
 	try {
 		const connection = getConnection();
 		const request = connection.request();
 
-		// Add all inputs
+		// Add parameters if provided
+		if (params) {
+			params.forEach((param) => {
+				request.input(param.name, param.type, param.value);
+			});
+		}
+
+		if (resultType === 'output') request.output('result', sql.Int);
+
+		const result = await request.execute(procedureName);
+
+		return resultType === 'output'
+			? result.output.result
+			: isMultipleResults
+				? result?.[resultType]
+				: result.recordset?.[0];
+	} catch (error) {
+		logger.error('Stored procedure execution failed:', { error });
+		throw error;
+	}
+};
+
+export const executeStoreProcedure = async (
+	procedureName,
+	params = [],
+	returnFullResult = false
+) => {
+	try {
+		// IMPORTANT: Await the actual connection
+		const pool = await getConnection();
+
+		const request = pool.request();
+
 		params.forEach((p) => {
 			request.input(p.name, p.type, p.value);
 		});
 
 		const result = await request.execute(procedureName);
 
-		// 🔥 If user wants full result (for multi-SELECT SP)
+		// MULTIPLE RESULT SETS RETURN
 		if (returnFullResult) {
-			return result; // includes recordsets
+			return {
+				recordsets: result.recordsets || [],
+				recordset: result.recordset || [],
+				rowsAffected: result.rowsAffected || [],
+			};
 		}
 
-		// Default behavior: return first row of first recordset
+		// DEFAULT → First row of first resultset
 		return result.recordset?.[0] || null;
 	} catch (error) {
 		logger.error('Stored procedure execution failed:', { error });

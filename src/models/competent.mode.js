@@ -1,8 +1,9 @@
 import sql from 'mssql';
 // DATABASE
-import { executeStoredProcedure } from '../database/index.js';
+import { executeStoredProcedure, executeStoreProcedure } from '../database/index.js';
 // UTILS
 import logger from '../utils/logger.js';
+import { type } from 'os';
 
 class CompetentModel {
 	async updateProfile(userId, data) {
@@ -1645,6 +1646,7 @@ class CompetentModel {
 		try {
 			const result = await executeStoredProcedure('SP_UpdateRenewCompetentOfficer', [
 				{ name: 'userId', type: sql.VarChar(30), value: userId },
+				{ name: 'logBook', type: sql.NVarChar(255), value: data.logBook },
 				{ name: 'medicalCertificate', type: sql.NVarChar(255), value: data.medicalCertificate },
 			]);
 			return result;
@@ -1656,7 +1658,7 @@ class CompetentModel {
 
 	async competentLogBook(competentUserId, startDate, endDate) {
 		try {
-			const result = await executeStoredProcedure(
+			const result = await executeStoreProcedure(
 				'SP_GetAllInspectionData',
 				[
 					{ name: 'competentUserId', type: sql.VarChar(30), value: competentUserId },

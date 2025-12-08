@@ -12,88 +12,23 @@ const allOfficersModel = new AllOfficersModel();
 
 class AllOfficersService {
 	async getCompetentPendingOfficers(districtId, page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getCompetentPendingOfficers(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getCompetentPendingOfficers service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getCompetentPendingOfficers(districtId, page, limit, search);
 	}
 
 	async getDashboard(userId) {
-		try {
-			const dashboard = await allOfficersModel.getDashboard(userId);
-			return dashboard;
-		} catch (err) {
-			logger.error('Error in getDashboard service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getDashboard(userId);
 	}
 
 	async getActiveCompetentOfficers(districtId, page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getActiveCompetentOfficers(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getActiveCompetentOfficers service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getActiveCompetentOfficers(districtId, page, limit, search);
 	}
 
 	async updateCompetentOfficersStatus({ userId, applicationType, reason }) {
-		try {
-			if (
-				!applicationType ||
-				![
-					'Approved',
-					'Rejected',
-					'RecommendedByDistrict',
-					'QueryToDistrict',
-					'NonRecommendedByDistrict',
-				].includes(applicationType)
-			) {
-				throw new Error('Invalid applicationType provided');
-			}
-
-			if (
-				(applicationType === 'Rejected' || applicationType === 'NonRecommendedByDistrict') &&
-				(!reason || reason.trim() === '')
-			) {
-				throw new Error(
-					'Reason is required when applicationType is Rejected OR NonRecommendedByDistrict'
-				);
-			}
-			const status = await allOfficersModel.updateCompetentOfficersStatus(
-				userId,
-				applicationType,
-				reason
-			);
-			return status;
-		} catch (err) {
-			logger.error('Error in updateCompetentOfficersStatus service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.updateCompetentOfficersStatus(userId, applicationType, reason);
 	}
 
 	async getInterviewCompetentOfficers(page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getInterviewCompetentOfficers(page, limit, search);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getInterviewCompetentOfficers service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getInterviewCompetentOfficers(page, limit, search);
 	}
 
 	async scheduleInterview({ interviewCandidates, scheduledInterviewDate }) {
@@ -172,8 +107,6 @@ class AllOfficersService {
 				newScheduledDate
 			);
 
-			console.log(candidates);
-
 			const formattedDate = new Date(newScheduledDate).toLocaleDateString('en-GB');
 
 			for (const candidate of candidates) {
@@ -225,13 +158,6 @@ class AllOfficersService {
 
 	async interviewCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
-			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
-				throw new Error('Invalid applicationType provided');
-			}
-
-			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Rejected');
-			}
 			const status = await allOfficersModel.interviewCompetentOfficersStatus(
 				userId,
 				applicationType,
@@ -262,29 +188,16 @@ class AllOfficersService {
 	}
 
 	async getTransferToSuperAdminCompetentOfficers(districtId, page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getTransferToSuperAdminCompetentOfficers(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getTransferToSuperAdminCompetentOfficers service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getTransferToSuperAdminCompetentOfficers(
+			districtId,
+			page,
+			limit,
+			search
+		);
 	}
 
 	async transferToSuperAdminCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
-			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
-				throw new Error('Invalid applicationType provided');
-			}
-
-			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Rejected');
-			}
 			const status = await allOfficersModel.transferToSuperAdminCompetentOfficersStatus(
 				userId,
 				applicationType,
@@ -402,7 +315,6 @@ class AllOfficersService {
 				}
 			}
 
-			// ✅ Send email
 			if (email && subject && html) {
 				await sendMail({
 					to: email,
@@ -419,70 +331,23 @@ class AllOfficersService {
 	}
 
 	async prioritiesCompetentOfficersStatus({ userId }) {
-		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
-			const status = await allOfficersModel.prioritiesCompetentOfficersStatus(userId);
-
-			return status;
-		} catch (err) {
-			logger.error('Error in prioritiesCompetentOfficersStatus service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.prioritiesCompetentOfficersStatus(userId);
 	}
 
 	async getQueryToDistrictCompetentOfficers(page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getQueryToDistrictCompetentOfficers(
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getQueryToDistrictCompetentOfficers service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getQueryToDistrictCompetentOfficers(page, limit, search);
 	}
 
 	async getFactoryOwners(districtId, page, limit, search) {
-		try {
-			const factory = await allOfficersModel.getFactoryOwners(districtId, page, limit, search);
-			return factory;
-		} catch (err) {
-			logger.error('Error in getFactoryOwners service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getFactoryOwners(districtId, page, limit, search);
 	}
 
 	async getCompetentRenewOfficersList(districtId, page, limit, search) {
-		try {
-			const renew = await allOfficersModel.getCompetentRenewOfficersList(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return renew;
-		} catch (err) {
-			logger.error('Error in getCompetentRenewOfficersList service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getCompetentRenewOfficersList(districtId, page, limit, search);
 	}
 
 	async renewCompetentOfficersStatus({ userId, applicationType, reason }) {
 		try {
-			if (!userId || userId.trim() === '') {
-				throw new Error('Invalid userId provided');
-			}
-			if (!applicationType || !['Approved', 'Rejected'].includes(applicationType)) {
-				throw new Error('Invalid applicationType provided');
-			}
-
-			if (applicationType === 'Rejected' && (!reason || reason.trim() === '')) {
-				throw new Error('Reason is required when applicationType is Rejected');
-			}
 			const status = await allOfficersModel.renewCompetentOfficersStatus(
 				userId,
 				applicationType,
@@ -524,26 +389,11 @@ class AllOfficersService {
 	}
 
 	async getCompetentTimeEndOfficersList(districtId, page, limit, search) {
-		try {
-			const officers = await allOfficersModel.getCompetentTimeEndOfficersList(
-				districtId,
-				page,
-				limit,
-				search
-			);
-			return officers;
-		} catch (err) {
-			logger.error('Error in getCompetentTimeEndOfficersList service:', { err });
-			throw err;
-		}
+		return await allOfficersModel.getCompetentTimeEndOfficersList(districtId, page, limit, search);
 	}
 
 	async timeEndCompetentOfficersRenewal(userId, status) {
 		try {
-			if (!status || status !== 'Approved') {
-				throw new Error('Invalid status provided');
-			}
-
 			const result = await allOfficersModel.timeEndCompetentOfficersRenewal(userId, status);
 
 			const istTime = result.expirationDateLimit;

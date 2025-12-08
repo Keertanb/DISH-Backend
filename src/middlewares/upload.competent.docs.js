@@ -57,6 +57,7 @@ const uploadCompetentDocs = multer({
 	{ name: 'educationDocument', maxCount: 1 },
 	{ name: 'infrastructureDocument', maxCount: 1 },
 	{ name: 'dateOfBirthDocument', maxCount: 1 },
+	{ name: 'logBook', maxCount: 1 },
 ]);
 
 export default uploadCompetentDocs;

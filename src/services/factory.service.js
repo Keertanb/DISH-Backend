@@ -8,72 +8,33 @@ import { sendMail } from '../utils/mail.js';
 const factoryModel = new FactoryModel();
 class FactoryService {
 	async registerMachine({ userId, machineName, totalMachines }) {
-		try {
-			const machine = await factoryModel.registerMachine({
-				userId,
-				machineName,
-				totalMachines,
-			});
-			return machine && machine.length > 0 ? machine[0] : null;
-		} catch (err) {
-			logger.error('Error in registerMachine service:', { err });
-			throw err;
-		}
+		const machine = await factoryModel.registerMachine({
+			userId,
+			machineName,
+			totalMachines,
+		});
+		return machine && machine.length > 0 ? machine[0] : null;
 	}
 
 	async getMachineCount(userId) {
-		try {
-			const count = await factoryModel.getMachineCount(userId);
-			return count;
-		} catch (err) {
-			logger.error('Error in getMachineCount service:', { err });
-			throw err;
-		}
+		return await factoryModel.getMachineCount(userId);
 	}
 
 	async getMachineList(userId, machineType, page, limit, search) {
-		try {
-			const machine = await factoryModel.getMachineList(userId, machineType, page, limit, search);
-			return machine;
-		} catch (err) {
-			logger.error('Error in getMachineList service:', { err });
-			throw err;
-		}
+		return await factoryModel.getMachineList(userId, machineType, page, limit, search);
 	}
 
 	async getFactoryOwnerProfile(userId) {
-		try {
-			const profile = await factoryModel.getFactoryOwnerProfile(userId);
-			return profile && profile.length > 0 ? profile[0] : null;
-		} catch (err) {
-			logger.error('Error in getFactoryOwnerProfile service:', { err });
-			throw err;
-		}
+		const profile = await factoryModel.getFactoryOwnerProfile(userId);
+		return profile && profile.length > 0 ? profile[0] : null;
 	}
 
 	async getFactoryMachineInspectionList(factoryUserId, page, limit, search) {
-		try {
-			const machine = await factoryModel.getFactoryMachineInspectionList(
-				factoryUserId,
-				page,
-				limit,
-				search
-			);
-			return machine;
-		} catch (err) {
-			logger.error('Error in getFactoryMachineInspectionList service:', { err });
-			throw err;
-		}
+		return await factoryModel.getFactoryMachineInspectionList(factoryUserId, page, limit, search);
 	}
 
 	async inactiveMachine(factoryUserId, machineNo) {
-		try {
-			const machine = await factoryModel.inactiveMachine(factoryUserId, machineNo);
-			return machine;
-		} catch (err) {
-			logger.error('Error in inactiveMachine service:', { err });
-			throw err;
-		}
+		return await factoryModel.inactiveMachine(factoryUserId, machineNo);
 	}
 
 	async upcomingInspectionUsers() {

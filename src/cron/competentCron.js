@@ -54,7 +54,6 @@ const competent24HoursEnd = cron.schedule(
 
 export default {
 	startAll: () => {
-		console.log('✅ competent startAll() EXECUTED');
 		competentExpirationReminder.start();
 		competentExpiry.start();
 		competentExpiryPause.start();

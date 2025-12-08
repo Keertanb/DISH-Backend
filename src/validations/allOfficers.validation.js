@@ -42,7 +42,10 @@ export const updateCompetentOfficersStatus = {
 
 		reason: Joi.when('applicationType', {
 			is: 'Rejected',
-			then: Joi.string().max(255).required(),
+			then: Joi.string().max(255).required().messages({
+				'string.max': 'Reason must be at most 255 characters',
+				'any.required': 'Reason is required',
+			}),
 			otherwise: Joi.allow(null).optional(),
 		}),
 	}),
@@ -87,7 +90,10 @@ export const InterviewCompetentOfficersStatus = {
 
 		reason: Joi.when('applicationType', {
 			is: 'Rejected',
-			then: Joi.string().max(255).required(),
+			then: Joi.string().max(255).required().messages({
+				'string.max': 'Reason must be at most 255 characters',
+				'any.required': 'Reason is required when applicationType is Rejected',
+			}),
 			otherwise: Joi.allow(null).optional(),
 		}),
 	}),
@@ -110,7 +116,10 @@ export const transferToSuperAdminCompetentOfficersStatus = {
 
 		reason: Joi.when('applicationType', {
 			is: 'Rejected',
-			then: Joi.string().max(255).required(),
+			then: Joi.string().max(255).required().messages({
+				'string.max': 'Reason must be at most 255 characters',
+				'any.required': 'Reason is required when applicationType is Rejected',
+			}),
 			otherwise: Joi.allow(null).optional(),
 		}),
 	}),
@@ -162,7 +171,10 @@ export const renewCompetentOfficersStatus = {
 
 		reason: Joi.when('applicationType', {
 			is: 'Rejected',
-			then: Joi.string().max(255).required(),
+			then: Joi.string().max(255).required().messages({
+				'string.max': 'Reason must be at most 255 characters',
+				'any.required': 'Reason is required when applicationType is Rejected',
+			}),
 			otherwise: Joi.allow(null).optional(),
 		}),
 	}),
