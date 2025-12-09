@@ -19,7 +19,7 @@ const config = {
 		},
 	},
 	MAIL: {
-		mail: process.env.MAIL_USER,
+		mail: process.env.MAIL_USER || 'oldeal2k23@gmail.com',
 		password: process.env.MAIL_PASS || 'qhlg qfkq ywjy kegh',
 	},
 
@@ -38,7 +38,5 @@ const config = {
 		healthWindowMs: parseInt(process.env.RATE_LIMIT_HEALTH_WINDOW_MS || '60000', 10), // 1 minute
 	},
 };
-
-console.log(config.database, config.server);
 
 export default config;

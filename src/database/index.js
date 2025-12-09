@@ -9,6 +9,10 @@ export const DB_CONFIG = {
 	user: config.database.user,
 	password: config.database.password,
 	port: config.database.port,
+	mail: {
+		mail: config.MAIL.mail,
+		pass: config.MAIL.password,
+	},
 	options: {
 		encrypt: config.database.encrypt,
 		trustServerCertificate: config.database.trustServerCertificate,
