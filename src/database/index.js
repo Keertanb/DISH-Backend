@@ -35,7 +35,6 @@ let pool = null;
 export const initializeDatabase = async () => {
 	try {
 		pool = await new sql.ConnectionPool(DB_CONFIG).connect();
-		console.log(DB_CONFIG);
 		logger.info('Database connected successfully');
 	} catch (error) {
 		logger.error('Database connection failed', {
