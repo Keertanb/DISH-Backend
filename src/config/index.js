@@ -4,10 +4,10 @@ dotenv.config();
 
 const config = {
 	database: {
-		server: process.env.DB_SERVER,
-		database: process.env.DB_NAME,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
+		server: process.env.DB_SERVER || 'dish-db.c0ryweokuiro.us-east-1.rds.amazonaws.com',
+		database: process.env.DB_NAME || 'DISHPortal',
+		user: process.env.DB_USER || 'admin',
+		password: process.env.DB_PASSWORD || 'XXwm$i#:luF6Q*aONO7u3n9g)jf9',
 		port: parseInt(process.env.DB_PORT || '1433', 10),
 		encrypt: process.env.DB_ENCRYPT === 'true',
 		trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
