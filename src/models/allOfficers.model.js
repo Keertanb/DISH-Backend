@@ -171,7 +171,7 @@ class AllOfficersModel {
 				true
 			);
 
-			return result[0];
+			return result;
 		} catch (err) {
 			logger.error('Error in InterviewCompetentOfficersStatus model:', { err });
 			throw err;
